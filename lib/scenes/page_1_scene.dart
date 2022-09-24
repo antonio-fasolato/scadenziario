@@ -11,8 +11,17 @@ class Page1Scene extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: const Center(
-        child: Text("Page 1"),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text("Page 1"),
+            IconButton(
+              onPressed: () => Navigator.pop(context), 
+              icon: const Icon(Icons.arrow_back)
+            )
+          ],
+        )
       ),
     );
   }

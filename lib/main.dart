@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'scenes/landing_scene.dart';
-import 'scenes/page_1_scene.dart';
-import 'scenes/page_2_scene.dart';
+import 'scenes/details_scene.dart';
+import 'scenes/editor_scene.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,8 +29,8 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/': (BuildContext ctx) => const LandingScene(title: "Scadenziario"),
-        '/Detail': (BuildContext ctx) => const Page1Scene(title: "Scadenziario"),
-        '/Edit': (BuildContext ctx) => const Page2Scene(title: "Scadenziario"),
+        '/Detail': (BuildContext ctx) => const DetailsScene(title: "Scadenziario"),
+        '/Edit': (BuildContext ctx) => const EditorScene(title: "Scadenziario"),
       },
       initialRoute: '/',
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),

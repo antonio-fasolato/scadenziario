@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Page2Scene extends StatelessWidget {
-  const Page2Scene({super.key, required this.title});
+class EditorScene extends StatelessWidget {
+  const EditorScene({super.key, required this.title});
 
   final String title;
 

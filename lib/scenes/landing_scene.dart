@@ -19,7 +19,7 @@ class LandingScene extends StatelessWidget {
               'Landing screen:',
             ),
             IconButton(
-              onPressed: () => Navigator.pushNamed(context, '/page1'), 
+              onPressed: () => Navigator.pushNamed(context, '/Detail'), 
               icon: const Icon(Icons.forward)
             )
           ],

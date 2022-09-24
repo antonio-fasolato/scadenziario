@@ -16,22 +16,10 @@ class Page1Scene extends StatelessWidget {
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Text("Page 1"),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back)),
-              IconButton(
-                  onPressed: () => Navigator.push<void>(
-                      context,
-                      MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              Page2Scene(title: title))),
-                  icon: const Icon(Icons.forward))
-            ],
-          ),
+          const Text("Details:"),
+          ElevatedButton(
+              onPressed: () => Navigator.pushNamed(context, "/Edit"),
+              child: const Text("Edit"))
         ],
       )),
     );

@@ -17,8 +17,11 @@ class EditorScene extends StatelessWidget {
         children: <Widget>[
           const Text("Editor"),
           ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Confirm"))
+              onPressed: () => Navigator.pop(context, "OK"),
+              child: const Text("Confirm")),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(context, "KO"),
+              child: const Text("Cancel")),
         ],
       )),
     );

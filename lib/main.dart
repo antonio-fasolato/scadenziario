@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Scadenziario',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -24,13 +24,18 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      routes: {
+        '/': (BuildContext ctx) => const LandingScene(title: "Scadenziario"),
+        '/page1': (BuildContext ctx) => const Page1Scene(title: "Scadenziario"),
+      },
+      initialRoute: '/',
+      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class LandingScene extends StatefulWidget {
+  const LandingScene({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -44,10 +49,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<LandingScene> createState() => _LandingSceneState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _LandingSceneState extends State<LandingScene> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -110,6 +115,24 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class Page1Scene extends StatelessWidget {
+  const Page1Scene({super.key, required this.title});
+
+  final String title;
+
+    @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: const Center(
+        child: Text("Page 1"),
+      ),
     );
   }
 }

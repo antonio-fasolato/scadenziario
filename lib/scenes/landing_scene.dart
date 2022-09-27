@@ -19,12 +19,23 @@ class LandingScene extends StatelessWidget {
               'Landing screen:',
             ),
             IconButton(
-              onPressed: () => Navigator.pushNamed(context, '/Detail'), 
-              icon: const Icon(Icons.forward)
-            )
+                onPressed: () => Navigator.pushNamed(context, '/Detail'),
+                icon: const Icon(Icons.forward))
           ],
         ),
       ),
+      drawer: Drawer(
+          child: ListView(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.forward),
+            title: const Text("Avanti"),
+            onTap: () {
+              Navigator.pushNamed(context, "/Detail");
+            },
+          ),
+        ],
+      )),
     );
   }
 }

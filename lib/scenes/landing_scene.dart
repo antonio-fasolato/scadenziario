@@ -34,6 +34,20 @@ class LandingScene extends StatelessWidget {
               Navigator.pushNamed(context, "/Detail");
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.forward),
+            title: const Text("Placeholder 1"),
+            onTap: () {
+              Navigator.pushNamed(context, "/Placeholder1");
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.forward),
+            title: const Text("Placeholder 2"),
+            onTap: () {
+              Navigator.pushNamed(context, "/Placeholder2");
+            },
+          ),
         ],
       )),
     );

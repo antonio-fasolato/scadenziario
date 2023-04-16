@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/scenes/database_selection_scene.dart';
+import 'package:scadenziario/scenes/homepage_scene.dart';
 
 void main() {
   runApp(const Scadenziario());
@@ -15,7 +16,10 @@ class Scadenziario extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      routes: {"/": (buildContext) => DatabaseSelectionScene()},
+      routes: {
+        "/": (buildContext) => DatabaseSelectionScene(),
+        "/home": (buildContext) => HomepageScene()
+      },
       initialRoute: '/',
     );
   }

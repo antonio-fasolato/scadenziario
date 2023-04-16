@@ -12,9 +12,15 @@ class DatabaseSelectionScene extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          children: [const Text("Selezione database"), ElevatedButton(onPressed: () {
-            Navigator.of(context).pushNamed("/home");
-          }, child: const Text("Seleziona database"))],
+          children: [
+            const Text("Selezione database"),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil("/home", (route) => false);
+                },
+                child: const Text("Seleziona database"))
+          ],
         ),
       ),
       // bottomNavigationBar: const Footer(),

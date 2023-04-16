@@ -15,21 +15,21 @@ class Footer extends StatelessWidget {
               tooltip: "Personale",
               icon: const Icon(Icons.people),
               onPressed: () {
-                Navigator.of(context).pushNamed("/");
+                Navigator.of(context).pushNamed("/people");
               },
             ),
             IconButton(
               tooltip: "Calendario",
               icon: const Icon(Icons.calendar_month),
               onPressed: () {
-                Navigator.of(context).pushNamed("/");
+                Navigator.of(context).pushNamed("/calendar");
               },
             ),
             IconButton(
               tooltip: "Attività e corsi",
               icon: const Icon(Icons.business_center),
               onPressed: () {
-                Navigator.of(context).pushNamed("/");
+                Navigator.of(context).pushNamed("/activities");
               },
             ),
             const Spacer(),

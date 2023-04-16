@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:scadenziario/scenes/activities_scene.dart';
+import 'package:scadenziario/scenes/calendar_scene.dart';
 import 'package:scadenziario/scenes/database_selection_scene.dart';
 import 'package:scadenziario/scenes/homepage_scene.dart';
+import 'package:scadenziario/scenes/people_scene.dart';
 
 void main() {
   runApp(const Scadenziario());
@@ -17,8 +20,11 @@ class Scadenziario extends StatelessWidget {
         primarySwatch: Colors.blueGrey,
       ),
       routes: {
-        "/": (buildContext) => DatabaseSelectionScene(),
-        "/home": (buildContext) => HomepageScene()
+        "/": (buildContext) => const DatabaseSelectionScene(),
+        "/home": (buildContext) => const HomepageScene(),
+        "/people": (buildContext) => const PeopleScene(),
+        "/calendar": (buildContext) => const CalendarScene(),
+        "/activities": (buildContext) => const ActivitiesScene(),
       },
       initialRoute: '/',
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scadenziario/scenes/database_selection_scene.dart';
 
 void main() {
   runApp(const Scadenziario());
@@ -10,41 +11,12 @@ class Scadenziario extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Scadenziario',
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      home: const ScadenziarioWidget(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class ScadenziarioWidget extends StatefulWidget {
-  const ScadenziarioWidget({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<ScadenziarioWidget> createState() => _ScadenziarioWidgetState();
-}
-
-class _ScadenziarioWidgetState extends State<ScadenziarioWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Text(
-              'Main widget',
-            ),
-          ],
-        ),
-      ),
+      routes: {"/": (buildContext) => DatabaseSelectionScene()},
+      initialRoute: '/',
     );
   }
 }

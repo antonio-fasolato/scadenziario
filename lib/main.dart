@@ -22,7 +22,7 @@ class Scadenziario extends StatelessWidget {
       routes: {
         "/": (buildContext) => const DatabaseSelectionScene(),
         "/home": (buildContext) => const HomepageScene(),
-        "/people": (buildContext) => const PeopleScene(),
+        "/people": (buildContext) => PeopleScene(),
         "/calendar": (buildContext) => const CalendarScene(),
         "/activities": (buildContext) => const ActivitiesScene(),
       },

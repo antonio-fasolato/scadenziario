@@ -23,7 +23,7 @@ class DatabaseSelectionScene extends StatelessWidget {
               width: 450,
               child: Card(
                 child: Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -43,6 +43,9 @@ class DatabaseSelectionScene extends StatelessWidget {
                                       onPressed: () {},
                                       icon: const Icon(Icons.folder_open)),
                                 ),
+                                validator: (value) => (value?.isEmpty ?? false)
+                                    ? "Selezionare un file da aprire o creare"
+                                    : null,
                               ),
                               TextFormField(
                                 controller: _passwordController,
@@ -50,6 +53,16 @@ class DatabaseSelectionScene extends StatelessWidget {
                                 decoration: const InputDecoration(
                                   label: Text("Password"),
                                 ),
+                                validator: (value) {
+                                  if (value?.isNotEmpty ?? false) {
+                                    if (value !=
+                                        _passwordCheckController.text) {
+                                      return "Password e controllo password devono combaciare";
+                                    }
+                                  }
+
+                                  return null;
+                                },
                               ),
                               TextFormField(
                                 controller: _passwordCheckController,
@@ -69,8 +82,11 @@ class DatabaseSelectionScene extends StatelessWidget {
                           const Spacer(),
                           ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                                    "/home", (route) => false);
+                                if (_formKey.currentState?.validate() ??
+                                    false) {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      "/home", (route) => false);
+                                }
                               },
                               child: const Text("Seleziona database")),
                         ],

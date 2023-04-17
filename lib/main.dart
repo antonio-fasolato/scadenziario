@@ -20,7 +20,7 @@ class Scadenziario extends StatelessWidget {
         primarySwatch: Colors.blueGrey,
       ),
       routes: {
-        "/": (buildContext) => const DatabaseSelectionScene(),
+        "/": (buildContext) => DatabaseSelectionScene(),
         "/home": (buildContext) => const HomepageScene(),
         "/people": (buildContext) => PeopleScene(),
         "/calendar": (buildContext) => const CalendarScene(),

@@ -12,6 +12,13 @@ class Footer extends StatelessWidget {
         child: Row(
           children: <Widget>[
             IconButton(
+              tooltip: "Home",
+              icon: const Icon(Icons.home),
+              onPressed: () {
+                Navigator.of(context).pushNamed("/home");
+              },
+            ),
+            IconButton(
               tooltip: "Personale",
               icon: const Icon(Icons.people),
               onPressed: () {

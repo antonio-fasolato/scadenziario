@@ -4,6 +4,7 @@ import 'package:scadenziario/scenes/calendar_scene.dart';
 import 'package:scadenziario/scenes/database_selection_scene.dart';
 import 'package:scadenziario/scenes/homepage_scene.dart';
 import 'package:scadenziario/scenes/people_scene.dart';
+import 'package:scadenziario/scenes/settings_scene.dart';
 
 void main() {
   runApp(const Scadenziario());
@@ -25,6 +26,7 @@ class Scadenziario extends StatelessWidget {
         "/people": (buildContext) => PeopleScene(),
         "/calendar": (buildContext) => const CalendarScene(),
         "/activities": (buildContext) => ActivitiesScene(),
+        "/settings": (buildContext) => SettingsScene(),
       },
       initialRoute: '/',
     );

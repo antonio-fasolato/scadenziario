@@ -5,13 +5,20 @@ import 'package:scadenziario/scenes/database_selection_scene.dart';
 import 'package:scadenziario/scenes/homepage_scene.dart';
 import 'package:scadenziario/scenes/people_scene.dart';
 import 'package:scadenziario/scenes/settings_scene.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const Scadenziario());
+void main() async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  runApp(Scadenziario(
+    sharedPreferences: sharedPreferences,
+  ));
 }
 
 class Scadenziario extends StatelessWidget {
-  const Scadenziario({super.key});
+  final SharedPreferences _sharedPreferences;
+
+  const Scadenziario({super.key, required SharedPreferences sharedPreferences})
+      : _sharedPreferences = sharedPreferences;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +28,9 @@ class Scadenziario extends StatelessWidget {
         primarySwatch: Colors.blueGrey,
       ),
       routes: {
-        "/": (buildContext) => DatabaseSelectionScene(),
+        "/": (buildContext) => DatabaseSelectionScene(
+              sharedPreferences: _sharedPreferences,
+            ),
         "/home": (buildContext) => const HomepageScene(),
         "/people": (buildContext) => PeopleScene(),
         "/calendar": (buildContext) => const CalendarScene(),

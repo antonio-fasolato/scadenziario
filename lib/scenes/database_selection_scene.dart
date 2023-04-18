@@ -1,13 +1,45 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DatabaseSelectionScene extends StatelessWidget {
-  DatabaseSelectionScene({super.key});
+  static const String _recentFilesKey = "recentFiles";
+  final SharedPreferences _sharedPreferences;
+
+  DatabaseSelectionScene(
+      {super.key, required SharedPreferences sharedPreferences})
+      : _sharedPreferences = sharedPreferences;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _fileController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordCheckController =
-      TextEditingController();
+
+  // final TextEditingController _passwordController = TextEditingController();
+  // final TextEditingController _passwordCheckController =
+  //     TextEditingController();
+
+  List<ListTile> _getRecentFiles() {
+    List<String> files =
+        _sharedPreferences?.getStringList(_recentFilesKey) ?? [];
+
+    return List.of(files.map((f) => ListTile(
+          contentPadding: const EdgeInsets.all(1),
+          title: SelectableText(f),
+        )));
+  }
+
+  void _pushRecentFile(String path) {
+    var oldFiles = _sharedPreferences?.getStringList(_recentFilesKey) ?? [];
+    if (!oldFiles.contains(path)) {
+      oldFiles.add(path);
+    }
+
+    if (oldFiles.length > 10) {
+      oldFiles.sublist(1);
+    }
+
+    _sharedPreferences.setStringList(_recentFilesKey, oldFiles);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,37 +72,49 @@ class DatabaseSelectionScene extends StatelessWidget {
                                 decoration: InputDecoration(
                                   label: const Text("File di archivio"),
                                   suffixIcon: IconButton(
-                                      onPressed: () {},
+                                      onPressed: () async {
+                                        String? selectedPath =
+                                            await FilePicker.platform.saveFile(
+                                                dialogTitle:
+                                                    "Selezionare il file di archivio",
+                                                type: FileType.custom,
+                                                allowedExtensions: [
+                                              ".db",
+                                              ".sqlite"
+                                            ]);
+                                        if (selectedPath != null) {
+                                          _fileController.text = selectedPath;
+                                        }
+                                      },
                                       icon: const Icon(Icons.folder_open)),
                                 ),
                                 validator: (value) => (value?.isEmpty ?? false)
                                     ? "Selezionare un file da aprire o creare"
                                     : null,
                               ),
-                              TextFormField(
-                                controller: _passwordController,
-                                obscureText: true,
-                                decoration: const InputDecoration(
-                                  label: Text("Password"),
-                                ),
-                                validator: (value) {
-                                  if (value?.isNotEmpty ?? false) {
-                                    if (value !=
-                                        _passwordCheckController.text) {
-                                      return "Password e controllo password devono combaciare";
-                                    }
-                                  }
-
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: _passwordCheckController,
-                                obscureText: true,
-                                decoration: const InputDecoration(
-                                  label: Text("Controllo password"),
-                                ),
-                              ),
+                              // TextFormField(
+                              //   controller: _passwordController,
+                              //   obscureText: true,
+                              //   decoration: const InputDecoration(
+                              //     label: Text("Password"),
+                              //   ),
+                              //   validator: (value) {
+                              //     if (value?.isNotEmpty ?? false) {
+                              //       if (value !=
+                              //           _passwordCheckController.text) {
+                              //         return "Password e controllo password devono combaciare";
+                              //       }
+                              //     }
+                              //     return null;
+                              //   },
+                              // ),
+                              // TextFormField(
+                              //   controller: _passwordCheckController,
+                              //   obscureText: true,
+                              //   decoration: const InputDecoration(
+                              //     label: Text("Controllo password"),
+                              //   ),
+                              // ),
                             ],
                           )),
                       const SizedBox(
@@ -81,9 +125,18 @@ class DatabaseSelectionScene extends StatelessWidget {
                         children: [
                           const Spacer(),
                           ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
+                                  SqliteConnection conn =
+                                      SqliteConnection.getInstance();
+                                  if (conn.isConnected) {
+                                    conn.disconnect();
+                                  }
+                                  await conn.connect(
+                                      databasePath: _fileController.text);
+                                  _pushRecentFile(_fileController.text);
+
                                   Navigator.of(context).pushNamedAndRemoveUntil(
                                       "/home", (route) => false);
                                 }
@@ -107,24 +160,7 @@ class DatabaseSelectionScene extends StatelessWidget {
               width: 450,
               child: ListView(
                 shrinkWrap: true,
-                children: const [
-                  ListTile(
-                    contentPadding: EdgeInsets.all(1),
-                    title: Text("C:\\lavoro\\data.db"),
-                  ),
-                  ListTile(
-                    contentPadding: EdgeInsets.all(1),
-                    title: Text("C:\\lavoro\\data.db"),
-                  ),
-                  ListTile(
-                    contentPadding: EdgeInsets.all(1),
-                    title: Text("C:\\lavoro\\data.db"),
-                  ),
-                  ListTile(
-                    contentPadding: EdgeInsets.all(1),
-                    title: Text("C:\\lavoro\\data.db"),
-                  ),
-                ],
+                children: _getRecentFiles(),
               ),
             ),
           ],

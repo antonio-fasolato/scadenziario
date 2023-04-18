@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io' as io;
 
 class DatabaseSelectionScene extends StatelessWidget {
   static const String _recentFilesKey = "recentFiles";
@@ -42,6 +43,23 @@ class DatabaseSelectionScene extends StatelessWidget {
     }
 
     _sharedPreferences.setStringList(_recentFilesKey, oldFiles);
+  }
+
+  Future<void> _selectDatabaseFile(BuildContext context) async {
+    if (_formKey.currentState?.validate() ?? false) {
+      SqliteConnection conn = SqliteConnection.getInstance();
+      if (conn.isConnected) {
+        conn.disconnect();
+      }
+      bool newFile = !(await io.File(_fileController.text).exists());
+      await conn.connect(databasePath: _fileController.text);
+      if (newFile) {
+        await conn.initDb();
+      }
+      _pushRecentFile(_fileController.text);
+
+      Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
+    }
   }
 
   @override
@@ -129,20 +147,7 @@ class DatabaseSelectionScene extends StatelessWidget {
                           const Spacer(),
                           ElevatedButton(
                               onPressed: () async {
-                                if (_formKey.currentState?.validate() ??
-                                    false) {
-                                  SqliteConnection conn =
-                                      SqliteConnection.getInstance();
-                                  if (conn.isConnected) {
-                                    conn.disconnect();
-                                  }
-                                  await conn.connect(
-                                      databasePath: _fileController.text);
-                                  _pushRecentFile(_fileController.text);
-
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                      "/home", (route) => false);
-                                }
+                                await _selectDatabaseFile(context);
                               },
                               child: const Text("Seleziona database")),
                         ],

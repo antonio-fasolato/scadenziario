@@ -3,6 +3,7 @@ import 'package:sqlite_wrapper/sqlite_wrapper.dart';
 
 class SqliteConnection {
   final Logger log = Logger();
+  static final sqlWrapper = SQLiteWrapper();
   String? _databasePath;
   DatabaseInfo? _databaseInfo;
 
@@ -32,6 +33,27 @@ class SqliteConnection {
       _databasePath = null;
       log.d("Disconnected from $path");
     }
+  }
+
+  Future<void> initDb() async {
+    log.d("Initializing new database");
+
+    String sql = """
+      CREATE TABLE IF NOT EXISTS "masterdata" (
+        "id" text NOT NULL PRIMARY KEY,
+        "name" text NOT NULL,
+        "surname" text NOT NULL,
+        "birthdate" text NOT NULL,
+        "email" text NOT NULL,
+        "phone" text,
+        "mobile" text,
+        "enabled" integer NOT NULL DEFAULT(1),
+        "deleted" integer NOT NULL DEFAULT(0)
+      ); 
+    """;
+    log.d(sql);
+
+    await sqlWrapper.execute(sql);
   }
 
   bool get isConnected {

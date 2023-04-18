@@ -22,9 +22,12 @@ class DatabaseSelectionScene extends StatelessWidget {
     List<String> files =
         _sharedPreferences?.getStringList(_recentFilesKey) ?? [];
 
-    return List.of(files.map((f) => ListTile(
+    return List.of(files.reversed.map((f) => ListTile(
           contentPadding: const EdgeInsets.all(1),
           title: SelectableText(f),
+          onTap: () {
+            _fileController.text = f;
+          },
         )));
   }
 

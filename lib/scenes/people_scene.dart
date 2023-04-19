@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/components/footer.dart';
 
-class PeopleScene extends StatelessWidget {
-  PeopleScene({super.key});
+class PeopleScene extends StatefulWidget {
+  const PeopleScene({super.key});
 
+  @override
+  State<StatefulWidget> createState() => _PeopleSceneState();
+}
+
+class _PeopleSceneState extends State<PeopleScene> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
+  bool _SidebarVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -20,18 +26,24 @@ class PeopleScene extends StatelessWidget {
             child: Column(
               children: [
                 Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      controller: _searchController,
-                      decoration: const InputDecoration(
-                          label: Text("Cerca"), prefixIcon: Icon(Icons.search)),
-                    )),
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
+                        label: Text("Cerca"), prefixIcon: Icon(Icons.search)),
+                  ),
+                ),
                 ListView(
                   shrinkWrap: true,
-                  children: const [
+                  children: [
                     ListTile(
-                      title: Text("Mario Rossi"),
-                      leading: Icon(Icons.account_circle),
+                      title: const Text("Mario Rossi"),
+                      leading: const Icon(Icons.account_circle),
+                      onTap: () {
+                        setState(() {
+                          _SidebarVisible = true;
+                        });
+                      },
                     )
                   ],
                 ),
@@ -39,7 +51,7 @@ class PeopleScene extends StatelessWidget {
             ),
           ),
           Visibility(
-            visible: true,
+            visible: _SidebarVisible,
             child: Expanded(
               child: Column(
                 children: const [Text("DX")],
@@ -50,7 +62,11 @@ class PeopleScene extends StatelessWidget {
       ),
       bottomNavigationBar: const Footer(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            _SidebarVisible = true;
+          });
+        },
         tooltip: "Aggiungi personale",
         child: const Icon(Icons.add),
       ),

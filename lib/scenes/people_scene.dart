@@ -8,10 +8,12 @@ class PeopleScene extends StatefulWidget {
   State<StatefulWidget> createState() => _PeopleSceneState();
 }
 
+enum SidebarType { none, newMasterData, editMasterdata }
+
 class _PeopleSceneState extends State<PeopleScene> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
-  bool _SidebarVisible = false;
+  SidebarType _sidebarWidgetType = SidebarType.none;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class _PeopleSceneState extends State<PeopleScene> {
                       leading: const Icon(Icons.account_circle),
                       onTap: () {
                         setState(() {
-                          _SidebarVisible = true;
+                          _sidebarWidgetType = SidebarType.editMasterdata;
                         });
                       },
                     )
@@ -51,10 +53,19 @@ class _PeopleSceneState extends State<PeopleScene> {
             ),
           ),
           Visibility(
-            visible: _SidebarVisible,
+            visible: _sidebarWidgetType != SidebarType.none,
             child: Expanded(
               child: Column(
-                children: const [Text("DX")],
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _sidebarWidgetType = SidebarType.none;
+                      });
+                    },
+                    child: const Text("Chiudi"),
+                  )
+                ],
               ),
             ),
           ),
@@ -64,7 +75,7 @@ class _PeopleSceneState extends State<PeopleScene> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            _SidebarVisible = true;
+            _sidebarWidgetType = SidebarType.newMasterData;
           });
         },
         tooltip: "Aggiungi personale",

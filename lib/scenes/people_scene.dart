@@ -13,28 +13,40 @@ class PeopleScene extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Scadenziario - Personale"),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          children: [
-            Form(
-                key: _formKey,
-                child: TextFormField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                      label: Text("Cerca"), prefixIcon: Icon(Icons.search)),
-                )),
-            ListView(
-              shrinkWrap: true,
-              children: const [
-                ListTile(
-                  title: Text("Mario Rossi"),
-                  leading: Icon(Icons.account_circle),
-                )
+      body: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                          label: Text("Cerca"), prefixIcon: Icon(Icons.search)),
+                    )),
+                ListView(
+                  shrinkWrap: true,
+                  children: const [
+                    ListTile(
+                      title: Text("Mario Rossi"),
+                      leading: Icon(Icons.account_circle),
+                    )
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+          Visibility(
+            visible: true,
+            child: Expanded(
+              child: Column(
+                children: const [Text("DX")],
+              ),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: const Footer(),
       floatingActionButton: FloatingActionButton(

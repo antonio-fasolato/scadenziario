@@ -21,7 +21,11 @@ class _PeopleSceneState extends State<PeopleScene> {
     switch (_sidebarWidgetType) {
       case SidebarType.newMasterData:
         {
-          return Expanded(flex: 70, child: PeopleNew());
+          return Expanded(
+              flex: 70,
+              child: PeopleNew(
+                confirm: _closeSidePanel,
+              ));
         }
       default:
         {
@@ -31,6 +35,12 @@ class _PeopleSceneState extends State<PeopleScene> {
           );
         }
     }
+  }
+
+  void _closeSidePanel() {
+    setState(() {
+      _sidebarWidgetType = SidebarType.none;
+    });
   }
 
   @override
@@ -79,14 +89,17 @@ class _PeopleSceneState extends State<PeopleScene> {
         ],
       ),
       bottomNavigationBar: const Footer(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _sidebarWidgetType = SidebarType.newMasterData;
-          });
-        },
-        tooltip: "Aggiungi personale",
-        child: const Icon(Icons.add),
+      floatingActionButton: Visibility(
+        visible: _sidebarWidgetType == SidebarType.none,
+        child: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              _sidebarWidgetType = SidebarType.newMasterData;
+            });
+          },
+          tooltip: "Aggiungi personale",
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

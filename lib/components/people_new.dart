@@ -5,9 +5,10 @@ import 'package:scadenziario/model/duty.dart';
 import 'package:scadenziario/repositories/duty_repository.dart';
 
 class PeopleNew extends StatefulWidget {
-  late void Function() _confirm;
+  final void Function() _confirm;
 
-  PeopleNew({super.key, required void Function() confirm}) : _confirm = confirm;
+  const PeopleNew({super.key, required void Function() confirm})
+      : _confirm = confirm;
 
   @override
   State<PeopleNew> createState() => _PeopleNewState();

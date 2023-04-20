@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/components/footer.dart';
+import 'package:scadenziario/components/people_edit.dart';
+import 'package:scadenziario/components/people_new.dart';
 
 class PeopleScene extends StatefulWidget {
   const PeopleScene({super.key});
@@ -15,6 +17,22 @@ class _PeopleSceneState extends State<PeopleScene> {
   final TextEditingController _searchController = TextEditingController();
   SidebarType _sidebarWidgetType = SidebarType.none;
 
+  Widget _sidePanelBuilder() {
+    switch (_sidebarWidgetType) {
+      case SidebarType.newMasterData:
+        {
+          return Expanded(flex: 70, child: PeopleNew());
+        }
+      default:
+        {
+          return Expanded(
+            flex: 70,
+            child: PeopleEdit(),
+          );
+        }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,8 +41,10 @@ class _PeopleSceneState extends State<PeopleScene> {
       ),
       body: Row(
         mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
+            flex: 30,
             child: Column(
               children: [
                 Form(
@@ -54,20 +74,7 @@ class _PeopleSceneState extends State<PeopleScene> {
           ),
           Visibility(
             visible: _sidebarWidgetType != SidebarType.none,
-            child: Expanded(
-              child: Column(
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _sidebarWidgetType = SidebarType.none;
-                      });
-                    },
-                    child: const Text("Chiudi"),
-                  )
-                ],
-              ),
-            ),
+            child: _sidePanelBuilder(),
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scadenziario/model/duty.dart';
@@ -73,6 +74,10 @@ class _PeopleNewState extends State<PeopleNew> {
                         decoration: const InputDecoration(
                             label: Text("Nome"),
                             prefixIcon: Icon(Icons.person)),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) => (value ?? "").isEmpty
+                            ? "Il nome della persona è obbligatorio"
+                            : null,
                       ),
                     ),
                     TableCell(
@@ -81,6 +86,10 @@ class _PeopleNewState extends State<PeopleNew> {
                         decoration: const InputDecoration(
                             label: Text("Cognome"),
                             prefixIcon: Icon(Icons.person)),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) => (value ?? "").isEmpty
+                            ? "Il cognome della persona è obbligatorio"
+                            : null,
                       ),
                     ),
                   ]),
@@ -103,10 +112,12 @@ class _PeopleNewState extends State<PeopleNew> {
                           setState(() {
                             _birthDateController.text = formattedDate;
                           });
-                        } else {
-                          print("Date is not selected");
                         }
                       },
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) => (value ?? "").isEmpty
+                          ? "La data di nascita è obbligatoria"
+                          : null,
                     )),
                     TableCell(
                       child: DropdownButtonFormField<String>(
@@ -124,6 +135,10 @@ class _PeopleNewState extends State<PeopleNew> {
                             _dutyController.text = value ?? "";
                           });
                         },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) => (value ?? "").isEmpty
+                            ? "La mansione della persona è obbligatoria"
+                            : null,
                       ),
                     )
                   ]),
@@ -133,6 +148,16 @@ class _PeopleNewState extends State<PeopleNew> {
                       controller: _mailController,
                       decoration: const InputDecoration(
                           label: Text("Email"), prefixIcon: Icon(Icons.mail)),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if ((value ?? "").isEmpty) {
+                          return "L'indirizzo email è obbligatorio";
+                        }
+                        if (!EmailValidator.validate(value ?? "")) {
+                          return "L'indirizzo mail non è corretto";
+                        }
+                        return null;
+                      },
                     )),
                     Container()
                   ]),
@@ -161,7 +186,11 @@ class _PeopleNewState extends State<PeopleNew> {
                 Padding(
                   padding: const EdgeInsets.only(top: 16, bottom: 8),
                   child: ElevatedButton(
-                    onPressed: () => widget._confirm(),
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        widget._confirm();
+                      }
+                    },
                     child: const Text("Inserisci"),
                   ),
                 ),

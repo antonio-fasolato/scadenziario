@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:scadenziario/model/duty.dart';
 import 'package:scadenziario/repositories/duty_repository.dart';
 
@@ -19,8 +20,8 @@ class _PeopleNewState extends State<PeopleNew> {
   final TextEditingController _mailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
+  final TextEditingController _dutyController = TextEditingController();
   List<Duty> _duties = [];
-  String? _dutyId;
 
   @override
   void initState() {
@@ -89,14 +90,29 @@ class _PeopleNewState extends State<PeopleNew> {
                       controller: _birthDateController,
                       decoration: const InputDecoration(
                           label: Text("Data di nascita"),
-                          prefixIcon: Icon(Icons.calendar_month)),
+                          prefixIcon: Icon(Icons.calendar_today)),
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime.now());
+                        if (pickedDate != null) {
+                          String formattedDate =
+                              DateFormat.yMd('it_IT').format(pickedDate);
+                          setState(() {
+                            _birthDateController.text = formattedDate;
+                          });
+                        } else {
+                          print("Date is not selected");
+                        }
+                      },
                     )),
                     TableCell(
                       child: DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
-                          label: Text("Mansione"),
-                          prefixIcon: Icon(Icons.work)
-                        ),
+                            label: Text("Mansione"),
+                            prefixIcon: Icon(Icons.work)),
                         items: _duties
                             .map<DropdownMenuItem<String>>((d) =>
                                 DropdownMenuItem<String>(
@@ -105,16 +121,10 @@ class _PeopleNewState extends State<PeopleNew> {
                             .toList(),
                         onChanged: (value) {
                           setState(() {
-                            _dutyId = value;
+                            _dutyController.text = value ?? "";
                           });
                         },
                       ),
-                      //     TextFormField(
-                      //   controller: _jobController,
-                      //   decoration: const InputDecoration(
-                      //       label: Text("Mansione"),
-                      //       prefixIcon: Icon(Icons.work)),
-                      // ),
                     )
                   ]),
                   TableRow(children: [

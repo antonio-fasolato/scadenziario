@@ -6,12 +6,13 @@ import 'package:scadenziario/scenes/homepage_scene.dart';
 import 'package:scadenziario/scenes/people_scene.dart';
 import 'package:scadenziario/scenes/settings_scene.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  runApp(Scadenziario(
-    sharedPreferences: sharedPreferences,
-  ));
+  initializeDateFormatting('it_IT', null).then((_) => runApp(Scadenziario(
+        sharedPreferences: sharedPreferences,
+      )));
 }
 
 class Scadenziario extends StatelessWidget {

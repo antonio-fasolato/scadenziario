@@ -1,17 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:scadenziario/model/duty.dart';
+import 'package:scadenziario/repositories/duty_repository.dart';
 
-class PeopleNew extends StatelessWidget {
-  final void Function() _confirm;
+class PeopleNew extends StatefulWidget {
+  late void Function() _confirm;
+
+  PeopleNew({super.key, required void Function() confirm}) : _confirm = confirm;
+
+  @override
+  State<PeopleNew> createState() => _PeopleNewState();
+}
+
+class _PeopleNewState extends State<PeopleNew> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _birthDateController = TextEditingController();
-  final TextEditingController _jobController = TextEditingController();
   final TextEditingController _mailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
+  List<Duty> _duties = [];
+  String? _dutyId;
 
-  PeopleNew({super.key, required void Function() confirm}) : _confirm = confirm;
+  @override
+  void initState() {
+    super.initState();
+
+    _loadDuties();
+  }
+
+  Future<void> _loadDuties() async {
+    var duties = await DutyRepository.getAllDuties();
+
+    setState(() {
+      _duties = duties;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +92,30 @@ class PeopleNew extends StatelessWidget {
                           prefixIcon: Icon(Icons.calendar_month)),
                     )),
                     TableCell(
-                        child: TextFormField(
-                      controller: _jobController,
-                      decoration: const InputDecoration(
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
                           label: Text("Mansione"),
-                          prefixIcon: Icon(Icons.work)),
-                    ))
+                          prefixIcon: Icon(Icons.work)
+                        ),
+                        items: _duties
+                            .map<DropdownMenuItem<String>>((d) =>
+                                DropdownMenuItem<String>(
+                                    value: d.id,
+                                    child: Text(d.description ?? "")))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _dutyId = value;
+                          });
+                        },
+                      ),
+                      //     TextFormField(
+                      //   controller: _jobController,
+                      //   decoration: const InputDecoration(
+                      //       label: Text("Mansione"),
+                      //       prefixIcon: Icon(Icons.work)),
+                      // ),
+                    )
                   ]),
                   TableRow(children: [
                     TableCell(
@@ -109,7 +151,7 @@ class PeopleNew extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 16, bottom: 8),
                   child: ElevatedButton(
-                    onPressed: () => _confirm(),
+                    onPressed: () => widget._confirm(),
                     child: const Text("Inserisci"),
                   ),
                 ),

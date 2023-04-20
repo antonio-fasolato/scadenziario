@@ -24,7 +24,7 @@ class _PeopleSceneState extends State<PeopleScene> {
           return Expanded(
               flex: 70,
               child: PeopleNew(
-                confirm: _closeSidePanel,
+                confirm: _personSaved,
               ));
         }
       default:
@@ -37,10 +37,16 @@ class _PeopleSceneState extends State<PeopleScene> {
     }
   }
 
-  void _closeSidePanel() {
+  void _personSaved() {
     setState(() {
       _sidebarWidgetType = SidebarType.none;
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Persona salvata correttamente"),
+      ),
+    );
   }
 
   @override

@@ -1,8 +1,12 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:scadenziario/model/duty.dart';
+import 'package:scadenziario/model/master_data.dart';
 import 'package:scadenziario/repositories/duty_repository.dart';
+import 'package:scadenziario/repositories/masterdata_repository.dart';
+import 'package:uuid/uuid.dart';
 
 class PeopleNew extends StatefulWidget {
   final void Function() _confirm;
@@ -15,6 +19,7 @@ class PeopleNew extends StatefulWidget {
 }
 
 class _PeopleNewState extends State<PeopleNew> {
+  static final Logger log = Logger();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
@@ -187,9 +192,38 @@ class _PeopleNewState extends State<PeopleNew> {
                 Padding(
                   padding: const EdgeInsets.only(top: 16, bottom: 8),
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState?.validate() ?? false) {
-                        widget._confirm();
+                        MasterData person = MasterData(
+                            const Uuid().v4().toString(),
+                            _nameController.text,
+                            _surnameController.text,
+                            DateFormat.yMd('it_IT')
+                                .parse(_birthDateController.text),
+                            _mailController.text,
+                            _phoneController.text,
+                            _mobileController.text,
+                            true,
+                            false);
+                        int res = await MasterdataRepository.save(person);
+                        if (res == 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  height: 90,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                  ),
+                                  child: const Text(
+                                      "Errore nel salvataggio della persona")),
+                            ),
+                          );
+                        } else {
+                          widget._confirm();
+                        }
                       }
                     },
                     child: const Text("Inserisci"),

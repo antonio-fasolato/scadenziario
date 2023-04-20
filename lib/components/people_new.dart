@@ -207,6 +207,9 @@ class _PeopleNewState extends State<PeopleNew> {
                             false);
                         int res = await MasterdataRepository.save(person);
                         if (res == 0) {
+                          if (!context.mounted) {
+                            return;
+                          }
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Container(

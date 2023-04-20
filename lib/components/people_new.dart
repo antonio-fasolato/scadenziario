@@ -100,20 +100,6 @@ class PeopleNew extends StatelessWidget {
                           prefixIcon: Icon(Icons.phone_android)),
                     ))
                   ]),
-                  TableRow(children: [
-                    TableCell(
-                        child: TextFormField(
-                      decoration: const InputDecoration(
-                          label: Text("Abilitato"),
-                          prefixIcon: Icon(Icons.check)),
-                    )),
-                    TableCell(
-                        child: TextFormField(
-                      decoration: const InputDecoration(
-                          label: Text("Cancellato"),
-                          prefixIcon: Icon(Icons.delete)),
-                    ))
-                  ]),
                 ],
               ),
             ),
@@ -121,7 +107,7 @@ class PeopleNew extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.only(top: 16, bottom: 8),
                   child: ElevatedButton(
                     onPressed: () => _confirm(),
                     child: const Text("Inserisci"),

@@ -52,7 +52,27 @@ class SqliteConnection {
       ); 
     """;
     log.d(sql);
+    await sqlWrapper.execute(sql);
 
+    sql = """
+      CREATE TABLE IF NOT EXISTS "duties" (
+        "id" text NOT NULL PRIMARY KEY,
+        "description" text NOT NULL
+      ); 
+      insert into duties values ('2d9946eb-c7a1-4ed3-978c-1773babf302b', 'Impiegato');
+      insert into duties values ('2dd3b32a-79a8-4225-bb43-ba47d4dafc5a', 'Consulente esterno');
+    """;
+    log.d(sql);
+    await sqlWrapper.execute(sql);
+
+    sql =
+        "insert into duties values ('2d9946eb-c7a1-4ed3-978c-1773babf302b', 'Impiegato');";
+    log.d(sql);
+    await sqlWrapper.execute(sql);
+
+    sql =
+        "insert into duties values ('2dd3b32a-79a8-4225-bb43-ba47d4dafc5a', 'Consulente esterno');";
+    log.d(sql);
     await sqlWrapper.execute(sql);
   }
 

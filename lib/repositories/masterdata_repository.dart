@@ -6,6 +6,13 @@ class MasterdataRepository {
   static final Logger log = Logger();
   static final sqlWrapper = SQLiteWrapper();
 
+  static Future<List<MasterData>> getAll() async {
+    String sql = "select * from masterdata order by surname, name";
+    log.d(sql);
+    return List<MasterData>.from(
+        await sqlWrapper.query(sql, fromMap: MasterData.fromMap));
+  }
+
   static Future<int> save(MasterData m) async {
     String sql = "select * from masterdata where id = ?";
     if (m.id == null) {

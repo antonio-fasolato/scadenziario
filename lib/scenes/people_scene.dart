@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/components/people_edit.dart';
 import 'package:scadenziario/components/people_new.dart';
+import 'package:scadenziario/model/master_data.dart';
+import 'package:scadenziario/repositories/masterdata_repository.dart';
 
 class PeopleScene extends StatefulWidget {
   const PeopleScene({super.key});
@@ -16,6 +18,20 @@ class _PeopleSceneState extends State<PeopleScene> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
   SidebarType _sidebarWidgetType = SidebarType.none;
+  List<MasterData> _people = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getAllMasterdata();
+  }
+
+  Future<void> _getAllMasterdata() async {
+    var res = await MasterdataRepository.getAll();
+    setState(() {
+      _people = res;
+    });
+  }
 
   Widget _sidePanelBuilder() {
     switch (_sidebarWidgetType) {
@@ -73,17 +89,17 @@ class _PeopleSceneState extends State<PeopleScene> {
                 ),
                 ListView(
                   shrinkWrap: true,
-                  children: [
-                    ListTile(
-                      title: const Text("Mario Rossi"),
-                      leading: const Icon(Icons.account_circle),
-                      onTap: () {
-                        setState(() {
-                          _sidebarWidgetType = SidebarType.editMasterdata;
-                        });
-                      },
-                    )
-                  ],
+                  children: _people
+                      .map((p) => ListTile(
+                            title: Text("${p.surname} ${p.name}"),
+                            leading: const Icon(Icons.account_circle),
+                            onTap: () {
+                              setState(() {
+                                _sidebarWidgetType = SidebarType.editMasterdata;
+                              });
+                            },
+                          ))
+                      .toList(),
                 ),
               ],
             ),
@@ -103,7 +119,7 @@ class _PeopleSceneState extends State<PeopleScene> {
               _sidebarWidgetType = SidebarType.newMasterData;
             });
           },
-          tooltip: "Aggiungi personale",
+          tooltip: "Aggiungi persona",
           child: const Icon(Icons.add),
         ),
       ),

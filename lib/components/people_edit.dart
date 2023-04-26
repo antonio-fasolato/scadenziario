@@ -33,7 +33,7 @@ class PeopleEdit extends StatefulWidget {
 class _PeopleEditState extends State<PeopleEdit> {
   static final Logger log = Logger();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late String? _id;
+  String? _id;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _birthDateController = TextEditingController();

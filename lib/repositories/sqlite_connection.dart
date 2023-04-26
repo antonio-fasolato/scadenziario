@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:sqflite_common/sqflite_logger.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'dart:io' as io;
@@ -14,7 +16,14 @@ class SqliteConnection {
     WidgetsFlutterBinding.ensureInitialized();
 
     bool newFile = !(await io.File(_databasePath).exists());
-    var db = await databaseFactoryFfi.openDatabase(_databasePath);
+    DatabaseFactory factory = kDebugMode
+        ? SqfliteDatabaseFactoryLogger(databaseFactoryFfi,
+            options: SqfliteLoggerOptions(
+              type: SqfliteDatabaseFactoryLoggerType.all,
+              log: (event) => log.d(event),
+            ))
+        : databaseFactoryFfi;
+    var db = await factory.openDatabase(_databasePath);
     log.d("Connected to $_databasePath");
     if (newFile) {
       await _initDb(db);
@@ -40,7 +49,6 @@ class SqliteConnection {
         "deleted" integer NOT NULL DEFAULT(0)
       ); 
     """;
-    log.d(sql);
     await db.execute(sql);
 
     sql = """
@@ -49,17 +57,14 @@ class SqliteConnection {
         "description" text NOT NULL
       ); 
     """;
-    log.d(sql);
     await db.execute(sql);
 
     sql =
         "insert into duties values ('2d9946eb-c7a1-4ed3-978c-1773babf302b', 'Impiegato');";
-    log.d(sql);
     await db.execute(sql);
 
     sql =
         "insert into duties values ('2dd3b32a-79a8-4225-bb43-ba47d4dafc5a', 'Consulente esterno');";
-    log.d(sql);
     await db.execute(sql);
   }
 }

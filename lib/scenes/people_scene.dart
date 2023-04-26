@@ -74,6 +74,8 @@ class _PeopleSceneState extends State<PeopleScene> {
         content: Text("Persona salvata correttamente"),
       ),
     );
+
+    _getAllMasterdata();
   }
 
   void _editCancelled() {

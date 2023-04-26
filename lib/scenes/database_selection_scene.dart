@@ -2,7 +2,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io' as io;
 
 class DatabaseSelectionScene extends StatefulWidget {
   static const String _recentFilesKey = "recentFiles";

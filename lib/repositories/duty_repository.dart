@@ -4,18 +4,19 @@ import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class DutyRepository {
   static final Logger log = Logger();
+  final SqliteConnection _connection;
 
-  static Future<List<Duty>> getAllDuties() async {
-    const String sql = "SELECT * FROM duties";
-    log.d(sql);
+  DutyRepository(SqliteConnection connection) : _connection = connection;
 
-    var res = await SqliteConnection.getInstance()
-        .database
-        .query("duties", columns: ["id", "description"]);
+  Future<List<Duty>> getAllDuties() async {
+    var db = await _connection.connect();
+
+    var res = await db.query("duties", columns: ["id", "description"]);
     List<Duty> toReturn = [];
     if (res.isNotEmpty) {
       toReturn = res.map((e) => Duty.fromMap(e)).toList();
     }
+    await db.close();
     return toReturn;
   }
 }

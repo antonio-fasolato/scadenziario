@@ -7,10 +7,14 @@ import 'dart:io' as io;
 class DatabaseSelectionScene extends StatelessWidget {
   static const String _recentFilesKey = "recentFiles";
   final SharedPreferences _sharedPreferences;
+  final Function(SqliteConnection) _setSqliteConnection;
 
   DatabaseSelectionScene(
-      {super.key, required SharedPreferences sharedPreferences})
-      : _sharedPreferences = sharedPreferences;
+      {super.key,
+      required SharedPreferences sharedPreferences,
+      required Function(SqliteConnection) setSqliteConnection})
+      : _sharedPreferences = sharedPreferences,
+        _setSqliteConnection = setSqliteConnection;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _fileController = TextEditingController();
@@ -47,15 +51,7 @@ class DatabaseSelectionScene extends StatelessWidget {
 
   Future<void> _selectDatabaseFile(BuildContext context) async {
     if (_formKey.currentState?.validate() ?? false) {
-      SqliteConnection conn = SqliteConnection.getInstance();
-      if (conn.isConnected) {
-        conn.disconnect();
-      }
-      bool newFile = !(await io.File(_fileController.text).exists());
-      await conn.connect(databasePath: _fileController.text);
-      if (newFile) {
-        await conn.initDb();
-      }
+      _setSqliteConnection(SqliteConnection(_fileController.text));
       _pushRecentFile(_fileController.text);
 
       Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/scenes/activities_scene.dart';
 import 'package:scadenziario/scenes/calendar_scene.dart';
 import 'package:scadenziario/scenes/database_selection_scene.dart';
@@ -15,11 +16,24 @@ void main() async {
       )));
 }
 
-class Scadenziario extends StatelessWidget {
+class Scadenziario extends StatefulWidget {
   final SharedPreferences _sharedPreferences;
 
   const Scadenziario({super.key, required SharedPreferences sharedPreferences})
       : _sharedPreferences = sharedPreferences;
+
+  @override
+  State<Scadenziario> createState() => _ScadenziarioState();
+}
+
+class _ScadenziarioState extends State<Scadenziario> {
+  SqliteConnection? _connection;
+
+  void _setConnection(SqliteConnection connection) {
+    setState(() {
+      _connection = connection;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +44,12 @@ class Scadenziario extends StatelessWidget {
       ),
       routes: {
         "/": (buildContext) => DatabaseSelectionScene(
-              sharedPreferences: _sharedPreferences,
+              sharedPreferences: widget._sharedPreferences,
+              setSqliteConnection: _setConnection,
             ),
         "/home": (buildContext) => const HomepageScene(),
-        "/people": (buildContext) => PeopleScene(),
+        "/people": (buildContext) =>
+            PeopleScene(connection: _connection as SqliteConnection),
         "/calendar": (buildContext) => const CalendarScene(),
         "/activities": (buildContext) => ActivitiesScene(),
         "/settings": (buildContext) => SettingsScene(),

@@ -4,40 +4,50 @@ import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as io;
 
-class DatabaseSelectionScene extends StatelessWidget {
+class DatabaseSelectionScene extends StatefulWidget {
   static const String _recentFilesKey = "recentFiles";
   final SharedPreferences _sharedPreferences;
   final Function(SqliteConnection) _setSqliteConnection;
 
-  DatabaseSelectionScene(
+  const DatabaseSelectionScene(
       {super.key,
       required SharedPreferences sharedPreferences,
       required Function(SqliteConnection) setSqliteConnection})
       : _sharedPreferences = sharedPreferences,
         _setSqliteConnection = setSqliteConnection;
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _fileController = TextEditingController();
+  @override
+  State<DatabaseSelectionScene> createState() => _DatabaseSelectionSceneState();
+}
 
-  // final TextEditingController _passwordController = TextEditingController();
-  // final TextEditingController _passwordCheckController =
-  //     TextEditingController();
+class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
+  bool _showRecntFiles = false;
 
   List<ListTile> _getRecentFiles() {
-    List<String> files =
-        _sharedPreferences?.getStringList(_recentFilesKey) ?? [];
+    List<String> files = widget._sharedPreferences
+            ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
+        [];
 
     return List.of(files.reversed.map((f) => ListTile(
           contentPadding: const EdgeInsets.all(1),
           title: SelectableText(f),
           onTap: () {
-            _fileController.text = f;
+            _openDatabase(f);
           },
         )));
   }
 
+  void _openDatabase(String path) {
+    widget._setSqliteConnection(SqliteConnection(path));
+    _pushRecentFile(path);
+
+    Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
+  }
+
   void _pushRecentFile(String path) {
-    var oldFiles = _sharedPreferences?.getStringList(_recentFilesKey) ?? [];
+    var oldFiles = widget._sharedPreferences
+            ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
+        [];
     if (!oldFiles.contains(path)) {
       oldFiles.add(path);
     }
@@ -46,15 +56,17 @@ class DatabaseSelectionScene extends StatelessWidget {
       oldFiles.sublist(1);
     }
 
-    _sharedPreferences.setStringList(_recentFilesKey, oldFiles);
+    widget._sharedPreferences
+        .setStringList(DatabaseSelectionScene._recentFilesKey, oldFiles);
   }
 
   Future<void> _selectDatabaseFile(BuildContext context) async {
-    if (_formKey.currentState?.validate() ?? false) {
-      _setSqliteConnection(SqliteConnection(_fileController.text));
-      _pushRecentFile(_fileController.text);
-
-      Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
+    String? selectedPath = await FilePicker.platform.saveFile(
+        dialogTitle: "Selezionare il file di archivio",
+        type: FileType.custom,
+        allowedExtensions: ["db", "sqlite"]);
+    if (selectedPath != null) {
+      _openDatabase(selectedPath);
     }
   }
 
@@ -79,92 +91,38 @@ class DatabaseSelectionScene extends StatelessWidget {
                       const Text("Selezionare file di archivio",
                           style: TextStyle(
                               fontSize: 26, fontWeight: FontWeight.bold)),
-                      Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextFormField(
-                                controller: _fileController,
-                                decoration: InputDecoration(
-                                  label: const Text("File di archivio"),
-                                  suffixIcon: IconButton(
-                                      onPressed: () async {
-                                        String? selectedPath =
-                                            await FilePicker.platform.saveFile(
-                                                dialogTitle:
-                                                    "Selezionare il file di archivio",
-                                                type: FileType.custom,
-                                                allowedExtensions: [
-                                              ".db",
-                                              ".sqlite"
-                                            ]);
-                                        if (selectedPath != null) {
-                                          _fileController.text = selectedPath;
-                                        }
-                                      },
-                                      icon: const Icon(Icons.folder_open)),
-                                ),
-                                validator: (value) => (value?.isEmpty ?? false)
-                                    ? "Selezionare un file da aprire o creare"
-                                    : null,
-                              ),
-                              // TextFormField(
-                              //   controller: _passwordController,
-                              //   obscureText: true,
-                              //   decoration: const InputDecoration(
-                              //     label: Text("Password"),
-                              //   ),
-                              //   validator: (value) {
-                              //     if (value?.isNotEmpty ?? false) {
-                              //       if (value !=
-                              //           _passwordCheckController.text) {
-                              //         return "Password e controllo password devono combaciare";
-                              //       }
-                              //     }
-                              //     return null;
-                              //   },
-                              // ),
-                              // TextFormField(
-                              //   controller: _passwordCheckController,
-                              //   obscureText: true,
-                              //   decoration: const InputDecoration(
-                              //     label: Text("Controllo password"),
-                              //   ),
-                              // ),
-                            ],
-                          )),
                       const SizedBox(
                         height: 20,
                       ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Spacer(),
-                          ElevatedButton(
-                              onPressed: () async {
-                                await _selectDatabaseFile(context);
-                              },
-                              child: const Text("Seleziona database")),
-                        ],
+                      ElevatedButton(
+                          onPressed: () async {
+                            await _selectDatabaseFile(context);
+                          },
+                          child: const Text("Seleziona database")),
+                      const SizedBox(
+                        height: 20,
                       ),
+                      Visibility(
+                        visible: !_showRecntFiles,
+                        child: TextButton(
+                          child: const Text(
+                              "Oppure seleziona uno dei file usati recentemente",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          onPressed: () => setState(() {
+                            _showRecntFiles = true;
+                          }),
+                        ),
+                      ),
+                      Visibility(
+                        visible: _showRecntFiles,
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: _getRecentFiles(),
+                        ),
+                      )
                     ],
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-              width: 450,
-              child: Divider(color: Colors.grey),
-            ),
-            const Text("File recenti",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(
-              width: 450,
-              child: ListView(
-                shrinkWrap: true,
-                children: _getRecentFiles(),
               ),
             ),
           ],

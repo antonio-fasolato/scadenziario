@@ -1,17 +1,22 @@
 import 'package:logger/logger.dart';
 import 'package:scadenziario/model/duty.dart';
-import 'package:sqlite_wrapper/sqlite_wrapper.dart';
+import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class DutyRepository {
   static final Logger log = Logger();
-  static final sqlWrapper = SQLiteWrapper();
+  final SqliteConnection _connection;
 
-  static Future<List<Duty>> getAllDuties() async {
-    const String sql = "SELECT * FROM duties";
-    log.d(sql);
+  DutyRepository(SqliteConnection connection) : _connection = connection;
 
-    List<Duty> res =
-        List<Duty>.from(await sqlWrapper.query(sql, fromMap: Duty.fromMap));
-    return res;
+  Future<List<Duty>> getAllDuties() async {
+    var db = await _connection.connect();
+
+    var res = await db.query("duties", columns: ["id", "description"]);
+    List<Duty> toReturn = [];
+    if (res.isNotEmpty) {
+      toReturn = res.map((e) => Duty.fromMap(e)).toList();
+    }
+    await db.close();
+    return toReturn;
   }
 }

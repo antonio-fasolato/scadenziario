@@ -1,41 +1,38 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:sqlite_wrapper/sqlite_wrapper.dart';
+import 'package:sqflite_common/sqflite_logger.dart';
+import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'dart:io' as io;
 
 class SqliteConnection {
   final Logger log = Logger();
-  static final sqlWrapper = SQLiteWrapper();
-  String? _databasePath;
-  DatabaseInfo? _databaseInfo;
+  final String _databasePath;
 
-  SqliteConnection._internal();
+  SqliteConnection(this._databasePath);
 
-  static SqliteConnection getInstance() {
-    SqliteConnection instance = SqliteConnection._internal();
+  Future<Database> connect() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-    return instance;
-  }
-
-  Future<DatabaseInfo?> connect({required String databasePath}) async {
-    if (_databasePath != databasePath) {
-      _databasePath = databasePath;
-      _databaseInfo = await SQLiteWrapper().openDB(databasePath);
-      log.d("Connected to ${_databaseInfo?.path}");
+    bool newFile = !(await io.File(_databasePath).exists());
+    DatabaseFactory factory = kDebugMode
+        ? SqfliteDatabaseFactoryLogger(databaseFactoryFfi,
+            options: SqfliteLoggerOptions(
+              type: SqfliteDatabaseFactoryLoggerType.all,
+              log: (event) => log.d(event),
+            ))
+        : databaseFactoryFfi;
+    var db = await factory.openDatabase(_databasePath);
+    log.d("Connected to $_databasePath");
+    if (newFile) {
+      await _initDb(db);
     }
 
-    return _databaseInfo;
+    return db;
   }
 
-  void disconnect() async {
-    if (_databaseInfo != null) {
-      String? path = _databaseInfo?.path;
-      SQLiteWrapper().closeDB();
-      _databaseInfo = null;
-      _databasePath = null;
-      log.d("Disconnected from $path");
-    }
-  }
-
-  Future<void> initDb() async {
+  Future<void> _initDb(Database db) async {
     log.d("Initializing new database");
 
     String sql = """
@@ -44,6 +41,7 @@ class SqliteConnection {
         "name" text NOT NULL,
         "surname" text NOT NULL,
         "birthdate" text NOT NULL,
+        "duty" text NOT NULL,
         "email" text NOT NULL,
         "phone" text,
         "mobile" text,
@@ -51,32 +49,22 @@ class SqliteConnection {
         "deleted" integer NOT NULL DEFAULT(0)
       ); 
     """;
-    log.d(sql);
-    await sqlWrapper.execute(sql);
+    await db.execute(sql);
 
     sql = """
       CREATE TABLE IF NOT EXISTS "duties" (
         "id" text NOT NULL PRIMARY KEY,
         "description" text NOT NULL
       ); 
-      insert into duties values ('2d9946eb-c7a1-4ed3-978c-1773babf302b', 'Impiegato');
-      insert into duties values ('2dd3b32a-79a8-4225-bb43-ba47d4dafc5a', 'Consulente esterno');
     """;
-    log.d(sql);
-    await sqlWrapper.execute(sql);
+    await db.execute(sql);
 
     sql =
         "insert into duties values ('2d9946eb-c7a1-4ed3-978c-1773babf302b', 'Impiegato');";
-    log.d(sql);
-    await sqlWrapper.execute(sql);
+    await db.execute(sql);
 
     sql =
         "insert into duties values ('2dd3b32a-79a8-4225-bb43-ba47d4dafc5a', 'Consulente esterno');";
-    log.d(sql);
-    await sqlWrapper.execute(sql);
-  }
-
-  bool get isConnected {
-    return _databaseInfo != null;
+    await db.execute(sql);
   }
 }

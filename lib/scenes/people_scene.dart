@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/components/people_edit.dart';
-import 'package:scadenziario/components/people_new.dart';
 import 'package:scadenziario/model/master_data.dart';
 import 'package:scadenziario/repositories/masterdata_repository.dart';
+import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class PeopleScene extends StatefulWidget {
-  const PeopleScene({super.key});
+  final SqliteConnection _connection;
+
+  const PeopleScene({super.key, required SqliteConnection connection})
+      : _connection = connection;
 
   @override
   State<StatefulWidget> createState() => _PeopleSceneState();
@@ -19,6 +22,7 @@ class _PeopleSceneState extends State<PeopleScene> {
   final TextEditingController _searchController = TextEditingController();
   SidebarType _sidebarWidgetType = SidebarType.none;
   List<MasterData> _people = [];
+  MasterData? _selectedPerson;
 
   @override
   void initState() {
@@ -27,7 +31,7 @@ class _PeopleSceneState extends State<PeopleScene> {
   }
 
   Future<void> _getAllMasterdata() async {
-    var res = await MasterdataRepository.getAll();
+    var res = await MasterdataRepository(widget._connection).getAll();
     setState(() {
       _people = res;
     });
@@ -39,15 +43,22 @@ class _PeopleSceneState extends State<PeopleScene> {
         {
           return Expanded(
               flex: 70,
-              child: PeopleNew(
+              child: PeopleEdit(
                 confirm: _personSaved,
+                cancel: _editCancelled,
+                connection: widget._connection,
               ));
         }
       default:
         {
           return Expanded(
             flex: 70,
-            child: PeopleEdit(),
+            child: PeopleEdit(
+              confirm: _personSaved,
+              cancel: _editCancelled,
+              person: _selectedPerson,
+              connection: widget._connection,
+            ),
           );
         }
     }
@@ -63,6 +74,14 @@ class _PeopleSceneState extends State<PeopleScene> {
         content: Text("Persona salvata correttamente"),
       ),
     );
+
+    _getAllMasterdata();
+  }
+
+  void _editCancelled() {
+    setState(() {
+      _sidebarWidgetType = SidebarType.none;
+    });
   }
 
   @override
@@ -95,6 +114,7 @@ class _PeopleSceneState extends State<PeopleScene> {
                             leading: const Icon(Icons.account_circle),
                             onTap: () {
                               setState(() {
+                                _selectedPerson = p;
                                 _sidebarWidgetType = SidebarType.editMasterdata;
                               });
                             },

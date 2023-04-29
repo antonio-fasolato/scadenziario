@@ -60,7 +60,7 @@ class HomepageScene extends StatelessWidget {
                     Icons.business_center,
                   )),
               const Text(
-                "Personale",
+                "Attività e corsi",
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
             ]),

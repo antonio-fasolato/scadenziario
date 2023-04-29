@@ -1,5 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:scadenziario/model/duty.dart';
@@ -202,6 +203,9 @@ class _PeopleEditState extends State<PeopleEdit> {
                     TableCell(
                         child: TextFormField(
                       controller: _phoneController,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9 \-]'))
+                      ],
                       decoration: const InputDecoration(
                           label: Text("Telefono"),
                           prefixIcon: Icon(Icons.phone)),
@@ -209,6 +213,9 @@ class _PeopleEditState extends State<PeopleEdit> {
                     TableCell(
                         child: TextFormField(
                       controller: _mobileController,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9 \-]'))
+                      ],
                       decoration: const InputDecoration(
                           label: Text("Cellulare"),
                           prefixIcon: Icon(Icons.phone_android)),

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/components/footer.dart';
 
-class ActivitiesScene extends StatelessWidget {
+class ActivitiesScene extends StatefulWidget {
   ActivitiesScene({super.key});
 
+  @override
+  State<ActivitiesScene> createState() => _ActivitiesSceneState();
+}
+
+class _ActivitiesSceneState extends State<ActivitiesScene> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final TextEditingController _searchController = TextEditingController();
 
   @override

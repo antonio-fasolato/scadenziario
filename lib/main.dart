@@ -51,7 +51,9 @@ class _ScadenziarioState extends State<Scadenziario> {
         "/people": (buildContext) =>
             PeopleScene(connection: _connection as SqliteConnection),
         "/calendar": (buildContext) => const CalendarScene(),
-        "/activities": (buildContext) => ActivitiesScene(),
+        "/activities": (buildContext) => ActivitiesScene(
+              connection: _connection as SqliteConnection,
+            ),
         "/settings": (buildContext) => SettingsScene(),
       },
       initialRoute: '/',

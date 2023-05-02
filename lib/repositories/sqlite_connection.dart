@@ -66,5 +66,17 @@ class SqliteConnection {
     sql =
         "insert into duties values ('2dd3b32a-79a8-4225-bb43-ba47d4dafc5a', 'Consulente esterno');";
     await db.execute(sql);
+
+    sql = """
+      CREATE TABLE IF NOT EXISTS "class" (
+        "id" text NOT NULL PRIMARY KEY,
+        "name" text NOT NULL,
+        "description" text,
+        "duration" INTEGER NOT NULL,
+        "mobile" text,
+        "enabled" integer NOT NULL DEFAULT(1),
+        "deleted" integer NOT NULL DEFAULT(0)
+      ); 
+    """;
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:scadenziario/components/activity_edit.dart';
 import 'package:scadenziario/components/footer.dart';
+import 'package:scadenziario/model/class.dart';
+import 'package:scadenziario/repositories/class_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class ActivitiesScene extends StatefulWidget {
@@ -18,16 +21,63 @@ class _ActivitiesSceneState extends State<ActivitiesScene> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
   SidebarType _sidebarWidgetType = SidebarType.none;
+  List<Class> _activities = [];
+  Class? _selectedActivity;
+
+  @override
+  void initState() {
+    super.initState();
+    _getAllActivities();
+  }
+
+  _getAllActivities() async {
+    var res = await ClassRepository(widget._connection).getAll();
+    setState(() {
+      _activities = res;
+    });
+  }
+
+  _activitiesSaved() {
+    setState(() {
+      _sidebarWidgetType = SidebarType.none;
+    });
+    _getAllActivities();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Attività salvata correttamente"),
+      ),
+    );
+  }
+
+  void _editCancelled() {
+    setState(() {
+      _sidebarWidgetType = SidebarType.none;
+    });
+  }
 
   Widget _sidePanelBuilder() {
     switch (_sidebarWidgetType) {
       case SidebarType.newActivity:
         {
-          return Expanded(flex: 70, child: Text("Nuova attività"));
+          return Expanded(
+              flex: 70,
+              child: ActivityEdit(
+                confirm: _activitiesSaved,
+                cancel: _editCancelled,
+                connection: widget._connection,
+              ));
         }
       default:
         {
-          return Expanded(flex: 70, child: Text("Modifica attività"));
+          return Expanded(
+              flex: 70,
+              child: ActivityEdit(
+                confirm: _activitiesSaved,
+                cancel: _editCancelled,
+                connection: widget._connection,
+                activity: _selectedActivity,
+              ));
         }
     }
     return Container();
@@ -56,18 +106,19 @@ class _ActivitiesSceneState extends State<ActivitiesScene> {
                     )),
                 ListView(
                   shrinkWrap: true,
-                  children: [
-                    ListTile(
-                      title: const Text("Corso di primo soccorso"),
-                      subtitle: const Text("Scadenza 01/01/2023 - Iscritti 25"),
-                      leading: const Icon(Icons.business_center),
-                      onTap: () {
-                        setState(() {
-                          _sidebarWidgetType = SidebarType.editActivity;
-                        });
-                      },
-                    )
-                  ],
+                  children: _activities
+                      .map((a) => ListTile(
+                            title: Text("${a.name}"),
+                            subtitle: Text("${a.description}"),
+                            leading: const Icon(Icons.business_center),
+                            onTap: () {
+                              setState(() {
+                                _selectedActivity = a;
+                                _sidebarWidgetType = SidebarType.editActivity;
+                              });
+                            },
+                          ))
+                      .toList(),
                 ),
               ],
             ),

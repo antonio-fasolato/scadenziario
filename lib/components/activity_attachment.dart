@@ -101,6 +101,11 @@ class _ActivityAttachmentState extends State<ActivityAttachment> {
     return true;
   }
 
+  _delete(String id) async {
+    await AttachmentRepository(widget._connection).delete(id);
+    await _loadAttachments();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -122,8 +127,32 @@ class _ActivityAttachmentState extends State<ActivityAttachment> {
                               _download(a.id);
                             },
                             icon: const Icon(Icons.download)),
-                        trailing:
-                            const Icon(Icons.delete, color: Colors.redAccent),
+                        trailing: IconButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                        "Confermare la cancellazione del file ${a.fileName}?"),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          child: const Text("No")),
+                                      TextButton(
+                                          onPressed: () {
+                                            _delete(a.id);
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text("Si")),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            icon: const Icon(Icons.delete,
+                                color: Colors.redAccent)),
                       ))
                   .toList(),
             ),

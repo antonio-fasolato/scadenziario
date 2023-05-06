@@ -31,12 +31,24 @@ class AttachmentRepository {
 
   Future<Attachment?> getById(String id) async {
     var db = await _connection.connect();
-    Attachment? toReturn = null;
+    Attachment? toReturn;
 
     var res = await db.query("attachment", where: "id = ?", whereArgs: [id]);
     if (res.isNotEmpty) {
       toReturn = Attachment.fromMap(res.first);
     }
+
+    await db.close();
+    return toReturn;
+  }
+
+  delete(String id) async {
+    var db = await _connection.connect();
+    Attachment? toReturn;
+
+    await db.delete("class_attachment",
+        where: "attachment_id = ?", whereArgs: [id]);
+    await db.delete("attachment", where: "id = ?", whereArgs: [id]);
 
     await db.close();
     return toReturn;

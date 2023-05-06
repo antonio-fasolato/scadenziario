@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/attachmentRepository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
@@ -17,6 +21,7 @@ class ActivityAttachment extends StatefulWidget {
 }
 
 class _ActivityAttachmentState extends State<ActivityAttachment> {
+  final Logger log = Logger();
   List<Attachment> _attachments = [];
 
   _loadAttachments() async {
@@ -36,6 +41,66 @@ class _ActivityAttachmentState extends State<ActivityAttachment> {
     _loadAttachments();
   }
 
+  Future<bool> _download(String id) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
+    Attachment? attachment =
+        await AttachmentRepository(widget._connection).getById(id);
+    if (attachment == null) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Container(
+              padding: const EdgeInsets.all(16),
+              height: 90,
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: const Text("Errore nel download del file'")),
+        ),
+      );
+      return false;
+    }
+
+    String? selectedPath = await FilePicker.platform.getDirectoryPath(
+      dialogTitle: "Selezionare la cartella dove salvare l'allegato",
+    );
+    if (selectedPath != null) {
+      log.d("Save file to $selectedPath");
+
+      File f =
+          File(selectedPath + Platform.pathSeparator + attachment.fileName);
+
+      if (await f.exists()) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text("Il file esiste già, sovrascrivere."),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      navigator.pop();
+                    },
+                    child: const Text("No")),
+                TextButton(
+                    onPressed: () async {
+                      await f.writeAsBytes(attachment.data!.toList());
+                      navigator.pop();
+                    },
+                    child: const Text("Si"))
+              ],
+            );
+          },
+        );
+      } else {
+        await f.writeAsBytes(attachment.data!.toList());
+      }
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -52,7 +117,11 @@ class _ActivityAttachmentState extends State<ActivityAttachment> {
               children: _attachments
                   .map((a) => ListTile(
                         title: Text(a.fileName),
-                        leading: const Icon(Icons.download),
+                        leading: IconButton(
+                            onPressed: () {
+                              _download(a.id);
+                            },
+                            icon: const Icon(Icons.download)),
                         trailing:
                             const Icon(Icons.delete, color: Colors.redAccent),
                       ))

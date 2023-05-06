@@ -28,4 +28,17 @@ class AttachmentRepository {
     await db.close();
     return toReturn;
   }
+
+  Future<Attachment?> getById(String id) async {
+    var db = await _connection.connect();
+    Attachment? toReturn = null;
+
+    var res = await db.query("attachment", where: "id = ?", whereArgs: [id]);
+    if (res.isNotEmpty) {
+      toReturn = Attachment.fromMap(res.first);
+    }
+
+    await db.close();
+    return toReturn;
+  }
 }

@@ -178,9 +178,12 @@ class _ActivityEditState extends State<ActivityEdit> {
             ),
           ),
         ),
-        ActivityAttachment(
-          connection: widget._connection,
-          id: _id,
+        Visibility(
+          visible: widget._activity != null,
+          child: ActivityAttachment(
+            connection: widget._connection,
+            id: _id,
+          ),
         ),
       ],
     );

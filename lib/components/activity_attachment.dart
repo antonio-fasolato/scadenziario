@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:logger/logger.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/attachmentRepository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:uuid/uuid.dart';
 
 class ActivityAttachment extends StatefulWidget {
   final SqliteConnection _connection;
@@ -106,6 +108,23 @@ class _ActivityAttachmentState extends State<ActivityAttachment> {
     await _loadAttachments();
   }
 
+  _addAttachment() async {
+    FilePickerResult? res = await FilePicker.platform.pickFiles(
+      dialogTitle: "Selezionare il file da allegare",
+      allowMultiple: false,
+    );
+    if (res != null && res.count > 0 && res.paths.first != null) {
+      String path = res.paths.first as String;
+      File f = File(path);
+      Uint8List raw = await f.readAsBytes();
+      Attachment attachment = Attachment(
+          const Uuid().v4(), f.path.split(Platform.pathSeparator).last, raw);
+      await AttachmentRepository(widget._connection)
+          .save(attachment, widget._id as String);
+      await _loadAttachments();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -156,7 +175,9 @@ class _ActivityAttachmentState extends State<ActivityAttachment> {
                       ))
                   .toList(),
             ),
-            ElevatedButton(onPressed: () {}, child: const Text("Aggiungi"))
+            ElevatedButton(
+                onPressed: () => _addAttachment(),
+                child: const Text("Aggiungi")),
           ],
         ),
       ),

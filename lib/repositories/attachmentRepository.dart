@@ -44,13 +44,21 @@ class AttachmentRepository {
 
   delete(String id) async {
     var db = await _connection.connect();
-    Attachment? toReturn;
 
     await db.delete("class_attachment",
         where: "attachment_id = ?", whereArgs: [id]);
     await db.delete("attachment", where: "id = ?", whereArgs: [id]);
 
     await db.close();
-    return toReturn;
+  }
+
+  save(Attachment a, String classId) async {
+    var db = await _connection.connect();
+
+    await db.insert("attachment", a.toMap());
+    await db.insert(
+        "class_attachment", {"attachment_id": a.id, "class_id": classId});
+
+    await db.close();
   }
 }

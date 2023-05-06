@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
+import 'package:scadenziario/components/activity_attachment.dart';
 import 'package:scadenziario/model/class.dart';
 import 'package:scadenziario/repositories/class_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
@@ -49,130 +50,142 @@ class _ActivityEditState extends State<ActivityEdit> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 8, bottom: 8),
-              child: Text(
-                widget._activity == null
-                    ? "Nuova attività"
-                    : "Modifica attività",
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
-                Padding(
-                  padding: EdgeInsets.only(top: 8, bottom: 8),
-                  child: Text(
-                    "Dati dell'attività",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                )
-              ],
-            ),
-            Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                        label: Text("Nome"), prefixIcon: Icon(Icons.title)),
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) => (value ?? "").isEmpty
-                        ? "Il nome dell'attività' è obbligatorio"
-                        : null,
-                  ),
-                  TextFormField(
-                    controller: _descriptionController,
-                    decoration: const InputDecoration(
-                        label: Text("Descrizione"),
-                        prefixIcon: Icon(Icons.title)),
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                  ),
-                  TextFormField(
-                    controller: _durationController,
-                    decoration: const InputDecoration(
-                        label: Text("Durata"), prefixIcon: Icon(Icons.timer)),
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-                    ],
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) => (value ?? "").isEmpty
-                        ? "La durata dell'attività' è obbligatorio"
-                        : null,
-                  ),
-                ],
-              ),
-            ),
-            Row(
+    return Column(
+      children: [
+        Card(
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
-                  child: ElevatedButton(
-                    onPressed: widget._cancel,
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent),
-                    child: const Text("Annulla"),
+                  padding: const EdgeInsets.only(top: 8, bottom: 8),
+                  child: Text(
+                    widget._activity == null
+                        ? "Nuova attività"
+                        : "Modifica attività",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                 ),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        Class activity = Class(
-                            _id ?? const Uuid().v4().toString(),
-                            _nameController.text,
-                            _descriptionController.text,
-                            int.parse(_durationController.text),
-                            true,
-                            false);
-
-                        int res = await ClassRepository(widget._connection)
-                            .save(activity);
-                        if (res == 0) {
-                          if (!context.mounted) {
-                            return;
-                          }
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  height: 90,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(20)),
-                                  ),
-                                  child: const Text(
-                                      "Errore nel salvataggio dell'attività'")),
-                            ),
-                          );
-                        } else {
-                          widget._confirm();
-                        }
-                      }
-                    },
-                    child:
-                        Text(widget._activity == null ? "Inserisci" : "Salva"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.only(top: 8, bottom: 8),
+                      child: Text(
+                        "Dati dell'attività",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  ],
+                ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                            label: Text("Nome"), prefixIcon: Icon(Icons.title)),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) => (value ?? "").isEmpty
+                            ? "Il nome dell'attività' è obbligatorio"
+                            : null,
+                      ),
+                      TextFormField(
+                        controller: _descriptionController,
+                        decoration: const InputDecoration(
+                            label: Text("Descrizione"),
+                            prefixIcon: Icon(Icons.title)),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      ),
+                      TextFormField(
+                        controller: _durationController,
+                        decoration: const InputDecoration(
+                            label: Text("Durata"),
+                            prefixIcon: Icon(Icons.timer)),
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                        ],
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) => (value ?? "").isEmpty
+                            ? "La durata dell'attività' è obbligatorio"
+                            : null,
+                      ),
+                    ],
                   ),
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16, bottom: 8),
+                      child: ElevatedButton(
+                        onPressed: widget._cancel,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent),
+                        child: const Text("Annulla"),
+                      ),
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16, bottom: 8),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            Class activity = Class(
+                                _id ?? const Uuid().v4().toString(),
+                                _nameController.text,
+                                _descriptionController.text,
+                                int.parse(_durationController.text),
+                                true,
+                                false);
+
+                            int res = await ClassRepository(widget._connection)
+                                .save(activity);
+                            if (res == 0) {
+                              if (!context.mounted) {
+                                return;
+                              }
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Container(
+                                      padding: const EdgeInsets.all(16),
+                                      height: 90,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20)),
+                                      ),
+                                      child: const Text(
+                                          "Errore nel salvataggio dell'attività'")),
+                                ),
+                              );
+                            } else {
+                              widget._confirm();
+                            }
+                          }
+                        },
+                        child: Text(
+                            widget._activity == null ? "Inserisci" : "Salva"),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
-      ),
+        Visibility(
+          visible: widget._activity != null,
+          child: ActivityAttachment(
+            connection: widget._connection,
+            id: _id,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -78,5 +78,26 @@ class SqliteConnection {
         "deleted" integer NOT NULL DEFAULT(0)
       ); 
     """;
+    await db.execute(sql);
+
+    sql = """
+      CREATE TABLE IF NOT EXISTS "attachment" (
+        "id" text NOT NULL PRIMARY KEY,
+        "fileName" text NOT NULL,
+        "data" BLOB not null
+      ); 
+    """;
+    await db.execute(sql);
+
+    sql = """
+      CREATE TABLE IF NOT EXISTS "class_attachment" (
+        "class_id" text NOT NULL,
+        "attachment_id" text NOT NULL,
+        PRIMARY KEY("class_id", "attachment_id"),
+        FOREIGN KEY ("class_id") REFERENCES class("id"),
+        FOREIGN KEY ("attachment_id") REFERENCES attachment("id")
+      )
+    """;
+    await db.execute(sql);
   }
 }

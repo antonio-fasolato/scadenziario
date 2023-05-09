@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
-import 'package:scadenziario/components/activity_attachment.dart';
+import 'package:scadenziario/components/attachments_list.dart';
 import 'package:scadenziario/model/class.dart';
+import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/class_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:uuid/uuid.dart';
@@ -180,8 +181,9 @@ class _ActivityEditState extends State<ActivityEdit> {
         ),
         Visibility(
           visible: widget._activity != null,
-          child: ActivityAttachment(
+          child: AttachmentsList(
             connection: widget._connection,
+            type: AttachmentType.classAttachment,
             id: _id,
           ),
         ),

@@ -2,22 +2,37 @@ import 'package:logger/logger.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
+enum AttachmentType { masterdata, classAttachment }
+
 class AttachmentRepository {
   static final Logger log = Logger();
   final SqliteConnection _connection;
 
   AttachmentRepository(SqliteConnection connection) : _connection = connection;
 
-  Future<List<Attachment>> getClassAttachments(String id) async {
+  Future<List<Attachment>> getAttachmentsByLinkedEntity(
+      String id, AttachmentType type) async {
     var db = await _connection.connect();
     List<Attachment> toReturn = [];
+    String joinTable = "";
+    String foreignKey = "";
+    switch (type) {
+      case AttachmentType.classAttachment:
+        joinTable = "class_attachment";
+        foreignKey = "class_id";
+        break;
+      case AttachmentType.masterdata:
+        joinTable = "masterdata_attachment";
+        foreignKey = "masterdata_id";
+        break;
+    }
     String sql = """
       select id, filename
       from attachment
-      inner join class_attachment on
+      inner join $joinTable on
         attachment_id = id
       where 1 = 1
-        and class_id = ?
+        and $foreignKey = ?
       ORDER BY fileName
     """;
     var res = await db.rawQuery(sql, [id]);
@@ -42,22 +57,38 @@ class AttachmentRepository {
     return toReturn;
   }
 
-  delete(String id) async {
+  delete(String id, AttachmentType type) async {
     var db = await _connection.connect();
 
-    await db.delete("class_attachment",
-        where: "attachment_id = ?", whereArgs: [id]);
+    switch (type) {
+      case AttachmentType.classAttachment:
+        await db.delete("class_attachment",
+            where: "attachment_id = ?", whereArgs: [id]);
+        break;
+      case AttachmentType.masterdata:
+        await db.delete("masterdata_attachment",
+            where: "attachment_id = ?", whereArgs: [id]);
+        break;
+    }
     await db.delete("attachment", where: "id = ?", whereArgs: [id]);
 
     await db.close();
   }
 
-  save(Attachment a, String classId) async {
+  save(Attachment a, String linkedId, AttachmentType type) async {
     var db = await _connection.connect();
 
     await db.insert("attachment", a.toMap());
-    await db.insert(
-        "class_attachment", {"attachment_id": a.id, "class_id": classId});
+    switch (type) {
+      case AttachmentType.masterdata:
+        await db.insert("masterdata_attachment",
+            {"attachment_id": a.id, "masterdata_id": linkedId});
+        break;
+      case AttachmentType.classAttachment:
+        await db.insert(
+            "class_attachment", {"attachment_id": a.id, "class_id": linkedId});
+        break;
+    }
 
     await db.close();
   }

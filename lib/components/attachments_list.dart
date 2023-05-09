@@ -9,20 +9,25 @@ import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:uuid/uuid.dart';
 
-class ActivityAttachment extends StatefulWidget {
+class AttachmentsList extends StatefulWidget {
   final SqliteConnection _connection;
+  final AttachmentType _type;
   final String? _id;
 
-  const ActivityAttachment(
-      {super.key, String? id, required SqliteConnection connection})
-      : _id = id,
+  const AttachmentsList(
+      {super.key,
+      required AttachmentType type,
+      String? id,
+      required SqliteConnection connection})
+      : _type = type,
+        _id = id,
         _connection = connection;
 
   @override
-  State<ActivityAttachment> createState() => _ActivityAttachmentState();
+  State<AttachmentsList> createState() => _AttachmentsListState();
 }
 
-class _ActivityAttachmentState extends State<ActivityAttachment> {
+class _AttachmentsListState extends State<AttachmentsList> {
   final Logger log = Logger();
   List<Attachment> _attachments = [];
 
@@ -30,7 +35,7 @@ class _ActivityAttachmentState extends State<ActivityAttachment> {
     List<Attachment> res = [];
     if (widget._id != null) {
       res = await AttachmentRepository(widget._connection)
-          .getClassAttachments(widget._id as String);
+          .getAttachmentsByLinkedEntity(widget._id as String, widget._type);
     }
     setState(() {
       _attachments = res;
@@ -104,7 +109,7 @@ class _ActivityAttachmentState extends State<ActivityAttachment> {
   }
 
   _delete(String id) async {
-    await AttachmentRepository(widget._connection).delete(id);
+    await AttachmentRepository(widget._connection).delete(id, widget._type);
     await _loadAttachments();
   }
 
@@ -120,7 +125,7 @@ class _ActivityAttachmentState extends State<ActivityAttachment> {
       Attachment attachment = Attachment(
           const Uuid().v4(), f.path.split(Platform.pathSeparator).last, raw);
       await AttachmentRepository(widget._connection)
-          .save(attachment, widget._id as String);
+          .save(attachment, widget._id as String, widget._type);
       await _loadAttachments();
     }
   }

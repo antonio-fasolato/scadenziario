@@ -180,7 +180,7 @@ class _ActivityEditState extends State<ActivityEdit> {
         ),
         Visibility(
           visible: widget._activity != null,
-          child: ActivityAttachment(
+          child: AttachmentsList(
             connection: widget._connection,
             id: _id,
           ),

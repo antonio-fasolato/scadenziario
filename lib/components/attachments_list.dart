@@ -9,20 +9,20 @@ import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:uuid/uuid.dart';
 
-class ActivityAttachment extends StatefulWidget {
+class AttachmentsList extends StatefulWidget {
   final SqliteConnection _connection;
   final String? _id;
 
-  const ActivityAttachment(
+  const AttachmentsList(
       {super.key, String? id, required SqliteConnection connection})
       : _id = id,
         _connection = connection;
 
   @override
-  State<ActivityAttachment> createState() => _ActivityAttachmentState();
+  State<AttachmentsList> createState() => _AttachmentsListState();
 }
 
-class _ActivityAttachmentState extends State<ActivityAttachment> {
+class _AttachmentsListState extends State<AttachmentsList> {
   final Logger log = Logger();
   List<Attachment> _attachments = [];
 

@@ -30,7 +30,8 @@ class _AttachmentsListState extends State<AttachmentsList> {
     List<Attachment> res = [];
     if (widget._id != null) {
       res = await AttachmentRepository(widget._connection)
-          .getClassAttachments(widget._id as String);
+          .getAttachmentsByLinkedEntity(
+              widget._id as String, AttachmentType.classAttachment);
     }
     setState(() {
       _attachments = res;
@@ -104,7 +105,8 @@ class _AttachmentsListState extends State<AttachmentsList> {
   }
 
   _delete(String id) async {
-    await AttachmentRepository(widget._connection).delete(id);
+    await AttachmentRepository(widget._connection)
+        .delete(id, AttachmentType.classAttachment);
     await _loadAttachments();
   }
 

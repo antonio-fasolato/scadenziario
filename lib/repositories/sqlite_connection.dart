@@ -99,5 +99,16 @@ class SqliteConnection {
       )
     """;
     await db.execute(sql);
+
+    sql = """
+      CREATE TABLE IF NOT EXISTS "masterdata_attachment" (
+        "masterdata_id" text NOT NULL,
+        "attachment_id" text NOT NULL,
+        PRIMARY KEY("masterdata_id", "attachment_id"),
+        FOREIGN KEY ("masterdata_id") REFERENCES masterdata("id"),
+        FOREIGN KEY ("attachment_id") REFERENCES attachment("id")
+      )
+    """;
+    await db.execute(sql);
   }
 }

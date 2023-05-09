@@ -2,6 +2,8 @@ import 'package:logger/logger.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
+enum AttachmentType { masterdata, classAttachment }
+
 class AttachmentRepository {
   static final Logger log = Logger();
   final SqliteConnection _connection;
@@ -52,12 +54,18 @@ class AttachmentRepository {
     await db.close();
   }
 
-  save(Attachment a, String classId) async {
+  save(Attachment a, String linkedId, AttachmentType type) async {
     var db = await _connection.connect();
 
     await db.insert("attachment", a.toMap());
-    await db.insert(
-        "class_attachment", {"attachment_id": a.id, "class_id": classId});
+    switch (type) {
+      case AttachmentType.masterdata:
+        break;
+      case AttachmentType.classAttachment:
+        await db.insert(
+            "class_attachment", {"attachment_id": a.id, "class_id": linkedId});
+        break;
+    }
 
     await db.close();
   }

@@ -119,8 +119,8 @@ class _ActivityAttachmentState extends State<ActivityAttachment> {
       Uint8List raw = await f.readAsBytes();
       Attachment attachment = Attachment(
           const Uuid().v4(), f.path.split(Platform.pathSeparator).last, raw);
-      await AttachmentRepository(widget._connection)
-          .save(attachment, widget._id as String);
+      await AttachmentRepository(widget._connection).save(
+          attachment, widget._id as String, AttachmentType.classAttachment);
       await _loadAttachments();
     }
   }

@@ -11,11 +11,16 @@ import 'package:uuid/uuid.dart';
 
 class AttachmentsList extends StatefulWidget {
   final SqliteConnection _connection;
+  final AttachmentType _type;
   final String? _id;
 
   const AttachmentsList(
-      {super.key, String? id, required SqliteConnection connection})
-      : _id = id,
+      {super.key,
+      required AttachmentType type,
+      String? id,
+      required SqliteConnection connection})
+      : _type = type,
+        _id = id,
         _connection = connection;
 
   @override
@@ -30,8 +35,7 @@ class _AttachmentsListState extends State<AttachmentsList> {
     List<Attachment> res = [];
     if (widget._id != null) {
       res = await AttachmentRepository(widget._connection)
-          .getAttachmentsByLinkedEntity(
-              widget._id as String, AttachmentType.classAttachment);
+          .getAttachmentsByLinkedEntity(widget._id as String, widget._type);
     }
     setState(() {
       _attachments = res;
@@ -105,8 +109,7 @@ class _AttachmentsListState extends State<AttachmentsList> {
   }
 
   _delete(String id) async {
-    await AttachmentRepository(widget._connection)
-        .delete(id, AttachmentType.classAttachment);
+    await AttachmentRepository(widget._connection).delete(id, widget._type);
     await _loadAttachments();
   }
 
@@ -121,8 +124,8 @@ class _AttachmentsListState extends State<AttachmentsList> {
       Uint8List raw = await f.readAsBytes();
       Attachment attachment = Attachment(
           const Uuid().v4(), f.path.split(Platform.pathSeparator).last, raw);
-      await AttachmentRepository(widget._connection).save(
-          attachment, widget._id as String, AttachmentType.classAttachment);
+      await AttachmentRepository(widget._connection)
+          .save(attachment, widget._id as String, widget._type);
       await _loadAttachments();
     }
   }

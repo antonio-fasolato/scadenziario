@@ -81,6 +81,8 @@ class AttachmentRepository {
     await db.insert("attachment", a.toMap());
     switch (type) {
       case AttachmentType.masterdata:
+        await db.insert("masterdata_attachment",
+            {"attachment_id": a.id, "masterdata_id": linkedId});
         break;
       case AttachmentType.classAttachment:
         await db.insert(

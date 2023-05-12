@@ -1,5 +1,5 @@
 import 'package:logger/logger.dart';
-import 'package:scadenziario/model/class.dart';
+import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class ClassRepository {

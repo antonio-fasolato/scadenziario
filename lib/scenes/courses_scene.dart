@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scadenziario/components/activity_edit.dart';
+import 'package:scadenziario/components/course_edit.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/model/class.dart';
 import 'package:scadenziario/repositories/class_repository.dart';

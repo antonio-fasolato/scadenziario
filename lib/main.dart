@@ -49,7 +49,7 @@ class _ScadenziarioState extends State<Scadenziario> {
             ),
         "/home": (buildContext) => const HomepageScene(),
         "/people": (buildContext) =>
-            PeopleScene(connection: _connection as SqliteConnection),
+            PersonsScene(connection: _connection as SqliteConnection),
         "/calendar": (buildContext) => const CalendarScene(),
         "/activities": (buildContext) => CoursesScene(
               connection: _connection as SqliteConnection,

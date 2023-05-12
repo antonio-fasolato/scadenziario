@@ -12,7 +12,7 @@ class PersonRepository {
     var db = await _connection.connect();
 
     List<Person> toReturn = [];
-    var res = await db.query("masterdata", orderBy: "surname, name");
+    var res = await db.query("persons", orderBy: "surname, name");
     if (res.isNotEmpty) {
       toReturn = List.from(res.map((e) => Person.fromMap(e)));
     }
@@ -22,23 +22,18 @@ class PersonRepository {
 
   Future<int> save(Person m) async {
     if (m.id == null) {
-      throw Exception("Masterdata has null id");
+      throw Exception("Person has null id");
     } else {
       var db = await _connection.connect();
 
-      var res =
-          await db.query("masterdata", where: "id = ?", whereArgs: [m.id]);
+      var res = await db.query("persons", where: "id = ?", whereArgs: [m.id]);
       if (res.isEmpty) {
-        log.d("New masterdata $m");
-        int res = await db.insert("masterdata", m.toMap());
-        log.d("Saved row with rowid $res");
+        int res = await db.insert("persons", m.toMap());
         await db.close();
         return res;
       } else {
-        log.d("Update masterdata $m");
-        int res = await db.update("masterdata", m.toMap(),
-            where: "id = ?", whereArgs: [m.id]);
-        log.d("updated $res rows");
+        int res = await db
+            .update("persons", m.toMap(), where: "id = ?", whereArgs: [m.id]);
         await db.close();
         return res;
       }

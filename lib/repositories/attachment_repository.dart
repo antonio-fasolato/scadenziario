@@ -2,7 +2,7 @@ import 'package:logger/logger.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
-enum AttachmentType { masterdata, course }
+enum AttachmentType { person, course }
 
 class AttachmentRepository {
   static final Logger log = Logger();
@@ -21,9 +21,9 @@ class AttachmentRepository {
         joinTable = "course_attachment";
         foreignKey = "course_id";
         break;
-      case AttachmentType.masterdata:
-        joinTable = "masterdata_attachment";
-        foreignKey = "masterdata_id";
+      case AttachmentType.person:
+        joinTable = "person_attachment";
+        foreignKey = "person_id";
         break;
     }
     String sql = """
@@ -65,8 +65,8 @@ class AttachmentRepository {
         await db.delete("course_attachment",
             where: "attachment_id = ?", whereArgs: [id]);
         break;
-      case AttachmentType.masterdata:
-        await db.delete("masterdata_attachment",
+      case AttachmentType.person:
+        await db.delete("person_attachment",
             where: "attachment_id = ?", whereArgs: [id]);
         break;
     }
@@ -80,9 +80,9 @@ class AttachmentRepository {
 
     await db.insert("attachment", a.toMap());
     switch (type) {
-      case AttachmentType.masterdata:
-        await db.insert("masterdata_attachment",
-            {"attachment_id": a.id, "masterdata_id": linkedId});
+      case AttachmentType.person:
+        await db.insert("person_attachment",
+            {"attachment_id": a.id, "person_id": linkedId});
         break;
       case AttachmentType.course:
         await db.insert("course_attachment",

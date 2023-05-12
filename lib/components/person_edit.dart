@@ -303,7 +303,7 @@ class _PersonEditState extends State<PersonEdit> {
           visible: widget._person != null,
           child: AttachmentsList(
             connection: widget._connection,
-            type: AttachmentType.masterdata,
+            type: AttachmentType.person,
             id: _id,
           ),
         ),

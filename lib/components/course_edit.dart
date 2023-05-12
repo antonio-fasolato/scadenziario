@@ -8,13 +8,13 @@ import 'package:scadenziario/repositories/class_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:uuid/uuid.dart';
 
-class ActivityEdit extends StatefulWidget {
+class CourseEdit extends StatefulWidget {
   final SqliteConnection _connection;
   final void Function() _confirm;
   final void Function() _cancel;
   final Class? _activity;
 
-  const ActivityEdit(
+  const CourseEdit(
       {super.key,
       required void Function() confirm,
       required void Function() cancel,
@@ -26,10 +26,10 @@ class ActivityEdit extends StatefulWidget {
         _connection = connection;
 
   @override
-  State<ActivityEdit> createState() => _ActivityEditState();
+  State<CourseEdit> createState() => _CourseEditState();
 }
 
-class _ActivityEditState extends State<ActivityEdit> {
+class _CourseEditState extends State<CourseEdit> {
   static final Logger log = Logger();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _id;

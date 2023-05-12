@@ -62,7 +62,7 @@ class _CoursesSceneState extends State<CoursesScene> {
         {
           return Expanded(
               flex: 70,
-              child: ActivityEdit(
+              child: CourseEdit(
                 confirm: _courseSaved,
                 cancel: _editCancelled,
                 connection: widget._connection,
@@ -72,7 +72,7 @@ class _CoursesSceneState extends State<CoursesScene> {
         {
           return Expanded(
               flex: 70,
-              child: ActivityEdit(
+              child: CourseEdit(
                 confirm: _courseSaved,
                 cancel: _editCancelled,
                 connection: widget._connection,

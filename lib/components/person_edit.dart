@@ -7,7 +7,7 @@ import 'package:scadenziario/model/duty.dart';
 import 'package:scadenziario/model/master_data.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/duty_repository.dart';
-import 'package:scadenziario/repositories/masterdata_repository.dart';
+import 'package:scadenziario/repositories/person_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:uuid/uuid.dart';
 

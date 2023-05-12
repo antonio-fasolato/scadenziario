@@ -5,19 +5,19 @@ import 'package:scadenziario/model/class.dart';
 import 'package:scadenziario/repositories/class_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
-class ActivitiesScene extends StatefulWidget {
+class CoursesScene extends StatefulWidget {
   final SqliteConnection _connection;
 
-  const ActivitiesScene({super.key, required SqliteConnection connection})
+  const CoursesScene({super.key, required SqliteConnection connection})
       : _connection = connection;
 
   @override
-  State<ActivitiesScene> createState() => _ActivitiesSceneState();
+  State<CoursesScene> createState() => _CoursesSceneState();
 }
 
 enum SidebarType { none, newActivity, editActivity }
 
-class _ActivitiesSceneState extends State<ActivitiesScene> {
+class _CoursesSceneState extends State<CoursesScene> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
   SidebarType _sidebarWidgetType = SidebarType.none;

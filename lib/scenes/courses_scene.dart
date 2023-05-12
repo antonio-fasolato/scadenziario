@@ -31,7 +31,7 @@ class _CoursesSceneState extends State<CoursesScene> {
   }
 
   _getAllCourses() async {
-    var res = await ClassRepository(widget._connection).getAll();
+    var res = await CourseRepository(widget._connection).getAll();
     setState(() {
       _courses = res;
     });

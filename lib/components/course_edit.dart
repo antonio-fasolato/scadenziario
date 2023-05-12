@@ -142,7 +142,7 @@ class _CourseEditState extends State<CourseEdit> {
                                 true,
                                 false);
 
-                            int res = await ClassRepository(widget._connection)
+                            int res = await CourseRepository(widget._connection)
                                 .save(activity);
                             if (res == 0) {
                               if (!context.mounted) {

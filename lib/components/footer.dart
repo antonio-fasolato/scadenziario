@@ -34,7 +34,7 @@ class Footer extends StatelessWidget {
             ),
             IconButton(
               tooltip: "Attività e corsi",
-              icon: const Icon(Icons.business_center),
+              icon: const Icon(Icons.school_rounded),
               onPressed: () {
                 Navigator.of(context).pushNamed("/activities");
               },

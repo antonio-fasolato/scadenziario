@@ -264,7 +264,7 @@ class _PersonEditState extends State<PersonEdit> {
                                 true,
                                 false);
                             int res =
-                                await MasterdataRepository(widget._connection)
+                                await PersonRepository(widget._connection)
                                     .save(person);
                             if (res == 0) {
                               if (!context.mounted) {

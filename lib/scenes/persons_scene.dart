@@ -31,7 +31,7 @@ class _PersonsSceneState extends State<PersonsScene> {
   }
 
   Future<void> _getAllPersons() async {
-    var res = await MasterdataRepository(widget._connection).getAll();
+    var res = await PersonRepository(widget._connection).getAll();
     setState(() {
       _persons = res;
     });

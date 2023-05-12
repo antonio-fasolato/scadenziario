@@ -2,11 +2,11 @@ import 'package:logger/logger.dart';
 import 'package:scadenziario/model/master_data.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
-class MasterdataRepository {
+class PersonRepository {
   static final Logger log = Logger();
   final SqliteConnection _connection;
 
-  MasterdataRepository(SqliteConnection connection) : _connection = connection;
+  PersonRepository(SqliteConnection connection) : _connection = connection;
 
   Future<List<MasterData>> getAll() async {
     var db = await _connection.connect();

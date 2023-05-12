@@ -11,7 +11,7 @@ class Course {
 
   @override
   String toString() {
-    return 'Class{id: $id, name: $name, description: $description, duration: $duration, enabled: $enabled, deleted: $deleted}';
+    return 'Course{id: $id, name: $name, description: $description, duration: $duration, enabled: $enabled, deleted: $deleted}';
   }
 
   factory Course.fromMap(Map<String, dynamic> map) {

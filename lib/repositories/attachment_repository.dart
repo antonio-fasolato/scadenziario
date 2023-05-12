@@ -2,7 +2,7 @@ import 'package:logger/logger.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
-enum AttachmentType { masterdata, classAttachment }
+enum AttachmentType { person, course }
 
 class AttachmentRepository {
   static final Logger log = Logger();
@@ -17,13 +17,13 @@ class AttachmentRepository {
     String joinTable = "";
     String foreignKey = "";
     switch (type) {
-      case AttachmentType.classAttachment:
-        joinTable = "class_attachment";
-        foreignKey = "class_id";
+      case AttachmentType.course:
+        joinTable = "course_attachment";
+        foreignKey = "course_id";
         break;
-      case AttachmentType.masterdata:
-        joinTable = "masterdata_attachment";
-        foreignKey = "masterdata_id";
+      case AttachmentType.person:
+        joinTable = "person_attachment";
+        foreignKey = "person_id";
         break;
     }
     String sql = """
@@ -61,12 +61,12 @@ class AttachmentRepository {
     var db = await _connection.connect();
 
     switch (type) {
-      case AttachmentType.classAttachment:
-        await db.delete("class_attachment",
+      case AttachmentType.course:
+        await db.delete("course_attachment",
             where: "attachment_id = ?", whereArgs: [id]);
         break;
-      case AttachmentType.masterdata:
-        await db.delete("masterdata_attachment",
+      case AttachmentType.person:
+        await db.delete("person_attachment",
             where: "attachment_id = ?", whereArgs: [id]);
         break;
     }
@@ -80,13 +80,13 @@ class AttachmentRepository {
 
     await db.insert("attachment", a.toMap());
     switch (type) {
-      case AttachmentType.masterdata:
-        await db.insert("masterdata_attachment",
-            {"attachment_id": a.id, "masterdata_id": linkedId});
+      case AttachmentType.person:
+        await db.insert("person_attachment",
+            {"attachment_id": a.id, "person_id": linkedId});
         break;
-      case AttachmentType.classAttachment:
-        await db.insert(
-            "class_attachment", {"attachment_id": a.id, "class_id": linkedId});
+      case AttachmentType.course:
+        await db.insert("course_attachment",
+            {"attachment_id": a.id, "course_id": linkedId});
         break;
     }
 

@@ -36,7 +36,7 @@ class SqliteConnection {
     log.d("Initializing new database");
 
     String sql = """
-      CREATE TABLE IF NOT EXISTS "masterdata" (
+      CREATE TABLE IF NOT EXISTS "persons" (
         "id" text NOT NULL PRIMARY KEY,
         "name" text NOT NULL,
         "surname" text NOT NULL,
@@ -68,7 +68,7 @@ class SqliteConnection {
     await db.execute(sql);
 
     sql = """
-      CREATE TABLE IF NOT EXISTS "class" (
+      CREATE TABLE IF NOT EXISTS "course" (
         "id" text NOT NULL PRIMARY KEY,
         "name" text NOT NULL,
         "description" text,
@@ -90,22 +90,22 @@ class SqliteConnection {
     await db.execute(sql);
 
     sql = """
-      CREATE TABLE IF NOT EXISTS "class_attachment" (
-        "class_id" text NOT NULL,
+      CREATE TABLE IF NOT EXISTS "course_attachment" (
+        "course_id" text NOT NULL,
         "attachment_id" text NOT NULL,
-        PRIMARY KEY("class_id", "attachment_id"),
-        FOREIGN KEY ("class_id") REFERENCES class("id"),
+        PRIMARY KEY("course_id", "attachment_id"),
+        FOREIGN KEY ("course_id") REFERENCES course("id"),
         FOREIGN KEY ("attachment_id") REFERENCES attachment("id")
       )
     """;
     await db.execute(sql);
 
     sql = """
-      CREATE TABLE IF NOT EXISTS "masterdata_attachment" (
-        "masterdata_id" text NOT NULL,
+      CREATE TABLE IF NOT EXISTS "person_attachment" (
+        "person_id" text NOT NULL,
         "attachment_id" text NOT NULL,
-        PRIMARY KEY("masterdata_id", "attachment_id"),
-        FOREIGN KEY ("masterdata_id") REFERENCES masterdata("id"),
+        PRIMARY KEY("person_id", "attachment_id"),
+        FOREIGN KEY ("person_id") REFERENCES persons("id"),
         FOREIGN KEY ("attachment_id") REFERENCES attachment("id")
       )
     """;

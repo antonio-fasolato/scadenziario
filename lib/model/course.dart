@@ -1,4 +1,4 @@
-class Class {
+class Course {
   String? id;
   String? name;
   String? description;
@@ -6,16 +6,16 @@ class Class {
   bool? enabled;
   bool? deleted;
 
-  Class(this.id, this.name, this.description, this.duration, this.enabled,
+  Course(this.id, this.name, this.description, this.duration, this.enabled,
       this.deleted);
 
   @override
   String toString() {
-    return 'Class{id: $id, name: $name, description: $description, duration: $duration, enabled: $enabled, deleted: $deleted}';
+    return 'Course{id: $id, name: $name, description: $description, duration: $duration, enabled: $enabled, deleted: $deleted}';
   }
 
-  factory Class.fromMap(Map<String, dynamic> map) {
-    return Class(
+  factory Course.fromMap(Map<String, dynamic> map) {
+    return Course(
       map["id"],
       map["name"],
       map["description"],
@@ -31,8 +31,8 @@ class Class {
       "name": name,
       "description": description,
       "duration": duration,
-      "enabled": enabled !? 1 : 0,
-      "deleted": deleted !? 1 : 0,
+      "enabled": enabled! ? 1 : 0,
+      "deleted": deleted! ? 1 : 0,
     };
   }
 }

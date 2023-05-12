@@ -8,7 +8,7 @@ class HomepageScene extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Scadenziario - Pagina inziale"),
+        title: const Text("Scadenziario"),
       ),
       body: Center(
           child: Row(
@@ -57,10 +57,10 @@ class HomepageScene extends StatelessWidget {
                   },
                   iconSize: 200,
                   icon: const Icon(
-                    Icons.business_center,
+                    Icons.school_rounded,
                   )),
               const Text(
-                "Attività e corsi",
+                "Corsi",
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
             ]),

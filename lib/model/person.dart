@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-class MasterData {
+class Person {
   String? id;
   String? name;
   String? surname;
@@ -12,16 +12,16 @@ class MasterData {
   bool? enabled;
   bool? deleted;
 
-  MasterData(this.id, this.name, this.surname, this.birthdate, this.duty,
+  Person(this.id, this.name, this.surname, this.birthdate, this.duty,
       this.email, this.phone, this.mobile, this.enabled, this.deleted);
 
   @override
   String toString() {
-    return 'MasterData{id: $id, name: $name, surname: $surname, birthdate: $birthdate, duty: $duty, email: $email, phone: $phone, mobile: $mobile, enabled: $enabled, deleted: $deleted}';
+    return 'Person{id: $id, name: $name, surname: $surname, birthdate: $birthdate, duty: $duty, email: $email, phone: $phone, mobile: $mobile, enabled: $enabled, deleted: $deleted}';
   }
 
-  factory MasterData.fromMap(Map<String, dynamic> map) {
-    return MasterData(
+  factory Person.fromMap(Map<String, dynamic> map) {
+    return Person(
       map["id"],
       map["name"],
       map["surname"],

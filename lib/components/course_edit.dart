@@ -2,34 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:scadenziario/components/attachments_list.dart';
-import 'package:scadenziario/model/class.dart';
+import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
-import 'package:scadenziario/repositories/class_repository.dart';
+import 'package:scadenziario/repositories/course_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:uuid/uuid.dart';
 
-class ActivityEdit extends StatefulWidget {
+class CourseEdit extends StatefulWidget {
   final SqliteConnection _connection;
   final void Function() _confirm;
   final void Function() _cancel;
-  final Class? _activity;
+  final Course? _course;
 
-  const ActivityEdit(
+  const CourseEdit(
       {super.key,
       required void Function() confirm,
       required void Function() cancel,
-      Class? activity,
+      Course? course,
       required SqliteConnection connection})
       : _confirm = confirm,
         _cancel = cancel,
-        _activity = activity,
+        _course = course,
         _connection = connection;
 
   @override
-  State<ActivityEdit> createState() => _ActivityEditState();
+  State<CourseEdit> createState() => _CourseEditState();
 }
 
-class _ActivityEditState extends State<ActivityEdit> {
+class _CourseEditState extends State<CourseEdit> {
   static final Logger log = Logger();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _id;
@@ -41,11 +41,11 @@ class _ActivityEditState extends State<ActivityEdit> {
   void initState() {
     super.initState();
 
-    if (widget._activity != null) {
-      _id = widget._activity!.id;
-      _nameController.text = widget._activity?.name as String;
-      _descriptionController.text = widget._activity?.description ?? "";
-      _durationController.text = widget._activity?.duration.toString() ?? "";
+    if (widget._course != null) {
+      _id = widget._course!.id;
+      _nameController.text = widget._course?.name as String;
+      _descriptionController.text = widget._course?.description ?? "";
+      _durationController.text = widget._course?.duration.toString() ?? "";
     }
   }
 
@@ -63,20 +63,18 @@ class _ActivityEditState extends State<ActivityEdit> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
                   child: Text(
-                    widget._activity == null
-                        ? "Nuova attività"
-                        : "Modifica attività",
+                    widget._course == null ? "Nuovo corso" : "Modifica corso",
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                 ),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: const [
+                  children: [
                     Padding(
                       padding: EdgeInsets.only(top: 8, bottom: 8),
                       child: Text(
-                        "Dati dell'attività",
+                        "Dati del corso",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     )
@@ -93,7 +91,7 @@ class _ActivityEditState extends State<ActivityEdit> {
                             label: Text("Nome"), prefixIcon: Icon(Icons.title)),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) => (value ?? "").isEmpty
-                            ? "Il nome dell'attività' è obbligatorio"
+                            ? "Il nome del corso è obbligatorio"
                             : null,
                       ),
                       TextFormField(
@@ -113,7 +111,7 @@ class _ActivityEditState extends State<ActivityEdit> {
                         ],
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) => (value ?? "").isEmpty
-                            ? "La durata dell'attività' è obbligatorio"
+                            ? "La durata del corso è obbligatoria"
                             : null,
                       ),
                     ],
@@ -136,7 +134,7 @@ class _ActivityEditState extends State<ActivityEdit> {
                       child: ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            Class activity = Class(
+                            Course activity = Course(
                                 _id ?? const Uuid().v4().toString(),
                                 _nameController.text,
                                 _descriptionController.text,
@@ -144,7 +142,7 @@ class _ActivityEditState extends State<ActivityEdit> {
                                 true,
                                 false);
 
-                            int res = await ClassRepository(widget._connection)
+                            int res = await CourseRepository(widget._connection)
                                 .save(activity);
                             if (res == 0) {
                               if (!context.mounted) {
@@ -161,7 +159,7 @@ class _ActivityEditState extends State<ActivityEdit> {
                                             Radius.circular(20)),
                                       ),
                                       child: const Text(
-                                          "Errore nel salvataggio dell'attività'")),
+                                          "Errore nel salvataggio del corso")),
                                 ),
                               );
                             } else {
@@ -170,7 +168,7 @@ class _ActivityEditState extends State<ActivityEdit> {
                           }
                         },
                         child: Text(
-                            widget._activity == null ? "Inserisci" : "Salva"),
+                            widget._course == null ? "Inserisci" : "Salva"),
                       ),
                     ),
                   ],
@@ -180,10 +178,10 @@ class _ActivityEditState extends State<ActivityEdit> {
           ),
         ),
         Visibility(
-          visible: widget._activity != null,
+          visible: widget._course != null,
           child: AttachmentsList(
             connection: widget._connection,
-            type: AttachmentType.classAttachment,
+            type: AttachmentType.course,
             id: _id,
           ),
         ),

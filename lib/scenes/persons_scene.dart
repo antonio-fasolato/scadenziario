@@ -1,49 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/components/footer.dart';
-import 'package:scadenziario/components/people_edit.dart';
-import 'package:scadenziario/model/master_data.dart';
-import 'package:scadenziario/repositories/masterdata_repository.dart';
+import 'package:scadenziario/components/person_edit.dart';
+import 'package:scadenziario/model/person.dart';
+import 'package:scadenziario/repositories/person_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
-class PeopleScene extends StatefulWidget {
+class PersonsScene extends StatefulWidget {
   final SqliteConnection _connection;
 
-  const PeopleScene({super.key, required SqliteConnection connection})
+  const PersonsScene({super.key, required SqliteConnection connection})
       : _connection = connection;
 
   @override
-  State<StatefulWidget> createState() => _PeopleSceneState();
+  State<StatefulWidget> createState() => _PersonsSceneState();
 }
 
-enum SidebarType { none, newMasterData, editMasterdata }
+enum SidebarType { none, newPerson, editPerson }
 
-class _PeopleSceneState extends State<PeopleScene> {
+class _PersonsSceneState extends State<PersonsScene> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
   SidebarType _sidebarWidgetType = SidebarType.none;
-  List<MasterData> _people = [];
-  MasterData? _selectedPerson;
+  List<Person> _persons = [];
+  Person? _selectedPerson;
 
   @override
   void initState() {
     super.initState();
-    _getAllMasterdata();
+    _getAllPersons();
   }
 
-  Future<void> _getAllMasterdata() async {
-    var res = await MasterdataRepository(widget._connection).getAll();
+  Future<void> _getAllPersons() async {
+    var res = await PersonRepository(widget._connection).getAll();
     setState(() {
-      _people = res;
+      _persons = res;
     });
   }
 
   Widget _sidePanelBuilder() {
     switch (_sidebarWidgetType) {
-      case SidebarType.newMasterData:
+      case SidebarType.newPerson:
         {
           return Expanded(
               flex: 70,
-              child: PeopleEdit(
+              child: PersonEdit(
                 confirm: _personSaved,
                 cancel: _editCancelled,
                 connection: widget._connection,
@@ -53,7 +53,7 @@ class _PeopleSceneState extends State<PeopleScene> {
         {
           return Expanded(
             flex: 70,
-            child: PeopleEdit(
+            child: PersonEdit(
               confirm: _personSaved,
               cancel: _editCancelled,
               person: _selectedPerson,
@@ -75,7 +75,7 @@ class _PeopleSceneState extends State<PeopleScene> {
       ),
     );
 
-    _getAllMasterdata();
+    _getAllPersons();
   }
 
   void _editCancelled() {
@@ -108,14 +108,14 @@ class _PeopleSceneState extends State<PeopleScene> {
                 ),
                 ListView(
                   shrinkWrap: true,
-                  children: _people
+                  children: _persons
                       .map((p) => ListTile(
                             title: Text("${p.surname} ${p.name}"),
                             leading: const Icon(Icons.account_circle),
                             onTap: () {
                               setState(() {
                                 _selectedPerson = p;
-                                _sidebarWidgetType = SidebarType.editMasterdata;
+                                _sidebarWidgetType = SidebarType.editPerson;
                               });
                             },
                           ))
@@ -136,7 +136,7 @@ class _PeopleSceneState extends State<PeopleScene> {
         child: FloatingActionButton(
           onPressed: () {
             setState(() {
-              _sidebarWidgetType = SidebarType.newMasterData;
+              _sidebarWidgetType = SidebarType.newPerson;
             });
           },
           tooltip: "Aggiungi persona",

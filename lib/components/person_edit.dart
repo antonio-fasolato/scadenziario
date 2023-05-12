@@ -2,27 +2,26 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:scadenziario/components/attachments_list.dart';
 import 'package:scadenziario/model/duty.dart';
-import 'package:scadenziario/model/master_data.dart';
+import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/duty_repository.dart';
-import 'package:scadenziario/repositories/masterdata_repository.dart';
+import 'package:scadenziario/repositories/person_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:uuid/uuid.dart';
 
-class PeopleEdit extends StatefulWidget {
+class PersonEdit extends StatefulWidget {
   final SqliteConnection _connection;
   final void Function() _confirm;
   final void Function() _cancel;
-  final MasterData? _person;
+  final Person? _person;
 
-  const PeopleEdit(
+  const PersonEdit(
       {super.key,
       required void Function() confirm,
       required void Function() cancel,
-      MasterData? person,
+      Person? person,
       required SqliteConnection connection})
       : _confirm = confirm,
         _cancel = cancel,
@@ -30,11 +29,10 @@ class PeopleEdit extends StatefulWidget {
         _connection = connection;
 
   @override
-  State<PeopleEdit> createState() => _PeopleEditState();
+  State<PersonEdit> createState() => _PersonEditState();
 }
 
-class _PeopleEditState extends State<PeopleEdit> {
-  static final Logger log = Logger();
+class _PersonEditState extends State<PersonEdit> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _id;
   final TextEditingController _nameController = TextEditingController();
@@ -92,9 +90,9 @@ class _PeopleEditState extends State<PeopleEdit> {
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 24)),
                 ),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: const [
+                  children: [
                     Padding(
                       padding: EdgeInsets.only(top: 8, bottom: 8),
                       child: Text("Dati anagrafici",
@@ -253,7 +251,7 @@ class _PeopleEditState extends State<PeopleEdit> {
                       child: ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState?.validate() ?? false) {
-                            MasterData person = MasterData(
+                            Person person = Person(
                                 _id ?? const Uuid().v4().toString(),
                                 _nameController.text,
                                 _surnameController.text,
@@ -266,7 +264,7 @@ class _PeopleEditState extends State<PeopleEdit> {
                                 true,
                                 false);
                             int res =
-                                await MasterdataRepository(widget._connection)
+                                await PersonRepository(widget._connection)
                                     .save(person);
                             if (res == 0) {
                               if (!context.mounted) {
@@ -305,7 +303,7 @@ class _PeopleEditState extends State<PeopleEdit> {
           visible: widget._person != null,
           child: AttachmentsList(
             connection: widget._connection,
-            type: AttachmentType.masterdata,
+            type: AttachmentType.person,
             id: _id,
           ),
         ),

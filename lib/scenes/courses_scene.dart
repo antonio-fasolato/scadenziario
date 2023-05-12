@@ -21,8 +21,8 @@ class _CoursesSceneState extends State<CoursesScene> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
   SidebarType _sidebarWidgetType = SidebarType.none;
-  List<Class> _courses = [];
-  Class? _selectedCourse;
+  List<Course> _courses = [];
+  Course? _selectedCourse;
 
   @override
   void initState() {

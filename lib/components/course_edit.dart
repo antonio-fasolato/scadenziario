@@ -12,13 +12,13 @@ class CourseEdit extends StatefulWidget {
   final SqliteConnection _connection;
   final void Function() _confirm;
   final void Function() _cancel;
-  final Class? _course;
+  final Course? _course;
 
   const CourseEdit(
       {super.key,
       required void Function() confirm,
       required void Function() cancel,
-      Class? course,
+      Course? course,
       required SqliteConnection connection})
       : _confirm = confirm,
         _cancel = cancel,
@@ -134,7 +134,7 @@ class _CourseEditState extends State<CourseEdit> {
                       child: ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            Class activity = Class(
+                            Course activity = Course(
                                 _id ?? const Uuid().v4().toString(),
                                 _nameController.text,
                                 _descriptionController.text,

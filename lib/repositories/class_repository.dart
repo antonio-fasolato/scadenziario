@@ -8,20 +8,20 @@ class ClassRepository {
 
   ClassRepository(SqliteConnection connection) : _connection = connection;
 
-  Future<List<Class>> getAll() async {
+  Future<List<Course>> getAll() async {
     var db = await _connection.connect();
 
-    List<Class> toReturn = [];
+    List<Course> toReturn = [];
     var res = await db.query("class", orderBy: "name");
     if (res.isNotEmpty) {
-      toReturn = List.from(res.map((e) => Class.fromMap(e)));
+      toReturn = List.from(res.map((e) => Course.fromMap(e)));
     }
 
     await db.close();
     return toReturn;
   }
 
-  Future<int> save(Class c) async {
+  Future<int> save(Course c) async {
     if (c.id == null) {
       throw Exception("Class with null id");
     }

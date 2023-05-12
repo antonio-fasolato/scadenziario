@@ -15,13 +15,13 @@ class PersonEdit extends StatefulWidget {
   final SqliteConnection _connection;
   final void Function() _confirm;
   final void Function() _cancel;
-  final MasterData? _person;
+  final Person? _person;
 
   const PersonEdit(
       {super.key,
       required void Function() confirm,
       required void Function() cancel,
-      MasterData? person,
+      Person? person,
       required SqliteConnection connection})
       : _confirm = confirm,
         _cancel = cancel,
@@ -251,7 +251,7 @@ class _PersonEditState extends State<PersonEdit> {
                       child: ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState?.validate() ?? false) {
-                            MasterData person = MasterData(
+                            Person person = Person(
                                 _id ?? const Uuid().v4().toString(),
                                 _nameController.text,
                                 _surnameController.text,

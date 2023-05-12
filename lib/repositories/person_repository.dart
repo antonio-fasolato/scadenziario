@@ -8,19 +8,19 @@ class PersonRepository {
 
   PersonRepository(SqliteConnection connection) : _connection = connection;
 
-  Future<List<MasterData>> getAll() async {
+  Future<List<Person>> getAll() async {
     var db = await _connection.connect();
 
-    List<MasterData> toReturn = [];
+    List<Person> toReturn = [];
     var res = await db.query("masterdata", orderBy: "surname, name");
     if (res.isNotEmpty) {
-      toReturn = List.from(res.map((e) => MasterData.fromMap(e)));
+      toReturn = List.from(res.map((e) => Person.fromMap(e)));
     }
     await db.close();
     return toReturn;
   }
 
-  Future<int> save(MasterData m) async {
+  Future<int> save(Person m) async {
     if (m.id == null) {
       throw Exception("Masterdata has null id");
     } else {

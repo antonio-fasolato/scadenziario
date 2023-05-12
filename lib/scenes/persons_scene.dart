@@ -21,8 +21,8 @@ class _PersonsSceneState extends State<PersonsScene> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
   SidebarType _sidebarWidgetType = SidebarType.none;
-  List<MasterData> _persons = [];
-  MasterData? _selectedPerson;
+  List<Person> _persons = [];
+  Person? _selectedPerson;
 
   @override
   void initState() {

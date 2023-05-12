@@ -15,33 +15,33 @@ class CoursesScene extends StatefulWidget {
   State<CoursesScene> createState() => _CoursesSceneState();
 }
 
-enum SidebarType { none, newActivity, editActivity }
+enum SidebarType { none, newCourse, editCourse }
 
 class _CoursesSceneState extends State<CoursesScene> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
   SidebarType _sidebarWidgetType = SidebarType.none;
-  List<Class> _activities = [];
-  Class? _selectedActivity;
+  List<Class> _courses = [];
+  Class? _selectedCourse;
 
   @override
   void initState() {
     super.initState();
-    _getAllActivities();
+    _getAllCourses();
   }
 
-  _getAllActivities() async {
+  _getAllCourses() async {
     var res = await ClassRepository(widget._connection).getAll();
     setState(() {
-      _activities = res;
+      _courses = res;
     });
   }
 
-  _activitiesSaved() {
+  _courseSaved() {
     setState(() {
       _sidebarWidgetType = SidebarType.none;
     });
-    _getAllActivities();
+    _getAllCourses();
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -58,12 +58,12 @@ class _CoursesSceneState extends State<CoursesScene> {
 
   Widget _sidePanelBuilder() {
     switch (_sidebarWidgetType) {
-      case SidebarType.newActivity:
+      case SidebarType.newCourse:
         {
           return Expanded(
               flex: 70,
               child: ActivityEdit(
-                confirm: _activitiesSaved,
+                confirm: _courseSaved,
                 cancel: _editCancelled,
                 connection: widget._connection,
               ));
@@ -73,10 +73,10 @@ class _CoursesSceneState extends State<CoursesScene> {
           return Expanded(
               flex: 70,
               child: ActivityEdit(
-                confirm: _activitiesSaved,
+                confirm: _courseSaved,
                 cancel: _editCancelled,
                 connection: widget._connection,
-                activity: _selectedActivity,
+                activity: _selectedCourse,
               ));
         }
     }
@@ -106,15 +106,15 @@ class _CoursesSceneState extends State<CoursesScene> {
                     )),
                 ListView(
                   shrinkWrap: true,
-                  children: _activities
+                  children: _courses
                       .map((a) => ListTile(
                             title: Text("${a.name}"),
                             subtitle: Text("${a.description}"),
                             leading: const Icon(Icons.business_center),
                             onTap: () {
                               setState(() {
-                                _selectedActivity = a;
-                                _sidebarWidgetType = SidebarType.editActivity;
+                                _selectedCourse = a;
+                                _sidebarWidgetType = SidebarType.editCourse;
                               });
                             },
                           ))
@@ -132,7 +132,7 @@ class _CoursesSceneState extends State<CoursesScene> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            _sidebarWidgetType = SidebarType.newActivity;
+            _sidebarWidgetType = SidebarType.newCourse;
           });
         },
         tooltip: "Aggiungi Corso",

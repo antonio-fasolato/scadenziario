@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
-import 'package:scadenziario/scenes/activities_scene.dart';
+import 'package:scadenziario/scenes/courses_scene.dart';
 import 'package:scadenziario/scenes/calendar_scene.dart';
 import 'package:scadenziario/scenes/database_selection_scene.dart';
 import 'package:scadenziario/scenes/homepage_scene.dart';

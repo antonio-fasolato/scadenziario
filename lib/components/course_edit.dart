@@ -4,7 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:scadenziario/components/attachments_list.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
-import 'package:scadenziario/repositories/class_repository.dart';
+import 'package:scadenziario/repositories/course_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:uuid/uuid.dart';
 

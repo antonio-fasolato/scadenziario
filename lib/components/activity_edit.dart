@@ -63,20 +63,18 @@ class _ActivityEditState extends State<ActivityEdit> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
                   child: Text(
-                    widget._activity == null
-                        ? "Nuova attività"
-                        : "Modifica attività",
+                    widget._activity == null ? "Nuovo corso" : "Modifica corso",
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                 ),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: const [
+                  children: [
                     Padding(
                       padding: EdgeInsets.only(top: 8, bottom: 8),
                       child: Text(
-                        "Dati dell'attività",
+                        "Dati del corso",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     )
@@ -93,7 +91,7 @@ class _ActivityEditState extends State<ActivityEdit> {
                             label: Text("Nome"), prefixIcon: Icon(Icons.title)),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) => (value ?? "").isEmpty
-                            ? "Il nome dell'attività' è obbligatorio"
+                            ? "Il nome del corso è obbligatorio"
                             : null,
                       ),
                       TextFormField(
@@ -113,7 +111,7 @@ class _ActivityEditState extends State<ActivityEdit> {
                         ],
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) => (value ?? "").isEmpty
-                            ? "La durata dell'attività' è obbligatorio"
+                            ? "La durata del corso è obbligatoria"
                             : null,
                       ),
                     ],
@@ -161,7 +159,7 @@ class _ActivityEditState extends State<ActivityEdit> {
                                             Radius.circular(20)),
                                       ),
                                       child: const Text(
-                                          "Errore nel salvataggio dell'attività'")),
+                                          "Errore nel salvataggio del corso")),
                                 ),
                               );
                             } else {

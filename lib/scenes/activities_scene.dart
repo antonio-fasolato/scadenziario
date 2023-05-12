@@ -45,7 +45,7 @@ class _ActivitiesSceneState extends State<ActivitiesScene> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("Attività salvata correttamente"),
+        content: Text("Corso salvato correttamente"),
       ),
     );
   }
@@ -87,7 +87,7 @@ class _ActivitiesSceneState extends State<ActivitiesScene> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Scadenziario - Attività e corsi"),
+        title: const Text("Scadenziario - Corsi"),
       ),
       body: Row(
         mainAxisSize: MainAxisSize.max,
@@ -135,7 +135,7 @@ class _ActivitiesSceneState extends State<ActivitiesScene> {
             _sidebarWidgetType = SidebarType.newActivity;
           });
         },
-        tooltip: "Aggiungi Attività/corso",
+        tooltip: "Aggiungi Corso",
         child: const Icon(Icons.add),
       ),
     );

@@ -93,8 +93,8 @@ class SqliteConnection {
       CREATE TABLE IF NOT EXISTS "course_attachment" (
         "course_id" text NOT NULL,
         "attachment_id" text NOT NULL,
-        PRIMARY KEY("class_id", "attachment_id"),
-        FOREIGN KEY ("class_id") REFERENCES class("id"),
+        PRIMARY KEY("course_id", "attachment_id"),
+        FOREIGN KEY ("course_id") REFERENCES course("id"),
         FOREIGN KEY ("attachment_id") REFERENCES attachment("id")
       )
     """;

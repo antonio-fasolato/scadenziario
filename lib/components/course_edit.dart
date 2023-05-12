@@ -12,17 +12,17 @@ class CourseEdit extends StatefulWidget {
   final SqliteConnection _connection;
   final void Function() _confirm;
   final void Function() _cancel;
-  final Class? _activity;
+  final Class? _course;
 
   const CourseEdit(
       {super.key,
       required void Function() confirm,
       required void Function() cancel,
-      Class? activity,
+      Class? course,
       required SqliteConnection connection})
       : _confirm = confirm,
         _cancel = cancel,
-        _activity = activity,
+        _course = course,
         _connection = connection;
 
   @override
@@ -41,11 +41,11 @@ class _CourseEditState extends State<CourseEdit> {
   void initState() {
     super.initState();
 
-    if (widget._activity != null) {
-      _id = widget._activity!.id;
-      _nameController.text = widget._activity?.name as String;
-      _descriptionController.text = widget._activity?.description ?? "";
-      _durationController.text = widget._activity?.duration.toString() ?? "";
+    if (widget._course != null) {
+      _id = widget._course!.id;
+      _nameController.text = widget._course?.name as String;
+      _descriptionController.text = widget._course?.description ?? "";
+      _durationController.text = widget._course?.duration.toString() ?? "";
     }
   }
 
@@ -63,7 +63,7 @@ class _CourseEditState extends State<CourseEdit> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
                   child: Text(
-                    widget._activity == null ? "Nuovo corso" : "Modifica corso",
+                    widget._course == null ? "Nuovo corso" : "Modifica corso",
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 24),
                   ),
@@ -168,7 +168,7 @@ class _CourseEditState extends State<CourseEdit> {
                           }
                         },
                         child: Text(
-                            widget._activity == null ? "Inserisci" : "Salva"),
+                            widget._course == null ? "Inserisci" : "Salva"),
                       ),
                     ),
                   ],
@@ -178,7 +178,7 @@ class _CourseEditState extends State<CourseEdit> {
           ),
         ),
         Visibility(
-          visible: widget._activity != null,
+          visible: widget._course != null,
           child: AttachmentsList(
             connection: widget._connection,
             type: AttachmentType.classAttachment,

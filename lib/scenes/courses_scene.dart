@@ -76,7 +76,7 @@ class _CoursesSceneState extends State<CoursesScene> {
                 confirm: _courseSaved,
                 cancel: _editCancelled,
                 connection: widget._connection,
-                activity: _selectedCourse,
+                course: _selectedCourse,
               ));
         }
     }

@@ -1,5 +1,5 @@
 import 'package:logger/logger.dart';
-import 'package:scadenziario/model/master_data.dart';
+import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class PersonRepository {

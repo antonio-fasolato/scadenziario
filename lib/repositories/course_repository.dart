@@ -12,7 +12,7 @@ class CourseRepository {
     var db = await _connection.connect();
 
     List<Course> toReturn = [];
-    var res = await db.query("class", orderBy: "name");
+    var res = await db.query("course", orderBy: "name");
     if (res.isNotEmpty) {
       toReturn = List.from(res.map((e) => Course.fromMap(e)));
     }
@@ -27,16 +27,16 @@ class CourseRepository {
     }
 
     var db = await _connection.connect();
-    var res = await db.query("class", where: "id = ?", whereArgs: [c.id]);
+    var res = await db.query("course", where: "id = ?", whereArgs: [c.id]);
     if (res.isEmpty) {
-      log.d("New class $c");
-      int res = await db.insert("class", c.toMap());
+      log.d("New course $c");
+      int res = await db.insert("course", c.toMap());
       await db.close();
       return res;
     } else {
       log.d("Update course $c");
       int res = await db
-          .update("class", c.toMap(), where: "id = ?", whereArgs: [c.id]);
+          .update("course", c.toMap(), where: "id = ?", whereArgs: [c.id]);
       await db.close();
       return res;
     }

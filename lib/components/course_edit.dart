@@ -181,7 +181,7 @@ class _CourseEditState extends State<CourseEdit> {
           visible: widget._course != null,
           child: AttachmentsList(
             connection: widget._connection,
-            type: AttachmentType.classAttachment,
+            type: AttachmentType.course,
             id: _id,
           ),
         ),

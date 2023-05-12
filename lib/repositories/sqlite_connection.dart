@@ -68,7 +68,7 @@ class SqliteConnection {
     await db.execute(sql);
 
     sql = """
-      CREATE TABLE IF NOT EXISTS "class" (
+      CREATE TABLE IF NOT EXISTS "course" (
         "id" text NOT NULL PRIMARY KEY,
         "name" text NOT NULL,
         "description" text,
@@ -90,8 +90,8 @@ class SqliteConnection {
     await db.execute(sql);
 
     sql = """
-      CREATE TABLE IF NOT EXISTS "class_attachment" (
-        "class_id" text NOT NULL,
+      CREATE TABLE IF NOT EXISTS "course_attachment" (
+        "course_id" text NOT NULL,
         "attachment_id" text NOT NULL,
         PRIMARY KEY("class_id", "attachment_id"),
         FOREIGN KEY ("class_id") REFERENCES class("id"),

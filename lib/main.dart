@@ -4,7 +4,7 @@ import 'package:scadenziario/scenes/courses_scene.dart';
 import 'package:scadenziario/scenes/calendar_scene.dart';
 import 'package:scadenziario/scenes/database_selection_scene.dart';
 import 'package:scadenziario/scenes/homepage_scene.dart';
-import 'package:scadenziario/scenes/people_scene.dart';
+import 'package:scadenziario/scenes/persons_scene.dart';
 import 'package:scadenziario/scenes/settings_scene.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';

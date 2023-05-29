@@ -20,7 +20,7 @@ class DatabaseSelectionScene extends StatefulWidget {
 }
 
 class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
-  bool _showRecntFiles = false;
+  bool _showRecentFiles = false;
 
   List<ListTile> _getRecentFiles() {
     List<String> files = widget._sharedPreferences
@@ -102,18 +102,18 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
                         height: 20,
                       ),
                       Visibility(
-                        visible: !_showRecntFiles,
+                        visible: !_showRecentFiles,
                         child: TextButton(
                           child: const Text(
                               "Oppure seleziona uno dei file usati recentemente",
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           onPressed: () => setState(() {
-                            _showRecntFiles = true;
+                            _showRecentFiles = true;
                           }),
                         ),
                       ),
                       Visibility(
-                        visible: _showRecntFiles,
+                        visible: _showRecentFiles,
                         child: ListView(
                           shrinkWrap: true,
                           children: _getRecentFiles(),

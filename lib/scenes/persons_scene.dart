@@ -24,6 +24,13 @@ class _PersonsSceneState extends State<PersonsScene> {
   List<Person> _persons = [];
   Person? _selectedPerson;
 
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();

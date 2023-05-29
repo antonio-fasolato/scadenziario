@@ -45,6 +45,19 @@ class _PersonEditState extends State<PersonEdit> {
   List<Duty> _duties = [];
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    _surnameController.dispose();
+    _birthDateController.dispose();
+    _mailController.dispose();
+    _phoneController.dispose();
+    _mobileController.dispose();
+    _dutyController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
 
@@ -263,9 +276,8 @@ class _PersonEditState extends State<PersonEdit> {
                                 _mobileController.text,
                                 true,
                                 false);
-                            int res =
-                                await PersonRepository(widget._connection)
-                                    .save(person);
+                            int res = await PersonRepository(widget._connection)
+                                .save(person);
                             if (res == 0) {
                               if (!context.mounted) {
                                 return;

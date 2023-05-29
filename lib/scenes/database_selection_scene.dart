@@ -29,7 +29,7 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
 
     return List.of(files.reversed.map((f) => ListTile(
           contentPadding: const EdgeInsets.all(1),
-          title: SelectableText(f),
+          title: Text(f),
           onTap: () {
             _openDatabase(f);
           },

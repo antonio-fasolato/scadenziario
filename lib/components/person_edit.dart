@@ -67,9 +67,8 @@ class _PersonEditState extends State<PersonEdit> {
                 )
               ],
             ),
-            content: AttachmentsList(
+            content: AttachmentsList.person(
               connection: widget._connection,
-              type: AttachmentType.person,
               id: state.person.id as String,
             ),
           );

@@ -23,6 +23,18 @@ class AttachmentsList extends StatefulWidget {
         _id = id,
         _connection = connection;
 
+  const AttachmentsList.person(
+      {super.key, required String id, required SqliteConnection connection})
+      : _id = id,
+        _type = AttachmentType.person,
+        _connection = connection;
+
+  const AttachmentsList.course(
+      {super.key, required String id, required SqliteConnection connection})
+      : _id = id,
+        _type = AttachmentType.course,
+        _connection = connection;
+
   @override
   State<AttachmentsList> createState() => _AttachmentsListState();
 }

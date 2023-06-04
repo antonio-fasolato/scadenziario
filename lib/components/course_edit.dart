@@ -48,9 +48,8 @@ class _CourseEditState extends State<CourseEdit> {
                 )
               ],
             ),
-            content: AttachmentsList(
+            content: AttachmentsList.course(
               connection: widget._connection,
-              type: AttachmentType.course,
               id: state.course.id as String,
             ),
           );

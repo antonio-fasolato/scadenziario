@@ -177,14 +177,14 @@ class _CourseEditState extends State<CourseEdit> {
             ),
           ),
         ),
-        Visibility(
-          visible: widget._course != null,
-          child: AttachmentsList(
-            connection: widget._connection,
-            type: AttachmentType.course,
-            id: _id,
-          ),
-        ),
+        // Visibility(
+        //   visible: widget._course != null,
+        //   child: AttachmentsList(
+        //     connection: widget._connection,
+        //     type: AttachmentType.course,
+        //     id: _id,
+        //   ),
+        // ),
       ],
     );
   }

@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_custom.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +45,39 @@ class _PersonEditState extends State<PersonEdit> {
     PersonState state = Provider.of<PersonState>(context, listen: false);
     var duties = await DutyRepository(widget._connection).getAllDuties();
     state.loadDuties(duties);
+  }
+
+  _attachmentsPopup(BuildContext context) {
+    PersonState state = Provider.of<PersonState>(context, listen: false);
+
+    if (state.isSelected) {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Row(
+              children: [
+                const Text("Allegati"),
+                const Spacer(),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Icon(Icons.close),
+                )
+              ],
+            ),
+            content: AttachmentsList(
+              connection: widget._connection,
+              type: AttachmentType.person,
+              id: state.person.id as String,
+            ),
+          );
+        },
+      );
+    } else {
+      return Container();
+    }
   }
 
   @override
@@ -225,6 +259,15 @@ class _PersonEditState extends State<PersonEdit> {
                     const Spacer(),
                     Padding(
                       padding: const EdgeInsets.only(top: 16, bottom: 8),
+                      child: ElevatedButton.icon(
+                        onPressed: () => _attachmentsPopup(context),
+                        label: const Text("Allegati"),
+                        icon: const Icon(Icons.attachment_outlined),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16, top: 16, bottom: 8),
                       child: ElevatedButton(
                         onPressed: () async {
                           PersonState state =
@@ -279,16 +322,16 @@ class _PersonEditState extends State<PersonEdit> {
             ),
           ),
         ),
-        Consumer<PersonState>(
-          builder: (context, state, child) => Visibility(
-            visible: state.person.id != null,
-            child: AttachmentsList(
-              connection: widget._connection,
-              type: AttachmentType.person,
-              id: state.person.id,
-            ),
-          ),
-        ),
+        // Consumer<PersonState>(
+        //   builder: (context, state, child) => Visibility(
+        //     visible: state.person.id != null,
+        //     child: AttachmentsList(
+        //       connection: widget._connection,
+        //       type: AttachmentType.person,
+        //       id: state.person.id,
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

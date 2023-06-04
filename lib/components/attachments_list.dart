@@ -12,12 +12,12 @@ import 'package:uuid/uuid.dart';
 class AttachmentsList extends StatefulWidget {
   final SqliteConnection _connection;
   final AttachmentType _type;
-  final String? _id;
+  final String _id;
 
   const AttachmentsList(
       {super.key,
       required AttachmentType type,
-      String? id,
+      required String id,
       required SqliteConnection connection})
       : _type = type,
         _id = id,
@@ -33,10 +33,9 @@ class _AttachmentsListState extends State<AttachmentsList> {
 
   _loadAttachments() async {
     List<Attachment> res = [];
-    if (widget._id != null) {
-      res = await AttachmentRepository(widget._connection)
-          .getAttachmentsByLinkedEntity(widget._id as String, widget._type);
-    }
+
+    res = await AttachmentRepository(widget._connection)
+        .getAttachmentsByLinkedEntity(widget._id, widget._type);
     setState(() {
       _attachments = res;
     });
@@ -132,60 +131,62 @@ class _AttachmentsListState extends State<AttachmentsList> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: _attachments
+                .map((a) => ListTile(
+                      title: Text(a.fileName),
+                      leading: IconButton(
+                          onPressed: () {
+                            _download(a.id);
+                          },
+                          icon: const Icon(Icons.download)),
+                      trailing: IconButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text(
+                                      "Confermare la cancellazione del file ${a.fileName}?"),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text("No")),
+                                    TextButton(
+                                        onPressed: () {
+                                          _delete(a.id);
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text("Si")),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          icon: const Icon(Icons.delete,
+                              color: Colors.redAccent)),
+                    ))
+                .toList(),
+          ),
+        ),
+        Row(
           children: [
-            const Text("Allegati",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            ListView(
-              shrinkWrap: true,
-              children: _attachments
-                  .map((a) => ListTile(
-                        title: Text(a.fileName),
-                        leading: IconButton(
-                            onPressed: () {
-                              _download(a.id);
-                            },
-                            icon: const Icon(Icons.download)),
-                        trailing: IconButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                        "Confermare la cancellazione del file ${a.fileName}?"),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                          child: const Text("No")),
-                                      TextButton(
-                                          onPressed: () {
-                                            _delete(a.id);
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("Si")),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.delete,
-                                color: Colors.redAccent)),
-                      ))
-                  .toList(),
+            const Spacer(),
+            ElevatedButton.icon(
+              onPressed: () => _addAttachment(),
+              icon: const Icon(Icons.add),
+              label: const Text("Aggiungi"),
             ),
-            ElevatedButton(
-                onPressed: () => _addAttachment(),
-                child: const Text("Aggiungi")),
           ],
         ),
-      ),
+      ],
     );
   }
 }

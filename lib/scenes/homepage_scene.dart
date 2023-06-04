@@ -53,7 +53,7 @@ class HomepageScene extends StatelessWidget {
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               IconButton(
                   onPressed: () {
-                    Navigator.of(context).pushNamed("/activities");
+                    Navigator.of(context).pushNamed("/courses");
                   },
                   iconSize: 200,
                   icon: const Icon(

@@ -36,7 +36,7 @@ class Footer extends StatelessWidget {
               tooltip: "Corsi",
               icon: const Icon(Icons.school_rounded),
               onPressed: () {
-                Navigator.of(context).pushNamed("/activities");
+                Navigator.of(context).pushNamed("/courses");
               },
             ),
             const Spacer(),

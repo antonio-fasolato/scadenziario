@@ -15,6 +15,8 @@ class Person {
   Person(this.id, this.name, this.surname, this.birthdate, this.duty,
       this.email, this.phone, this.mobile, this.enabled, this.deleted);
 
+  Person.empty();
+
   @override
   String toString() {
     return 'Person{id: $id, name: $name, surname: $surname, birthdate: $birthdate, duty: $duty, email: $email, phone: $phone, mobile: $mobile, enabled: $enabled, deleted: $deleted}';

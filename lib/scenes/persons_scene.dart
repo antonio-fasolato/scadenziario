@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/components/person_edit.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:scadenziario/state/person_state.dart';
 
 class PersonsScene extends StatefulWidget {
   final SqliteConnection _connection;
@@ -15,15 +17,10 @@ class PersonsScene extends StatefulWidget {
   State<StatefulWidget> createState() => _PersonsSceneState();
 }
 
-enum SidebarType { none, newPerson, editPerson }
-
 class _PersonsSceneState extends State<PersonsScene> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
-  SidebarType _sidebarWidgetType = SidebarType.none;
   List<Person> _persons = [];
-  Person? _selectedPerson;
-
 
   @override
   void dispose() {
@@ -45,36 +42,22 @@ class _PersonsSceneState extends State<PersonsScene> {
   }
 
   Widget _sidePanelBuilder() {
-    switch (_sidebarWidgetType) {
-      case SidebarType.newPerson:
-        {
-          return Expanded(
-              flex: 70,
-              child: PersonEdit(
-                confirm: _personSaved,
-                cancel: _editCancelled,
-                connection: widget._connection,
-              ));
-        }
-      default:
-        {
-          return Expanded(
+    PersonState state =
+        Provider.of<PersonState>(context, listen: false);
+    return state.isSelected
+        ? Expanded(
             flex: 70,
             child: PersonEdit(
               confirm: _personSaved,
               cancel: _editCancelled,
-              person: _selectedPerson,
               connection: widget._connection,
             ),
-          );
-        }
-    }
+          )
+        : Container();
   }
 
   void _personSaved() {
-    setState(() {
-      _sidebarWidgetType = SidebarType.none;
-    });
+    Provider.of<PersonState>(context, listen: false).deselectPerson();
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -86,9 +69,7 @@ class _PersonsSceneState extends State<PersonsScene> {
   }
 
   void _editCancelled() {
-    setState(() {
-      _sidebarWidgetType = SidebarType.none;
-    });
+    Provider.of<PersonState>(context, listen: false).deselectPerson();
   }
 
   @override
@@ -120,10 +101,9 @@ class _PersonsSceneState extends State<PersonsScene> {
                             title: Text("${p.surname} ${p.name}"),
                             leading: const Icon(Icons.account_circle),
                             onTap: () {
-                              setState(() {
-                                _selectedPerson = p;
-                                _sidebarWidgetType = SidebarType.editPerson;
-                              });
+                              Provider.of<PersonState>(context,
+                                      listen: false)
+                                  .selectPerson(p);
                             },
                           ))
                       .toList(),
@@ -131,23 +111,25 @@ class _PersonsSceneState extends State<PersonsScene> {
               ],
             ),
           ),
-          Visibility(
-            visible: _sidebarWidgetType != SidebarType.none,
-            child: _sidePanelBuilder(),
+          Consumer<PersonState>(
+            builder: (context, state, child) => Visibility(
+              visible: state.isSelected,
+              child: _sidePanelBuilder(),
+            ),
           ),
         ],
       ),
       bottomNavigationBar: const Footer(),
-      floatingActionButton: Visibility(
-        visible: _sidebarWidgetType == SidebarType.none,
-        child: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              _sidebarWidgetType = SidebarType.newPerson;
-            });
-          },
-          tooltip: "Aggiungi persona",
-          child: const Icon(Icons.add),
+      floatingActionButton: Consumer<PersonState>(
+        builder: (context, state, child) => Visibility(
+          visible: !state.isSelected,
+          child: FloatingActionButton(
+            onPressed: () {
+              state.selectPerson(Person.empty());
+            },
+            tooltip: "Aggiungi persona",
+            child: const Icon(Icons.add),
+          ),
         ),
       ),
     );

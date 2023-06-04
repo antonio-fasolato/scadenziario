@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/scenes/courses_scene.dart';
 import 'package:scadenziario/scenes/calendar_scene.dart';
@@ -6,6 +7,7 @@ import 'package:scadenziario/scenes/database_selection_scene.dart';
 import 'package:scadenziario/scenes/homepage_scene.dart';
 import 'package:scadenziario/scenes/persons_scene.dart';
 import 'package:scadenziario/scenes/settings_scene.dart';
+import 'package:scadenziario/state/person_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -48,8 +50,10 @@ class _ScadenziarioState extends State<Scadenziario> {
               setSqliteConnection: _setConnection,
             ),
         "/home": (buildContext) => const HomepageScene(),
-        "/people": (buildContext) =>
-            PersonsScene(connection: _connection as SqliteConnection),
+        "/people": (buildContext) => ChangeNotifierProvider<PersonState>(
+              create: (context) => PersonState(),
+              child: PersonsScene(connection: _connection as SqliteConnection),
+            ),
         "/calendar": (buildContext) => const CalendarScene(),
         "/activities": (buildContext) => CoursesScene(
               connection: _connection as SqliteConnection,

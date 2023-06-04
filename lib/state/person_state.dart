@@ -6,6 +6,7 @@ import 'package:scadenziario/model/person.dart';
 class PersonState extends ChangeNotifier {
   Person? _selectedPerson;
   List<Duty> _duties = [];
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _surnameController = TextEditingController();
   TextEditingController _birthDateController = TextEditingController();
@@ -17,6 +18,8 @@ class PersonState extends ChangeNotifier {
   List<Duty> get duties => _duties;
 
   bool get isSelected => _selectedPerson != null;
+
+  GlobalKey<FormState> get formKey => _formKey;
 
   TextEditingController get nameController => _nameController;
 

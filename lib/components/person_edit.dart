@@ -33,8 +33,6 @@ class PersonEdit extends StatefulWidget {
 }
 
 class _PersonEditState extends State<PersonEdit> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   @override
   void initState() {
     super.initState();
@@ -80,10 +78,10 @@ class _PersonEditState extends State<PersonEdit> {
                     ),
                   ],
                 ),
-                Form(
-                  key: _formKey,
-                  child: Consumer<PersonState>(
-                    builder: (context, state, child) => Table(
+                Consumer<PersonState>(
+                  builder: (context, state, child) => Form(
+                    key: state.formKey,
+                    child: Table(
                       children: [
                         TableRow(children: [
                           TableCell(
@@ -229,11 +227,9 @@ class _PersonEditState extends State<PersonEdit> {
                       padding: const EdgeInsets.only(top: 16, bottom: 8),
                       child: ElevatedButton(
                         onPressed: () async {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            PersonState state = Provider.of<PersonState>(
-                                context,
-                                listen: false);
-
+                          PersonState state =
+                              Provider.of<PersonState>(context, listen: false);
+                          if (state.formKey.currentState?.validate() ?? false) {
                             Person person = Person(
                                 state.person.id ?? const Uuid().v4().toString(),
                                 state.nameController.text,

@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'package:scadenziario/components/attachments_list.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/course_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:scadenziario/state/course_state.dart';
 import 'package:uuid/uuid.dart';
 
 class CourseEdit extends StatefulWidget {
   final SqliteConnection _connection;
   final void Function() _confirm;
   final void Function() _cancel;
-  final Course? _course;
 
   const CourseEdit(
       {super.key,
       required void Function() confirm,
       required void Function() cancel,
-      Course? course,
       required SqliteConnection connection})
       : _confirm = confirm,
         _cancel = cancel,
-        _course = course,
         _connection = connection;
 
   @override
@@ -30,22 +28,35 @@ class CourseEdit extends StatefulWidget {
 }
 
 class _CourseEditState extends State<CourseEdit> {
-  static final Logger log = Logger();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String? _id;
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _durationController = TextEditingController();
+  _attachmentsPopup(BuildContext context) {
+    CourseState state = Provider.of<CourseState>(context, listen: false);
 
-  @override
-  void initState() {
-    super.initState();
-
-    if (widget._course != null) {
-      _id = widget._course!.id;
-      _nameController.text = widget._course?.name as String;
-      _descriptionController.text = widget._course?.description ?? "";
-      _durationController.text = widget._course?.duration.toString() ?? "";
+    if (state.isSelected) {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Row(
+              children: [
+                const Text("Allegati"),
+                const Spacer(),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Icon(Icons.close),
+                )
+              ],
+            ),
+            content: AttachmentsList.course(
+              connection: widget._connection,
+              id: state.course.id as String,
+            ),
+          );
+        },
+      );
+    } else {
+      return Container();
     }
   }
 
@@ -62,10 +73,14 @@ class _CourseEditState extends State<CourseEdit> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
-                  child: Text(
-                    widget._course == null ? "Nuovo corso" : "Modifica corso",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 24),
+                  child: Consumer<CourseState>(
+                    builder: (context, state, child) => Text(
+                      state.course.id == null
+                          ? "Nuovo corso"
+                          : "Modifica corso",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 24),
+                    ),
                   ),
                 ),
                 const Row(
@@ -80,41 +95,44 @@ class _CourseEditState extends State<CourseEdit> {
                     )
                   ],
                 ),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                            label: Text("Nome"), prefixIcon: Icon(Icons.title)),
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) => (value ?? "").isEmpty
-                            ? "Il nome del corso è obbligatorio"
-                            : null,
-                      ),
-                      TextFormField(
-                        controller: _descriptionController,
-                        decoration: const InputDecoration(
-                            label: Text("Descrizione"),
-                            prefixIcon: Icon(Icons.title)),
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                      ),
-                      TextFormField(
-                        controller: _durationController,
-                        decoration: const InputDecoration(
-                            label: Text("Durata"),
-                            prefixIcon: Icon(Icons.timer)),
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-                        ],
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) => (value ?? "").isEmpty
-                            ? "La durata del corso è obbligatoria"
-                            : null,
-                      ),
-                    ],
+                Consumer<CourseState>(
+                  builder: (context, state, child) => Form(
+                    key: state.formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: state.nameController,
+                          decoration: const InputDecoration(
+                              label: Text("Nome"),
+                              prefixIcon: Icon(Icons.title)),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) => (value ?? "").isEmpty
+                              ? "Il nome del corso è obbligatorio"
+                              : null,
+                        ),
+                        TextFormField(
+                          controller: state.descriptionController,
+                          decoration: const InputDecoration(
+                              label: Text("Descrizione"),
+                              prefixIcon: Icon(Icons.title)),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                        ),
+                        TextFormField(
+                          controller: state.durationController,
+                          decoration: const InputDecoration(
+                              label: Text("Durata"),
+                              prefixIcon: Icon(Icons.timer)),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                          ],
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) => (value ?? "").isEmpty
+                              ? "La durata del corso è obbligatoria"
+                              : null,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Row(
@@ -131,14 +149,26 @@ class _CourseEditState extends State<CourseEdit> {
                     const Spacer(),
                     Padding(
                       padding: const EdgeInsets.only(top: 16, bottom: 8),
+                      child: ElevatedButton.icon(
+                        onPressed: () => _attachmentsPopup(context),
+                        icon: const Icon(Icons.attachment_outlined),
+                        label: const Text("Allegati"),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16, top: 16, bottom: 8),
                       child: ElevatedButton(
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
+                          CourseState state =
+                              Provider.of<CourseState>(context, listen: false);
+
+                          if (state.formKey.currentState!.validate()) {
                             Course activity = Course(
-                                _id ?? const Uuid().v4().toString(),
-                                _nameController.text,
-                                _descriptionController.text,
-                                int.parse(_durationController.text),
+                                state.course.id ?? const Uuid().v4().toString(),
+                                state.nameController.text,
+                                state.descriptionController.text,
+                                int.parse(state.durationController.text),
                                 true,
                                 false);
 
@@ -167,8 +197,10 @@ class _CourseEditState extends State<CourseEdit> {
                             }
                           }
                         },
-                        child: Text(
-                            widget._course == null ? "Inserisci" : "Salva"),
+                        child: Consumer<CourseState>(
+                          builder: (context, state, child) => Text(
+                              state.course.id == null ? "Inserisci" : "Salva"),
+                        ),
                       ),
                     ),
                   ],
@@ -177,14 +209,14 @@ class _CourseEditState extends State<CourseEdit> {
             ),
           ),
         ),
-        Visibility(
-          visible: widget._course != null,
-          child: AttachmentsList(
-            connection: widget._connection,
-            type: AttachmentType.course,
-            id: _id,
-          ),
-        ),
+        // Visibility(
+        //   visible: widget._course != null,
+        //   child: AttachmentsList(
+        //     connection: widget._connection,
+        //     type: AttachmentType.course,
+        //     id: _id,
+        //   ),
+        // ),
       ],
     );
   }

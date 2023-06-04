@@ -9,6 +9,8 @@ class Course {
   Course(this.id, this.name, this.description, this.duration, this.enabled,
       this.deleted);
 
+  Course.empty();
+
   @override
   String toString() {
     return 'Course{id: $id, name: $name, description: $description, duration: $duration, enabled: $enabled, deleted: $deleted}';

@@ -7,6 +7,7 @@ import 'package:scadenziario/scenes/database_selection_scene.dart';
 import 'package:scadenziario/scenes/homepage_scene.dart';
 import 'package:scadenziario/scenes/persons_scene.dart';
 import 'package:scadenziario/scenes/settings_scene.dart';
+import 'package:scadenziario/state/course_state.dart';
 import 'package:scadenziario/state/person_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -55,8 +56,11 @@ class _ScadenziarioState extends State<Scadenziario> {
               child: PersonsScene(connection: _connection as SqliteConnection),
             ),
         "/calendar": (buildContext) => const CalendarScene(),
-        "/courses": (buildContext) => CoursesScene(
-              connection: _connection as SqliteConnection,
+        "/courses": (buildContext) => ChangeNotifierProvider<CourseState>(
+              create: (context) => CourseState(),
+              child: CoursesScene(
+                connection: _connection as SqliteConnection,
+              ),
             ),
         "/settings": (buildContext) => SettingsScene(),
       },

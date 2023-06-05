@@ -29,7 +29,14 @@ class _CoursesSceneState extends State<CoursesScene> {
   }
 
   _getAllCourses() async {
-    var res = await CourseRepository(widget._connection).getAll();
+    List<Course> res = [];
+
+    if (_searchController.text.isNotEmpty) {
+      res = await CourseRepository(widget._connection)
+          .findByName(_searchController.text);
+    } else {
+      res = await CourseRepository(widget._connection).getAll();
+    }
     setState(() {
       _courses = res;
     });
@@ -87,8 +94,18 @@ class _CoursesSceneState extends State<CoursesScene> {
                   key: _formKey,
                   child: TextFormField(
                     controller: _searchController,
-                    decoration: const InputDecoration(
-                        label: Text("Cerca"), prefixIcon: Icon(Icons.search)),
+                    decoration: InputDecoration(
+                      label: Text("Cerca"),
+                      prefixIcon: Icon(Icons.search),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          _searchController.clear();
+                          _getAllCourses();
+                        },
+                        icon: const Icon(Icons.backspace),
+                      ),
+                    ),
+                    onChanged: (value) => _getAllCourses(),
                   ),
                 ),
                 ListView(

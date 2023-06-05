@@ -20,6 +20,28 @@ class PersonRepository {
     return toReturn;
   }
 
+  Future<List<Person>> searchByName(String q) async {
+    var db = await _connection.connect();
+
+    List<Person> toReturn = [];
+    var sql = '''
+      select *
+      from persons
+      where 1 = 1 and (
+        name like '%$q%'
+        or surname like '%$q%'
+        or email like '%$q%'
+      )
+      order by surname, name
+    ''';
+    var res = await db.rawQuery(sql);
+    if (res.isNotEmpty) {
+      toReturn = List.from(res.map((e) => Person.fromMap(e)));
+    }
+    await db.close();
+    return toReturn;
+  }
+
   Future<int> save(Person m) async {
     if (m.id == null) {
       throw Exception("Person has null id");

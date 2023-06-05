@@ -31,7 +31,7 @@ class _CourseEditState extends State<CourseEdit> {
   _attachmentsPopup(BuildContext context) {
     CourseState state = Provider.of<CourseState>(context, listen: false);
 
-    if (state.isSelected) {
+    if (state.hasCourse) {
       return showDialog(
         context: context,
         builder: (context) {

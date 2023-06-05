@@ -8,7 +8,7 @@ class CourseState extends ChangeNotifier {
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _durationController = TextEditingController();
 
-  bool get isSelected => _course != null;
+  bool get hasCourse => _course != null;
 
   Course get course => _course as Course;
 

@@ -40,7 +40,7 @@ class _CertificateSceneState extends State<CertificateScene> {
     List<Certification> res = [];
 
     CourseState state = Provider.of<CourseState>(context, listen: false);
-    if (state.isSelected) {
+    if (state.hasCourse) {
       res = await CertificationRepository(widget._connection)
           .getCertificationByCourse(state.course.id as String);
     }

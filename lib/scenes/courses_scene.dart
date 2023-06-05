@@ -62,7 +62,7 @@ class _CoursesSceneState extends State<CoursesScene> {
 
   Widget _sidePanelBuilder() {
     CourseState state = Provider.of<CourseState>(context, listen: false);
-    if (state.isSelected) {
+    if (state.hasCourse) {
       return Expanded(
         flex: 70,
         child: CourseEdit(
@@ -133,7 +133,7 @@ class _CoursesSceneState extends State<CoursesScene> {
           ),
           Consumer<CourseState>(
             builder: (context, state, child) => Visibility(
-              visible: state.isSelected,
+              visible: state.hasCourse,
               child: _sidePanelBuilder(),
             ),
           )
@@ -142,7 +142,7 @@ class _CoursesSceneState extends State<CoursesScene> {
       bottomNavigationBar: const Footer(),
       floatingActionButton: Consumer<CourseState>(
         builder: (context, state, child) => Visibility(
-          visible: !state.isSelected,
+          visible: !state.hasCourse,
           child: FloatingActionButton(
             onPressed: () {
               state.selectCourse(Course.empty());

@@ -95,8 +95,16 @@ class _PersonsSceneState extends State<PersonsScene> {
                   key: _formKey,
                   child: TextFormField(
                     controller: _searchController,
-                    decoration: const InputDecoration(
-                        label: Text("Cerca"), prefixIcon: Icon(Icons.search)),
+                    decoration: InputDecoration(
+                        label: const Text("Cerca"),
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            _searchController.clear();
+                            _getAllPersons();
+                          },
+                          icon: const Icon(Icons.backspace),
+                        )),
                     onChanged: (value) => _getAllPersons(),
                   ),
                 ),

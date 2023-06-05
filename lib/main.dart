@@ -41,6 +41,7 @@ class _ScadenziarioState extends State<Scadenziario> {
 
   @override
   Widget build(BuildContext context) {
+    var courseState = CourseState();
     return MaterialApp(
       title: 'Scadenziario',
       theme: ThemeData(
@@ -58,13 +59,16 @@ class _ScadenziarioState extends State<Scadenziario> {
             ),
         "/calendar": (buildContext) => const CalendarScene(),
         "/courses": (buildContext) => ChangeNotifierProvider<CourseState>(
-              create: (context) => CourseState(),
+              create: (context) => courseState,
               child: CoursesScene(
                 connection: _connection as SqliteConnection,
               ),
             ),
         "/settings": (buildContext) => SettingsScene(),
-        "/certificates": (buildContext) => const CertificateScene()
+        "/certificates": (buildContext) => ChangeNotifierProvider<CourseState>(
+              create: (context) => courseState,
+              child: const CertificateScene(),
+            ),
       },
       initialRoute: '/',
     );

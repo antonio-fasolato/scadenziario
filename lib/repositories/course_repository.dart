@@ -21,6 +21,28 @@ class CourseRepository {
     return toReturn;
   }
 
+  Future<List<Course>> findByName(String q) async {
+    var db = await _connection.connect();
+
+    List<Course> toReturn = [];
+    String sql = '''
+      select *
+      from course
+      where 1 = 1 and (
+        name like '%$q%'
+        or description like '%$q%'
+      )
+      order by name
+    ''';
+    var res = await db.rawQuery(sql);
+    if (res.isNotEmpty) {
+      toReturn = List.from(res.map((e) => Course.fromMap(e)));
+    }
+
+    await db.close();
+    return toReturn;
+  }
+
   Future<int> save(Course c) async {
     if (c.id == null) {
       throw Exception("Course with null id");

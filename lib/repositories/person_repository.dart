@@ -32,6 +32,7 @@ class PersonRepository {
         or surname like '%$q%'
         or email like '%$q%'
       )
+      order by surname, name
     ''';
     var res = await db.rawQuery(sql);
     if (res.isNotEmpty) {

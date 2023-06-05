@@ -35,15 +35,20 @@ class _PersonsSceneState extends State<PersonsScene> {
   }
 
   Future<void> _getAllPersons() async {
-    var res = await PersonRepository(widget._connection).getAll();
+    List<Person> res = [];
+    if (_searchController.text.isNotEmpty) {
+      res = await PersonRepository(widget._connection)
+          .searchByName(_searchController.text);
+    } else {
+      res = await PersonRepository(widget._connection).getAll();
+    }
     setState(() {
       _persons = res;
     });
   }
 
   Widget _sidePanelBuilder() {
-    PersonState state =
-        Provider.of<PersonState>(context, listen: false);
+    PersonState state = Provider.of<PersonState>(context, listen: false);
     return state.isSelected
         ? Expanded(
             flex: 70,
@@ -92,6 +97,7 @@ class _PersonsSceneState extends State<PersonsScene> {
                     controller: _searchController,
                     decoration: const InputDecoration(
                         label: Text("Cerca"), prefixIcon: Icon(Icons.search)),
+                    onChanged: (value) => _getAllPersons(),
                   ),
                 ),
                 ListView(
@@ -101,8 +107,7 @@ class _PersonsSceneState extends State<PersonsScene> {
                             title: Text("${p.surname} ${p.name}"),
                             leading: const Icon(Icons.account_circle),
                             onTap: () {
-                              Provider.of<PersonState>(context,
-                                      listen: false)
+                              Provider.of<PersonState>(context, listen: false)
                                   .selectPerson(p);
                             },
                           ))

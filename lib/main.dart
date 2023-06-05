@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:scadenziario/scenes/certificates_scene.dart';
 import 'package:scadenziario/scenes/courses_scene.dart';
 import 'package:scadenziario/scenes/calendar_scene.dart';
 import 'package:scadenziario/scenes/database_selection_scene.dart';
@@ -63,6 +64,7 @@ class _ScadenziarioState extends State<Scadenziario> {
               ),
             ),
         "/settings": (buildContext) => SettingsScene(),
+        "/certificates": (buildContext) => const CertificateScene()
       },
       initialRoute: '/',
     );

@@ -150,6 +150,16 @@ class _CourseEditState extends State<CourseEdit> {
                     Padding(
                       padding: const EdgeInsets.only(top: 16, bottom: 8),
                       child: ElevatedButton.icon(
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed("/certificates"),
+                        icon: const Icon(Icons.workspace_premium_outlined),
+                        label: const Text("Certificati"),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                      child: ElevatedButton.icon(
                         onPressed: () => _attachmentsPopup(context),
                         icon: const Icon(Icons.attachment_outlined),
                         label: const Text("Allegati"),

@@ -73,4 +73,12 @@ class CertificationRepository {
     await db.close();
     return toReturn;
   }
+
+  delete(String id) async {
+    var db = await _connection.connect();
+
+    await db.delete("certification", where: "id = ?", whereArgs: [id]);
+
+    await db.close();
+  }
 }

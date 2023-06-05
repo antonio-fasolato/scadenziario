@@ -76,6 +76,35 @@ class _CertificateSceneState extends State<CertificateScene> {
     return Container();
   }
 
+  _deleteCertification(String id) {
+    final navigator = Navigator.of(context);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Eliminare il certificato?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                navigator.pop();
+              },
+              child: const Text("No"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await CertificationRepository(widget._connection).delete(id);
+                await _getAllCertificates();
+                navigator.pop();
+              },
+              child: const Text("Si"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +151,8 @@ class _CertificateSceneState extends State<CertificateScene> {
                                       icon: const Icon(Icons.link_off),
                                       color: Colors.red,
                                       tooltip: "Elimina certificato",
-                                      onPressed: () {},
+                                      onPressed: () =>
+                                          _deleteCertification(c.id as String),
                                     ),
                                   ),
                                 )

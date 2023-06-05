@@ -56,4 +56,21 @@ class CertificationRepository {
     await db.close();
     return toReturn;
   }
+
+  Future<int> save(Certification c) async {
+    var db = await _connection.connect();
+    int toReturn = 0;
+
+    var res =
+        await db.query("certification", where: "id = ?", whereArgs: [c.id]);
+    if (res.isEmpty) {
+      toReturn = await db.insert("certification", c.toMap());
+    } else {
+      toReturn = await db.update("certification", c.toMap(),
+          where: "id = ?", whereArgs: [c.id]);
+    }
+
+    await db.close();
+    return toReturn;
+  }
 }

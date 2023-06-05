@@ -15,6 +15,9 @@ class CourseState extends ChangeNotifier {
   GlobalKey<FormState> _certificationFormKey = GlobalKey<FormState>();
   TextEditingController _certificationIssuingController =
       TextEditingController();
+  TextEditingController _certificationExpirationController =
+      TextEditingController();
+  TextEditingController _certificationNoteController = TextEditingController();
 
   bool get hasCourse => _course != null;
 
@@ -57,21 +60,39 @@ class CourseState extends ChangeNotifier {
   TextEditingController get certificationIssuingController =>
       _certificationIssuingController;
 
+  TextEditingController get certificationExpirationController =>
+      _certificationExpirationController;
+
+  TextEditingController get certificationNoteController =>
+      _certificationNoteController;
+
   selectCertification(Certification c) {
     _certification = c;
     _certificationFormKey = GlobalKey<FormState>();
     _certificationIssuingController =
+        TextEditingController(text: c.issuingDate ?? "");
+    _certificationExpirationController =
         TextEditingController(text: c.expirationDate ?? "");
+    _certificationNoteController =
+        TextEditingController(text: c.note ?? "");
     notifyListeners();
   }
 
   deselectCertification() {
     _certification = null;
+    _certificationIssuingController = TextEditingController();
+    _certificationExpirationController = TextEditingController();
+    _certificationNoteController = TextEditingController();
     notifyListeners();
   }
 
   changeCertificationIssuingDate(String date) {
     _certificationIssuingController.text = date;
+    notifyListeners();
+  }
+
+  changeCertificationExpirationDate(String date) {
+    _certificationExpirationController.text = date;
     notifyListeners();
   }
 }

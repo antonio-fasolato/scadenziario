@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
+import 'package:uuid/uuid.dart';
 
 class CertificationNew extends StatefulWidget {
   final SqliteConnection _connection;
@@ -85,7 +87,6 @@ class _CertificationNewState extends State<CertificationNew> {
                 style: const TextStyle(
                   decoration: TextDecoration.lineThrough,
                 ),
-                
               ),
             ),
             leading: const Icon(Icons.indeterminate_check_box_outlined)));
@@ -157,6 +158,15 @@ class _CertificationNewState extends State<CertificationNew> {
                                 children: [
                                   TextFormField(
                                     controller:
+                                        state.certificationNoteController,
+                                    decoration: const InputDecoration(
+                                        label: Text("Note"),
+                                        prefixIcon: Icon(Icons.note)),
+                                    minLines: 1,
+                                    maxLines: 10,
+                                  ),
+                                  TextFormField(
+                                    controller:
                                         state.certificationIssuingController,
                                     decoration: const InputDecoration(
                                         label: Text("Data certificato"),
@@ -175,10 +185,47 @@ class _CertificationNewState extends State<CertificationNew> {
                                               lastDate: DateTime.now().add(
                                                   const Duration(days: 365)));
                                       if (pickedDate != null) {
+                                        state.changeCertificationIssuingDate(
+                                            DateFormat.yMd('it_IT')
+                                                .format(pickedDate));
+                                        state.changeCertificationExpirationDate(
+                                            DateFormat.yMd('it_IT').format(
+                                                pickedDate.add(Duration(
+                                                    days:
+                                                        state.course.duration ??
+                                                            0 * 30))));
+                                      }
+                                    },
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 16.0),
+                                    child: Icon(Icons.arrow_downward_rounded),
+                                  ),
+                                  TextFormField(
+                                    controller:
+                                        state.certificationExpirationController,
+                                    decoration: const InputDecoration(
+                                        label: Text("Data scadenza"),
+                                        prefixIcon: Icon(Icons.calendar_month)),
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    validator: (value) => (value ?? "").isEmpty
+                                        ? "La data di scadenza del certificato"
+                                        : null,
+                                    onTap: () async {
+                                      DateTime? pickedDate =
+                                          await showDatePicker(
+                                              context: context,
+                                              initialDate: DateTime.now(),
+                                              firstDate: DateTime(1900),
+                                              lastDate: DateTime.now().add(
+                                                  const Duration(
+                                                      days: 365 * 10)));
+                                      if (pickedDate != null) {
                                         String formattedDate =
                                             DateFormat.yMd('it_IT')
                                                 .format(pickedDate);
-                                        state.changeCertificationIssuingDate(
+                                        state.changeCertificationExpirationDate(
                                             formattedDate);
                                       }
                                     },
@@ -212,39 +259,24 @@ class _CertificationNewState extends State<CertificationNew> {
                           CourseState state =
                               Provider.of<CourseState>(context, listen: false);
 
-                          // if (state.courseFormKey.currentState!.validate()) {
-                          //   Course activity = Course(
-                          //       state.course.id ?? const Uuid().v4().toString(),
-                          //       state.courseNameController.text,
-                          //       state.courseDescriptionController.text,
-                          //       int.parse(state.courseDurationController.text),
-                          //       true,
-                          //       false);
-                          //
-                          //   int res = await CourseRepository(widget._connection)
-                          //       .save(activity);
-                          //   if (res == 0) {
-                          //     if (!context.mounted) {
-                          //       return;
-                          //     }
-                          //     ScaffoldMessenger.of(context).showSnackBar(
-                          //       SnackBar(
-                          //         content: Container(
-                          //             padding: const EdgeInsets.all(16),
-                          //             height: 90,
-                          //             decoration: const BoxDecoration(
-                          //               color: Colors.red,
-                          //               borderRadius: BorderRadius.all(
-                          //                   Radius.circular(20)),
-                          //             ),
-                          //             child: const Text(
-                          //                 "Errore nel salvataggio del corso")),
-                          //       ),
-                          //     );
-                          //   } else {
-                          //     widget._confirm();
-                          //   }
-                          // }
+                          if (state.certificationFormKey.currentState!
+                                  .validate() &&
+                              _selectedPersons.isNotEmpty) {
+                            for (var p in _selectedPersons) {
+                              Certification cert = Certification(
+                                  const Uuid().v4().toString(),
+                                  state.course.id,
+                                  p,
+                                  state.certificationIssuingController.text,
+                                  state.certificationExpirationController.text,
+                                  state.certificationNoteController.text);
+
+                              await CertificationRepository(widget._connection)
+                                  .save(cert);
+                            }
+
+                            widget._confirm();
+                          }
                         },
                         child: Consumer<CourseState>(
                           builder: (context, state, child) => Text(

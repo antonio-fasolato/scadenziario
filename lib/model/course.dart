@@ -11,6 +11,15 @@ class Course {
 
   Course.empty();
 
+  Course.partial({
+    this.id,
+    this.name,
+    this.description,
+    this.duration,
+    this.enabled,
+    this.deleted,
+  });
+
   @override
   String toString() {
     return 'Course{id: $id, name: $name, description: $description, duration: $duration, enabled: $enabled, deleted: $deleted}';

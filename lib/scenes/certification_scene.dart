@@ -82,9 +82,17 @@ class _CertificateSceneState extends State<CertificateScene> {
                   children: _certificates
                       .map(
                         (c) => ListTile(
-                          title: Text(c.note as String),
-                          subtitle: const Text("Subtitle"),
+                          title: Text(
+                              "${c.person?.surname ?? ""} ${c.person?.name ?? ""}"),
+                          subtitle: Text(
+                              "Conseguito il ${c.issuingDate} - Prossima scadenza il ${c.expirationDate}"),
                           leading: const Icon(Icons.workspace_premium_outlined),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.link_off),
+                            color: Colors.red,
+                            tooltip: "Elimina certificato",
+                            onPressed: () {},
+                          ),
                         ),
                       )
                       .toList(),

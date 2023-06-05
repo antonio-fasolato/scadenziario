@@ -1,18 +1,46 @@
+import 'package:intl/intl.dart';
+import 'package:scadenziario/model/course.dart';
+import 'package:scadenziario/model/person.dart';
+
 class Certification {
   String? id;
-  String? course_id;
-  String? person_id;
-  String? issuing_date;
-  String? expiration_date;
+  String? courseId;
+  String? personId;
+  String? issuingDate;
+  String? expirationDate;
   String? note;
 
-  Certification(this.id, this.course_id, this.person_id, this.issuing_date,
-      this.expiration_date, this.note);
+  Person? person;
+  Course? course;
+
+  Certification(this.id, this.courseId, this.personId, this.issuingDate,
+      this.expirationDate, this.note);
 
   Certification.empty();
 
   factory Certification.fromMap(Map<String, dynamic> map) {
-    return Certification(
+    Person p = Person.partial(
+      id: map["person_id"],
+      name: map["name"],
+      surname: map["surname"],
+      birthdate: DateFormat.yMd('it_IT').parse(map["birthdate"]),
+      email: map["email"],
+      phone: map["phone"],
+      mobile: map["mobile"],
+      enabled: true,
+      deleted: false,
+    );
+
+    Course c = Course.partial(
+      id: map["course_id"],
+      name: map["course_name"],
+      description: map["course_description"],
+      duration: map["duration"],
+      enabled: true,
+      deleted: false,
+    );
+
+    Certification toReturn = Certification(
       map["id"],
       map["course_id"],
       map["person_id"],
@@ -20,21 +48,26 @@ class Certification {
       map["expiration_date"],
       map["note"],
     );
+
+    toReturn.person = p;
+    toReturn.course = c;
+
+    return toReturn;
   }
 
   Map<String, dynamic> toMap() {
     return {
       "id": id,
-      "course_id": course_id,
-      "person_id": person_id,
-      "issuing_date": issuing_date,
-      "expiration_date": expiration_date,
+      "course_id": courseId,
+      "person_id": personId,
+      "issuing_date": issuingDate,
+      "expiration_date": expirationDate,
       "note": note,
     };
   }
 
   @override
   String toString() {
-    return 'Certification{id: $id, course_id: $course_id, person_id: $person_id, issuing_date: $issuing_date, expiration_date: $expiration_date, note: $note}';
+    return 'Certification{id: $id, course_id: $courseId, person_id: $personId, issuing_date: $issuingDate, expiration_date: $expirationDate, note: $note}';
   }
 }

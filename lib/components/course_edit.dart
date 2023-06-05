@@ -121,7 +121,7 @@ class _CourseEditState extends State<CourseEdit> {
                         TextFormField(
                           controller: state.durationController,
                           decoration: const InputDecoration(
-                              label: Text("Durata"),
+                              label: Text("Durata (mesi)"),
                               prefixIcon: Icon(Icons.timer)),
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))

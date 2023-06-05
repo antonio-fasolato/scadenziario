@@ -3,37 +3,37 @@ import 'package:scadenziario/model/course.dart';
 
 class CourseState extends ChangeNotifier {
   Course? _course;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _durationController = TextEditingController();
+  final GlobalKey<FormState> _courseFormKey = GlobalKey<FormState>();
+  TextEditingController _courseNameController = TextEditingController();
+  TextEditingController _courseDescriptionController = TextEditingController();
+  TextEditingController _courseDurationController = TextEditingController();
 
   bool get hasCourse => _course != null;
 
   Course get course => _course as Course;
 
-  TextEditingController get nameController => _nameController;
+  TextEditingController get courseNameController => _courseNameController;
 
-  TextEditingController get descriptionController => _descriptionController;
+  TextEditingController get courseDescriptionController => _courseDescriptionController;
 
-  TextEditingController get durationController => _durationController;
+  TextEditingController get courseDurationController => _courseDurationController;
 
-  GlobalKey<FormState> get formKey => _formKey;
+  GlobalKey<FormState> get courseFormKey => _courseFormKey;
 
   selectCourse(Course course) {
     _course = course;
-    _nameController = TextEditingController(text: course.name);
-    _descriptionController = TextEditingController(text: course.description);
-    _durationController = TextEditingController(
+    _courseNameController = TextEditingController(text: course.name);
+    _courseDescriptionController = TextEditingController(text: course.description);
+    _courseDurationController = TextEditingController(
         text: course.duration == null ? "" : course.duration.toString());
     notifyListeners();
   }
 
   deselectCourse() {
     _course = null;
-    _nameController = TextEditingController();
-    _descriptionController = TextEditingController();
-    _durationController = TextEditingController();
+    _courseNameController = TextEditingController();
+    _courseDescriptionController = TextEditingController();
+    _courseDurationController = TextEditingController();
     notifyListeners();
   }
 }

@@ -96,12 +96,12 @@ class _CourseEditState extends State<CourseEdit> {
                 ),
                 Consumer<CourseState>(
                   builder: (context, state, child) => Form(
-                    key: state.formKey,
+                    key: state.courseFormKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextFormField(
-                          controller: state.nameController,
+                          controller: state.courseNameController,
                           decoration: const InputDecoration(
                               label: Text("Nome"),
                               prefixIcon: Icon(Icons.title)),
@@ -111,14 +111,14 @@ class _CourseEditState extends State<CourseEdit> {
                               : null,
                         ),
                         TextFormField(
-                          controller: state.descriptionController,
+                          controller: state.courseDescriptionController,
                           decoration: const InputDecoration(
                               label: Text("Descrizione"),
                               prefixIcon: Icon(Icons.title)),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                         ),
                         TextFormField(
-                          controller: state.durationController,
+                          controller: state.courseDurationController,
                           decoration: const InputDecoration(
                               label: Text("Durata (mesi)"),
                               prefixIcon: Icon(Icons.timer)),
@@ -172,12 +172,12 @@ class _CourseEditState extends State<CourseEdit> {
                           CourseState state =
                               Provider.of<CourseState>(context, listen: false);
 
-                          if (state.formKey.currentState!.validate()) {
+                          if (state.courseFormKey.currentState!.validate()) {
                             Course activity = Course(
                                 state.course.id ?? const Uuid().v4().toString(),
-                                state.nameController.text,
-                                state.descriptionController.text,
-                                int.parse(state.durationController.text),
+                                state.courseNameController.text,
+                                state.courseDescriptionController.text,
+                                int.parse(state.courseDurationController.text),
                                 true,
                                 false);
 

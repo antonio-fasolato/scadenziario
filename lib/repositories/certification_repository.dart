@@ -36,4 +36,24 @@ class CertificationRepository {
     await db.close();
     return toReturn;
   }
+
+  Future<List<String>> getPersonsFromCourseCertificate(String courseId) async {
+    var db = await _connection.connect();
+    List<String> toReturn = [];
+
+    String sql = """
+      select person_id
+      from certification
+      where 1 = 1
+        and course_id = '$courseId'
+    """;
+
+    var res = await db.rawQuery(sql);
+    if (res.isNotEmpty) {
+      toReturn = List.from(res.map((e) => e["person_id"]));
+    }
+
+    await db.close();
+    return toReturn;
+  }
 }

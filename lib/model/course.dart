@@ -25,14 +25,15 @@ class Course {
     return 'Course{id: $id, name: $name, description: $description, duration: $duration, enabled: $enabled, deleted: $deleted}';
   }
 
-  factory Course.fromMap(Map<String, dynamic> map) {
+  factory Course.fromMap(
+      {required Map<String, dynamic> map, String prefix = ""}) {
     return Course(
-      map["id"],
-      map["name"],
-      map["description"],
-      map["duration"],
-      map["enabled"] == 1,
-      map["deleted"] == 1,
+      map["${prefix}id"],
+      map["${prefix}name"],
+      map["${prefix}description"],
+      map["${prefix}duration"],
+      map["${prefix}enabled"] == 1,
+      map["${prefix}deleted"] == 1,
     );
   }
 

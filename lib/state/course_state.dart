@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/model/course.dart';
+import 'package:scadenziario/model/person.dart';
 
 class CourseState extends ChangeNotifier {
   // COURSES
@@ -12,6 +13,7 @@ class CourseState extends ChangeNotifier {
 
   // CERTIFICATIONS
   Certification? _certification;
+  Person? _person;
   GlobalKey<FormState> _certificationFormKey = GlobalKey<FormState>();
   TextEditingController _certificationIssuingController =
       TextEditingController();
@@ -22,6 +24,10 @@ class CourseState extends ChangeNotifier {
   bool get hasCourse => _course != null;
 
   Course get course => _course as Course;
+
+  bool get hasPerson => _person != null;
+
+  Person get person => _person as Person;
 
   TextEditingController get courseNameController => _courseNameController;
 
@@ -66,8 +72,9 @@ class CourseState extends ChangeNotifier {
   TextEditingController get certificationNoteController =>
       _certificationNoteController;
 
-  selectCertification(Certification c) {
+  selectCertification(Certification c, Person person) {
     _certification = c;
+    _person = person;
     _certificationFormKey = GlobalKey<FormState>();
     _certificationIssuingController =
         TextEditingController(text: c.issuingDate ?? "");
@@ -80,6 +87,7 @@ class CourseState extends ChangeNotifier {
 
   deselectCertification() {
     _certification = null;
+    _person = null;
     _certificationIssuingController = TextEditingController();
     _certificationExpirationController = TextEditingController();
     _certificationNoteController = TextEditingController();

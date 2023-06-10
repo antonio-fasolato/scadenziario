@@ -14,7 +14,7 @@ class CourseRepository {
     List<Course> toReturn = [];
     var res = await db.query("course", orderBy: "name");
     if (res.isNotEmpty) {
-      toReturn = List.from(res.map((e) => Course.fromMap(e)));
+      toReturn = List.from(res.map((e) => Course.fromMap(map: e)));
     }
 
     await db.close();
@@ -36,7 +36,7 @@ class CourseRepository {
     ''';
     var res = await db.rawQuery(sql);
     if (res.isNotEmpty) {
-      toReturn = List.from(res.map((e) => Course.fromMap(e)));
+      toReturn = List.from(res.map((e) => Course.fromMap(map: e)));
     }
 
     await db.close();

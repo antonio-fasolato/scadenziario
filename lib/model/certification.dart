@@ -18,7 +18,21 @@ class Certification {
 
   Certification.empty();
 
-  factory Certification.fromMap(Map<String, dynamic> map) {
+  factory Certification.fromMap(
+      {required Map<String, dynamic> map, String prefix = ""}) {
+    Certification toReturn = Certification(
+      map["${prefix}id"],
+      map["${prefix}course_id"],
+      map["${prefix}person_id"],
+      map["${prefix}issuing_date"],
+      map["${prefix}expiration_date"],
+      map["${prefix}note"],
+    );
+
+    return toReturn;
+  }
+
+  factory Certification.fromMapWithRelationships(Map<String, dynamic> map) {
     Person p = Person.partial(
       id: map["person_id"],
       name: map["name"],

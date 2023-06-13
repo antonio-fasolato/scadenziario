@@ -18,24 +18,21 @@ class CertificationRepository {
     List<CertificationDto> toReturn = [];
 
     String sql = """
+    select *
+    from persons as p
+    left join (
       select
-        p.*,
         c.id as c_id, c.course_id as c_course_id, c.person_id as c_person_id, c.issuing_date as c_issuing_date, c.expiration_date as c_expiration_date, c.note as c_note,
-        co.id as co_id, co.name as co_name, co.description as co_description, co.duration as co_duration, co.enabled as co_enabled, co.deleted as co_deleted
-      from persons p
-      left join certification c on
-        c.person_id = p.id
-      left join course as co on
-        c.course_id = co.id
+            co.id as co_id, co.name as co_name, co.description as co_description, co.duration as co_duration, co.enabled as co_enabled, co.deleted as co_deleted
+      from course as co
+      inner join certification as c on
+        co.id = c.course_id
       where 1 = 1
-        and p.deleted = 0
-        and (
-          co.id is null OR (
-            co.deleted = 0
-            and co.id = '$id'
-          )
-        )
-    """;
+        and co.deleted = 0
+        and co.id = '$id'
+    ) as x on
+      x.c_person_id = p.id
+	    """;
 
     var res = await db.rawQuery(sql);
     if (res.isNotEmpty) {

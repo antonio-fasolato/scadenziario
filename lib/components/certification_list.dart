@@ -9,11 +9,14 @@ import 'package:scadenziario/state/course_state.dart';
 
 class CertificationsList extends StatefulWidget {
   final SqliteConnection _connection;
+  final void Function() _getAllCertifications;
 
   const CertificationsList({
     super.key,
     required SqliteConnection connection,
-  }) : _connection = connection;
+    required Function() getAllCertifications,
+  })  : _connection = connection,
+        _getAllCertifications = getAllCertifications;
 
   @override
   State<CertificationsList> createState() => _CertificationsListState();
@@ -22,12 +25,11 @@ class CertificationsList extends StatefulWidget {
 class _CertificationsListState extends State<CertificationsList> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
-  List<CertificationDto> _certificates = [];
 
   @override
   void initState() {
     super.initState();
-    _getAllCertifications();
+    widget._getAllCertifications();
   }
 
   @override
@@ -35,20 +37,6 @@ class _CertificationsListState extends State<CertificationsList> {
     _searchController.dispose();
 
     super.dispose();
-  }
-
-  _getAllCertifications() async {
-    List<CertificationDto> res = [];
-
-    CourseState state = Provider.of<CourseState>(context, listen: false);
-    if (state.hasCourse) {
-      res = await CertificationRepository(widget._connection)
-          .getPersonsAndCertificationsByCourse(state.course.id as String);
-    }
-
-    setState(() {
-      _certificates = res;
-    });
   }
 
   Widget _buildCertificationTile(CertificationDto c) {
@@ -76,7 +64,8 @@ class _CertificationsListState extends State<CertificationsList> {
         trailing: IconButton(
           icon: const Icon(Icons.edit),
           tooltip: "Dettagli certificato",
-          onPressed: () => _editCertification(c.certification?.id as String, c.person),
+          onPressed: () =>
+              _editCertification(c.certification?.id as String, c.person),
         ),
         selected: state.hasCertification &&
             state.certification.id == c.certification?.id,
@@ -102,35 +91,6 @@ class _CertificationsListState extends State<CertificationsList> {
     }
   }
 
-  _deleteCertification(String id) {
-    final navigator = Navigator.of(context);
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Eliminare il certificato?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                navigator.pop();
-              },
-              child: const Text("No"),
-            ),
-            TextButton(
-              onPressed: () async {
-                await CertificationRepository(widget._connection).delete(id);
-                await _getAllCertifications();
-                navigator.pop();
-              },
-              child: const Text("Si"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -146,13 +106,15 @@ class _CertificationsListState extends State<CertificationsList> {
             ),
           ),
         ),
-        ListView(
-          shrinkWrap: true,
-          children: _certificates
-              .map(
-                (c) => _buildCertificationTile(c),
-              )
-              .toList(),
+        Consumer<CourseState>(
+          builder: (context, state, child) => ListView(
+            shrinkWrap: true,
+            children: state.certificates
+                .map(
+                  (c) => _buildCertificationTile(c),
+                )
+                .toList(),
+          ),
         ),
       ],
     );

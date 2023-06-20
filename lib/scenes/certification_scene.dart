@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:scadenziario/components/certification_list.dart';
 import 'package:scadenziario/components/certification_edit.dart';
 import 'package:scadenziario/components/footer.dart';
+import 'package:scadenziario/dto/certification_dto.dart';
+import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
 
@@ -24,28 +26,27 @@ class _CertificateSceneState extends State<CertificateScene> {
     super.initState();
   }
 
+  _getAllCertifications() async {
+    CourseState state = Provider.of<CourseState>(context, listen: false);
+    List<CertificationDto> res = [];
+
+    res = await CertificationRepository(widget._connection)
+        .getPersonsAndCertificationsByCourse(state.course.id as String);
+
+    state.setCertificates(res);
+  }
+
   _certificateSaved() {
     CourseState state = Provider.of<CourseState>(context, listen: false);
     state.deselectCertification();
+    _getAllCertifications();
   }
 
   void _editCancelled() {
     CourseState state = Provider.of<CourseState>(context, listen: false);
     state.deselectCertification();
+    _getAllCertifications();
   }
-
-  // Widget _sidePanelBuilder() {
-  //   CourseState state = Provider.of<CourseState>(context, listen: false);
-  //   if (state.hasCertification) {
-  //     return CertificationNew(
-  //       confirm: _certificateSaved,
-  //       cancel: _editCancelled,
-  //       connection: widget._connection,
-  //     );
-  //   }
-  //
-  //   return Container();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +62,12 @@ class _CertificateSceneState extends State<CertificateScene> {
         children: [
           Expanded(
             child: Consumer<CourseState>(
-              builder: (context, state, child) =>
-                  CertificationsList(connection: widget._connection),
+              builder: (context, state, child) => state.hasCourse
+                  ? CertificationsList(
+                      connection: widget._connection,
+                      getAllCertifications: _getAllCertifications,
+                    )
+                  : Container(),
             ),
           ),
           Expanded(

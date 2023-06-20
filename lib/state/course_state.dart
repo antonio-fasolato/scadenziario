@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/model/person.dart';
@@ -20,6 +21,7 @@ class CourseState extends ChangeNotifier {
   TextEditingController _certificationExpirationController =
       TextEditingController();
   TextEditingController _certificationNoteController = TextEditingController();
+  List<CertificationDto> _certificates = [];
 
   bool get hasCourse => _course != null;
 
@@ -72,6 +74,8 @@ class CourseState extends ChangeNotifier {
   TextEditingController get certificationNoteController =>
       _certificationNoteController;
 
+  List<CertificationDto> get certificates => _certificates;
+
   selectCertification(Certification c, Person person) {
     _certification = c;
     _person = person;
@@ -80,8 +84,7 @@ class CourseState extends ChangeNotifier {
         TextEditingController(text: c.issuingDate ?? "");
     _certificationExpirationController =
         TextEditingController(text: c.expirationDate ?? "");
-    _certificationNoteController =
-        TextEditingController(text: c.note ?? "");
+    _certificationNoteController = TextEditingController(text: c.note ?? "");
     notifyListeners();
   }
 
@@ -101,6 +104,11 @@ class CourseState extends ChangeNotifier {
 
   changeCertificationExpirationDate(String date) {
     _certificationExpirationController.text = date;
+    notifyListeners();
+  }
+
+  setCertificates(List<CertificationDto> certificates) {
+    _certificates = certificates;
     notifyListeners();
   }
 }

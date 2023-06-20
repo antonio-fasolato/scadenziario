@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:scadenziario/model/certification.dart';
+import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
+import 'package:uuid/uuid.dart';
 
 class CertificationEdit extends StatefulWidget {
   final SqliteConnection _connection;
@@ -23,6 +26,38 @@ class CertificationEdit extends StatefulWidget {
 }
 
 class _CertificationEditState extends State<CertificationEdit> {
+  _deleteCertification(String? id) {
+    if (id == null) {
+      return;
+    }
+    final navigator = Navigator.of(context);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Eliminare il certificato?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                navigator.pop();
+              },
+              child: const Text("No"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await CertificationRepository(widget._connection).delete(id);
+                widget._confirm();
+                navigator.pop();
+              },
+              child: const Text("Si"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -68,8 +103,7 @@ class _CertificationEditState extends State<CertificationEdit> {
                             // mainAxisSize: MainAxisSize.min,
                             children: [
                               TextFormField(
-                                controller:
-                                    state.certificationNoteController,
+                                controller: state.certificationNoteController,
                                 decoration: const InputDecoration(
                                     label: Text("Note"),
                                     prefixIcon: Icon(Icons.note)),
@@ -88,13 +122,12 @@ class _CertificationEditState extends State<CertificationEdit> {
                                     ? "La data del certificato è obbligatoria"
                                     : null,
                                 onTap: () async {
-                                  DateTime? pickedDate =
-                                      await showDatePicker(
-                                          context: context,
-                                          initialDate: DateTime.now(),
-                                          firstDate: DateTime(1900),
-                                          lastDate: DateTime.now().add(
-                                              const Duration(days: 365)));
+                                  DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(1900),
+                                      lastDate: DateTime.now()
+                                          .add(const Duration(days: 365)));
                                   if (pickedDate != null) {
                                     state.changeCertificationIssuingDate(
                                         DateFormat.yMd('it_IT')
@@ -102,9 +135,8 @@ class _CertificationEditState extends State<CertificationEdit> {
                                     state.changeCertificationExpirationDate(
                                         DateFormat.yMd('it_IT').format(
                                             pickedDate.add(Duration(
-                                                days:
-                                                    state.course.duration ??
-                                                        0 * 30))));
+                                                days: state.course.duration ??
+                                                    0 * 30))));
                                   }
                                 },
                               ),
@@ -124,14 +156,12 @@ class _CertificationEditState extends State<CertificationEdit> {
                                     ? "La data di scadenza del certificato"
                                     : null,
                                 onTap: () async {
-                                  DateTime? pickedDate =
-                                      await showDatePicker(
-                                          context: context,
-                                          initialDate: DateTime.now(),
-                                          firstDate: DateTime(1900),
-                                          lastDate: DateTime.now().add(
-                                              const Duration(
-                                                  days: 365 * 10)));
+                                  DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(1900),
+                                      lastDate: DateTime.now()
+                                          .add(const Duration(days: 365 * 10)));
                                   if (pickedDate != null) {
                                     String formattedDate =
                                         DateFormat.yMd('it_IT')
@@ -155,7 +185,8 @@ class _CertificationEditState extends State<CertificationEdit> {
                       child: ElevatedButton(
                         onPressed: widget._cancel,
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent),
+                          backgroundColor: Colors.redAccent,
+                        ),
                         child: const Text("Annulla"),
                       ),
                     ),
@@ -163,29 +194,43 @@ class _CertificationEditState extends State<CertificationEdit> {
                     Padding(
                       padding:
                           const EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          CourseState state =
+                              Provider.of<CourseState>(context, listen: false);
+                          _deleteCertification(state.certification?.id);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                        ),
+                        icon: const Icon(Icons.delete),
+                        label: const Text("Elimina"),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16, top: 16, bottom: 8),
                       child: ElevatedButton(
                         onPressed: () async {
-                          // CourseState state =
-                          //     Provider.of<CourseState>(context, listen: false);
-                          //
-                          // if (state.certificationFormKey.currentState!
-                          //         .validate() &&
-                          //     _selectedPersons.isNotEmpty) {
-                          //   for (var p in _selectedPersons) {
-                          //     Certification cert = Certification(
-                          //         const Uuid().v4().toString(),
-                          //         state.course.id,
-                          //         p,
-                          //         state.certificationIssuingController.text,
-                          //         state.certificationExpirationController.text,
-                          //         state.certificationNoteController.text);
-                          //
-                          //     await CertificationRepository(widget._connection)
-                          //         .save(cert);
-                          //   }
-                          //
-                          //   widget._confirm();
-                          // }
+                          CourseState state =
+                              Provider.of<CourseState>(context, listen: false);
+
+                          if (state.certificationFormKey.currentState!
+                              .validate()) {
+                            Certification cert = Certification(
+                                state.certification.id ??
+                                    const Uuid().v4().toString(),
+                                state.course.id,
+                                state.person.id,
+                                state.certificationIssuingController.text,
+                                state.certificationExpirationController.text,
+                                state.certificationNoteController.text);
+
+                            await CertificationRepository(widget._connection)
+                                .save(cert);
+
+                            widget._confirm();
+                          }
                         },
                         child: Consumer<CourseState>(
                           builder: (context, state, child) => Text(

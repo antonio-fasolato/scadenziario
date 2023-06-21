@@ -179,24 +179,26 @@ class _CertificationEditState extends State<CertificationEdit> {
               if (state.checkedCertifications.isEmpty) {
                 // Single certification edit
                 Certification cert = Certification(
-                    state.certification?.id as String,
-                    state.course.id,
-                    state.person.id,
-                    state.certificationIssuingController.text,
-                    state.certificationExpirationController.text,
-                    state.certificationNoteController.text);
+                  state.certification?.id as String,
+                  state.course.id,
+                  state.person.id,
+                  state.certificationIssuingController.text,
+                  state.certificationExpirationController.text,
+                  state.certificationNoteController.text,
+                );
 
                 await CertificationRepository(widget._connection).save(cert);
               } else {
                 // New certifications
                 for (var personId in state.checkedCertifications) {
                   Certification cert = Certification(
-                      const Uuid().v4(),
-                      state.course.id,
-                      personId,
-                      state.certificationIssuingController.text,
-                      state.certificationExpirationController.text,
-                      state.certificationNoteController.text);
+                    const Uuid().v4(),
+                    state.course.id,
+                    personId,
+                    state.certificationIssuingController.text,
+                    state.certificationExpirationController.text,
+                    state.certificationNoteController.text,
+                  );
 
                   await CertificationRepository(widget._connection).save(cert);
                 }

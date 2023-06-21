@@ -47,9 +47,17 @@ class _CertificationsListState extends State<CertificationsList> {
         title: Text("${c.person?.surname ?? ""} ${c.person?.name ?? ""}"),
         leading: const Icon(Icons.workspace_premium_outlined),
         trailing: IconButton(
-          icon: const Icon(Icons.add),
-          tooltip: "Aggiungi certificato",
-          onPressed: () => _addCertification(c.person),
+          icon: state.hasCertification
+              ? const Icon(Icons.edit_off)
+              : state.isCertificationChecked(c.person.id as String)
+                  ? const Icon(Icons.check_box_outlined)
+                  : const Icon(Icons.check_box_outline_blank),
+          tooltip: state.hasCertification ? "" : "Aggiungi certificato",
+          onPressed: () {
+            if (!state.hasCertification) {
+              state.checkCertification(c.person.id as String);
+            }
+          },
         ),
         selected: state.hasPerson && state.person.id == c.person?.id,
         selectedTileColor: Colors.grey,
@@ -61,14 +69,28 @@ class _CertificationsListState extends State<CertificationsList> {
         subtitle: Text(
             "Conseguito il ${c.certification?.issuingDate} - Prossima scadenza il ${c.certification?.expirationDate}"),
         leading: const Icon(Icons.workspace_premium_outlined),
-        trailing: IconButton(
-          icon: const Icon(Icons.edit),
-          tooltip: "Dettagli certificato",
-          onPressed: () =>
-              _editCertification(c.certification?.id as String, c.person),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            state.checkedCertifications.isEmpty
+                ? IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.attachment_outlined),
+                    tooltip: "Allegato del certificato",
+                  )
+                : Container(),
+            IconButton(
+              icon: state.checkedCertifications.isEmpty
+                  ? const Icon(Icons.edit)
+                  : const Icon(Icons.edit_off),
+              tooltip: "Dettagli certificato",
+              onPressed: () =>
+                  _editCertification(c.certification?.id as String, c.person),
+            ),
+          ],
         ),
         selected: state.hasCertification &&
-            state.certification.id == c.certification?.id,
+            state.certification?.id == c.certification?.id,
         selectedTileColor: Colors.grey,
         selectedColor: Colors.white70,
       );

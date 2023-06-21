@@ -22,7 +22,7 @@ class CourseState extends ChangeNotifier {
       TextEditingController();
   TextEditingController _certificationNoteController = TextEditingController();
   List<CertificationDto> _certifications = [];
-  List<String> _selectedCertifications = [];
+  List<String> _checkedCertifications = [];
 
   bool get hasCourse => _course != null;
 
@@ -49,6 +49,8 @@ class CourseState extends ChangeNotifier {
         TextEditingController(text: course.description);
     _courseDurationController = TextEditingController(
         text: course.duration == null ? "" : course.duration.toString());
+    _certification = null;
+    _checkedCertifications = [];
     notifyListeners();
   }
 
@@ -57,10 +59,12 @@ class CourseState extends ChangeNotifier {
     _courseNameController = TextEditingController();
     _courseDescriptionController = TextEditingController();
     _courseDurationController = TextEditingController();
+    _certification = null;
+    _checkedCertifications = [];
     notifyListeners();
   }
 
-  Certification get certification => _certification as Certification;
+  Certification? get certification => _certification;
 
   bool get hasCertification => _certification != null;
 
@@ -95,6 +99,7 @@ class CourseState extends ChangeNotifier {
     _certificationIssuingController = TextEditingController();
     _certificationExpirationController = TextEditingController();
     _certificationNoteController = TextEditingController();
+    _checkedCertifications = [];
     notifyListeners();
   }
 
@@ -110,6 +115,20 @@ class CourseState extends ChangeNotifier {
 
   setCertifications(List<CertificationDto> certificates) {
     _certifications = certificates;
+    notifyListeners();
+  }
+
+  List<String> get checkedCertifications => _checkedCertifications;
+
+  bool isCertificationChecked(String id) =>
+      _checkedCertifications.contains(id);
+
+  checkCertification(String id) {
+    if (isCertificationChecked(id)) {
+      _checkedCertifications.remove(id);
+    } else {
+      _checkedCertifications.add(id);
+    }
     notifyListeners();
   }
 }

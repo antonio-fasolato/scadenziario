@@ -72,7 +72,8 @@ class _CertificateSceneState extends State<CertificateScene> {
           ),
           Expanded(
             child: Consumer<CourseState>(
-              builder: (context, state, child) => state.hasCertification
+              builder: (context, state, child) => state.hasCertification ||
+                      state.checkedCertifications.isNotEmpty
                   ? CertificationEdit(
                       connection: widget._connection,
                       confirm: _certificateSaved,

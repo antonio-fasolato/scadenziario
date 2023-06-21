@@ -21,19 +21,57 @@ class DatabaseSelectionScene extends StatefulWidget {
 
 class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
   bool _showRecentFiles = false;
+  List<String> _recentFiles = [];
 
-  List<ListTile> _getRecentFiles() {
-    List<String> files = widget._sharedPreferences
-            ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
-        [];
+  @override
+  void initState() {
+    super.initState();
 
-    return List.of(files.reversed.map((f) => ListTile(
+    _getRecentFiles();
+  }
+
+  _getRecentFiles() {
+    setState(() {
+      _recentFiles = widget._sharedPreferences
+              ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
+          [];
+    });
+  }
+
+  List<Widget> _recentFilesTilesBuilder() {
+    return List.of(
+      _recentFiles.reversed.map(
+        (f) => ListTile(
           contentPadding: const EdgeInsets.all(1),
           title: Text(f),
           onTap: () {
             _openDatabase(f);
           },
-        )));
+          trailing: IconButton(
+            onPressed: () => _deleteRecent(f),
+            icon: const Icon(Icons.clear),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _deleteRecent(String path) {
+    var oldFiles = widget._sharedPreferences
+            ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
+        [];
+    oldFiles.remove(path);
+
+    if (oldFiles.length > 10) {
+      oldFiles.sublist(1);
+    }
+
+    widget._sharedPreferences
+        .setStringList(DatabaseSelectionScene._recentFilesKey, oldFiles);
+
+    setState(() {
+      _recentFiles = oldFiles;
+    });
   }
 
   void _openDatabase(String path) {
@@ -47,9 +85,8 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
     var oldFiles = widget._sharedPreferences
             ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
         [];
-    if (!oldFiles.contains(path)) {
-      oldFiles.add(path);
-    }
+    oldFiles.remove(path);
+    oldFiles.add(path);
 
     if (oldFiles.length > 10) {
       oldFiles.sublist(1);
@@ -57,6 +94,10 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
 
     widget._sharedPreferences
         .setStringList(DatabaseSelectionScene._recentFilesKey, oldFiles);
+
+    setState(() {
+      _recentFiles = oldFiles;
+    });
   }
 
   Future<void> _selectDatabaseFile(BuildContext context) async {
@@ -87,17 +128,21 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Selezionare file di archivio",
-                          style: TextStyle(
-                              fontSize: 26, fontWeight: FontWeight.bold)),
+                      const Text(
+                        "Selezionare file di archivio",
+                        style: TextStyle(
+                            fontSize: 26, fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(
                         height: 20,
                       ),
-                      ElevatedButton(
-                          onPressed: () async {
-                            await _selectDatabaseFile(context);
-                          },
-                          child: const Text("Seleziona database")),
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          await _selectDatabaseFile(context);
+                        },
+                        icon: const Icon(Icons.file_open),
+                        label: const Text("Apri o crea file"),
+                      ),
                       const SizedBox(
                         height: 20,
                       ),
@@ -116,7 +161,7 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
                         visible: _showRecentFiles,
                         child: ListView(
                           shrinkWrap: true,
-                          children: _getRecentFiles(),
+                          children: _recentFilesTilesBuilder(),
                         ),
                       )
                     ],

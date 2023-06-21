@@ -1,11 +1,17 @@
 import 'dart:typed_data';
 
 class Attachment {
-  String id;
-  String fileName;
+  String? id;
+  String? fileName;
   Uint8List? data;
 
   Attachment(this.id, this.fileName, this.data);
+
+  Attachment.partial({
+    this.id,
+    this.fileName,
+    this.data,
+  });
 
   @override
   String toString() {

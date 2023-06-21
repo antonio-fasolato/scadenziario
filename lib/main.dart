@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:scadenziario/scenes/certification_scene.dart';
 import 'package:scadenziario/scenes/courses_scene.dart';
 import 'package:scadenziario/scenes/calendar_scene.dart';
 import 'package:scadenziario/scenes/database_selection_scene.dart';
@@ -31,6 +32,7 @@ class Scadenziario extends StatefulWidget {
 
 class _ScadenziarioState extends State<Scadenziario> {
   SqliteConnection? _connection;
+  final courseState = CourseState();
 
   void _setConnection(SqliteConnection connection) {
     setState(() {
@@ -56,13 +58,19 @@ class _ScadenziarioState extends State<Scadenziario> {
               child: PersonsScene(connection: _connection as SqliteConnection),
             ),
         "/calendar": (buildContext) => const CalendarScene(),
-        "/courses": (buildContext) => ChangeNotifierProvider<CourseState>(
-              create: (context) => CourseState(),
+        "/courses": (buildContext) => ChangeNotifierProvider<CourseState>.value(
+              value: courseState,
               child: CoursesScene(
                 connection: _connection as SqliteConnection,
               ),
             ),
         "/settings": (buildContext) => SettingsScene(),
+        "/certificates": (buildContext) =>
+            ChangeNotifierProvider<CourseState>.value(
+              value: courseState,
+              child:
+                  CertificateScene(connection: _connection as SqliteConnection),
+            )
       },
       initialRoute: '/',
     );

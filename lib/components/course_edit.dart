@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:scadenziario/components/attachments_list.dart';
 import 'package:scadenziario/model/course.dart';
-import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/course_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
@@ -28,10 +27,12 @@ class CourseEdit extends StatefulWidget {
 }
 
 class _CourseEditState extends State<CourseEdit> {
+  final GlobalKey<FormState> _courseFormKey = GlobalKey<FormState>();
+
   _attachmentsPopup(BuildContext context) {
     CourseState state = Provider.of<CourseState>(context, listen: false);
 
-    if (state.isSelected) {
+    if (state.hasCourse) {
       return showDialog(
         context: context,
         builder: (context) {
@@ -97,12 +98,12 @@ class _CourseEditState extends State<CourseEdit> {
                 ),
                 Consumer<CourseState>(
                   builder: (context, state, child) => Form(
-                    key: state.formKey,
+                    key: _courseFormKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextFormField(
-                          controller: state.nameController,
+                          controller: state.courseNameController,
                           decoration: const InputDecoration(
                               label: Text("Nome"),
                               prefixIcon: Icon(Icons.title)),
@@ -112,14 +113,14 @@ class _CourseEditState extends State<CourseEdit> {
                               : null,
                         ),
                         TextFormField(
-                          controller: state.descriptionController,
+                          controller: state.courseDescriptionController,
                           decoration: const InputDecoration(
                               label: Text("Descrizione"),
                               prefixIcon: Icon(Icons.title)),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                         ),
                         TextFormField(
-                          controller: state.durationController,
+                          controller: state.courseDurationController,
                           decoration: const InputDecoration(
                               label: Text("Durata (mesi)"),
                               prefixIcon: Icon(Icons.timer)),
@@ -150,6 +151,16 @@ class _CourseEditState extends State<CourseEdit> {
                     Padding(
                       padding: const EdgeInsets.only(top: 16, bottom: 8),
                       child: ElevatedButton.icon(
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed("/certificates"),
+                        icon: const Icon(Icons.workspace_premium_outlined),
+                        label: const Text("Certificati"),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                      child: ElevatedButton.icon(
                         onPressed: () => _attachmentsPopup(context),
                         icon: const Icon(Icons.attachment_outlined),
                         label: const Text("Allegati"),
@@ -163,12 +174,12 @@ class _CourseEditState extends State<CourseEdit> {
                           CourseState state =
                               Provider.of<CourseState>(context, listen: false);
 
-                          if (state.formKey.currentState!.validate()) {
+                          if (_courseFormKey.currentState!.validate()) {
                             Course activity = Course(
                                 state.course.id ?? const Uuid().v4().toString(),
-                                state.nameController.text,
-                                state.descriptionController.text,
-                                int.parse(state.durationController.text),
+                                state.courseNameController.text,
+                                state.courseDescriptionController.text,
+                                int.parse(state.courseDurationController.text),
                                 true,
                                 false);
 

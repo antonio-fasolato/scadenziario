@@ -110,5 +110,21 @@ class SqliteConnection {
       )
     """;
     await db.execute(sql);
+
+    sql = """
+      CREATE TABLE IF NOT EXISTS "certification" (
+        "id" text PRIMARY KEY,
+        "course_id" text NOT NULL,
+        "person_id" text NOT NULL,
+        "issuing_date" text NOT NULL,
+        "expiration_date" text NOT NULL,
+        "note" text,
+        "attachment_id" text NULL,
+        FOREIGN KEY ("course_id") REFERENCES course("id"),
+        FOREIGN KEY ("person_id") REFERENCES persons("id"),
+        FOREIGN KEY ("attachment_id") REFERENCES attachment("id")
+      )
+    """;
+    await db.execute(sql);
   }
 }

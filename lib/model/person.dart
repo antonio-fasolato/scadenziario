@@ -17,6 +17,19 @@ class Person {
 
   Person.empty();
 
+  Person.partial({
+    this.id,
+    this.name,
+    this.surname,
+    this.birthdate,
+    this.duty,
+    this.email,
+    this.phone,
+    this.mobile,
+    this.enabled,
+    this.deleted,
+  });
+
   @override
   String toString() {
     return 'Person{id: $id, name: $name, surname: $surname, birthdate: $birthdate, duty: $duty, email: $email, phone: $phone, mobile: $mobile, enabled: $enabled, deleted: $deleted}';

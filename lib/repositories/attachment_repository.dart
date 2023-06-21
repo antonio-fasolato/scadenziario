@@ -2,7 +2,7 @@ import 'package:logger/logger.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
-enum AttachmentType { person, course }
+enum AttachmentType { person, course, certification }
 
 class AttachmentRepository {
   static final Logger log = Logger();
@@ -69,6 +69,14 @@ class AttachmentRepository {
         await db.delete("person_attachment",
             where: "attachment_id = ?", whereArgs: [id]);
         break;
+      case AttachmentType.certification:
+        await db.update(
+          "certification",
+          {"attachment_id": null},
+          where: "attachment_id = ?",
+          whereArgs: [id],
+        );
+        break;
     }
     await db.delete("attachment", where: "id = ?", whereArgs: [id]);
 
@@ -81,13 +89,24 @@ class AttachmentRepository {
     await db.insert("attachment", a.toMap());
     switch (type) {
       case AttachmentType.person:
-        await db.insert("person_attachment",
-            {"attachment_id": a.id, "person_id": linkedId});
+        await db.insert(
+          "person_attachment",
+          {"attachment_id": a.id, "person_id": linkedId},
+        );
         break;
       case AttachmentType.course:
-        await db.insert("course_attachment",
-            {"attachment_id": a.id, "course_id": linkedId});
+        await db.insert(
+          "course_attachment",
+          {"attachment_id": a.id, "course_id": linkedId},
+        );
         break;
+      case AttachmentType.certification:
+        await db.update(
+          "certification",
+          {"attachment_id": a.id},
+          where: "id = ?",
+          whereArgs: [linkedId],
+        );
     }
 
     await db.close();

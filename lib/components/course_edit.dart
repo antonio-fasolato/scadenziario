@@ -27,6 +27,8 @@ class CourseEdit extends StatefulWidget {
 }
 
 class _CourseEditState extends State<CourseEdit> {
+  final GlobalKey<FormState> _courseFormKey = GlobalKey<FormState>();
+
   _attachmentsPopup(BuildContext context) {
     CourseState state = Provider.of<CourseState>(context, listen: false);
 
@@ -96,7 +98,7 @@ class _CourseEditState extends State<CourseEdit> {
                 ),
                 Consumer<CourseState>(
                   builder: (context, state, child) => Form(
-                    key: state.courseFormKey,
+                    key: _courseFormKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -172,7 +174,7 @@ class _CourseEditState extends State<CourseEdit> {
                           CourseState state =
                               Provider.of<CourseState>(context, listen: false);
 
-                          if (state.courseFormKey.currentState!.validate()) {
+                          if (_courseFormKey.currentState!.validate()) {
                             Course activity = Course(
                                 state.course.id ?? const Uuid().v4().toString(),
                                 state.courseNameController.text,

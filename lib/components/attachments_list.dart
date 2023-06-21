@@ -87,8 +87,8 @@ class _AttachmentsListState extends State<AttachmentsList> {
     if (selectedPath != null) {
       log.d("Save file to $selectedPath");
 
-      File f =
-          File(selectedPath + Platform.pathSeparator + attachment.fileName);
+      File f = File(
+          selectedPath + Platform.pathSeparator + (attachment.fileName ?? ""));
 
       if (await f.exists()) {
         showDialog(
@@ -152,10 +152,10 @@ class _AttachmentsListState extends State<AttachmentsList> {
           child: Column(
             children: _attachments
                 .map((a) => ListTile(
-                      title: Text(a.fileName),
+                      title: Text(a.fileName ?? ""),
                       leading: IconButton(
                           onPressed: () {
-                            _download(a.id);
+                            _download(a.id ?? "");
                           },
                           icon: const Icon(Icons.download)),
                       trailing: IconButton(
@@ -173,7 +173,7 @@ class _AttachmentsListState extends State<AttachmentsList> {
                                         child: const Text("No")),
                                     TextButton(
                                         onPressed: () {
-                                          _delete(a.id);
+                                          _delete(a.id ?? "");
                                           Navigator.of(context).pop();
                                         },
                                         child: const Text("Si")),

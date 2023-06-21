@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:scadenziario/model/certification.dart';
+import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
@@ -148,14 +149,27 @@ class _CertificationEditState extends State<CertificationEdit> {
     toReturn.add(
       const Spacer(),
     );
+    if (state.hasCertification && state.certification?.attachmentId != null) {
+      toReturn.add(
+        Padding(
+          padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
+          child: ElevatedButton.icon(
+            onPressed: () => _deleteAttachment(state.certification?.attachmentId),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+            ),
+            icon: const Icon(Icons.attachment),
+            label: const Text("Elimina allegato"),
+          ),
+        ),
+      );
+    }
     if (state.hasCertification && state.certification?.id != null) {
       toReturn.add(
         Padding(
           padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
           child: ElevatedButton.icon(
             onPressed: () {
-              CourseState state =
-                  Provider.of<CourseState>(context, listen: false);
               _deleteCertification(state.certification?.id);
             },
             style: ElevatedButton.styleFrom(
@@ -185,6 +199,7 @@ class _CertificationEditState extends State<CertificationEdit> {
                   state.certificationIssuingController.text,
                   state.certificationExpirationController.text,
                   state.certificationNoteController.text,
+                  state.certification?.attachmentId,
                 );
 
                 await CertificationRepository(widget._connection).save(cert);
@@ -198,6 +213,7 @@ class _CertificationEditState extends State<CertificationEdit> {
                     state.certificationIssuingController.text,
                     state.certificationExpirationController.text,
                     state.certificationNoteController.text,
+                    null,
                   );
 
                   await CertificationRepository(widget._connection).save(cert);
@@ -239,6 +255,38 @@ class _CertificationEditState extends State<CertificationEdit> {
             TextButton(
               onPressed: () async {
                 await CertificationRepository(widget._connection).delete(id);
+                widget._confirm();
+                navigator.pop();
+              },
+              child: const Text("Si"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  _deleteAttachment(String? id) async {
+    if (id == null) {
+      return;
+    }
+    final navigator = Navigator.of(context);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Eliminare l'allegato?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                navigator.pop();
+              },
+              child: const Text("No"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await AttachmentRepository(widget._connection).delete(id, AttachmentType.certification);
                 widget._confirm();
                 navigator.pop();
               },

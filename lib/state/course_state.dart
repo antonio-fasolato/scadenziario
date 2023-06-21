@@ -7,7 +7,6 @@ import 'package:scadenziario/model/person.dart';
 class CourseState extends ChangeNotifier {
   // COURSES
   Course? _course;
-  final GlobalKey<FormState> _courseFormKey = GlobalKey<FormState>();
   TextEditingController _courseNameController = TextEditingController();
   TextEditingController _courseDescriptionController = TextEditingController();
   TextEditingController _courseDurationController = TextEditingController();
@@ -39,8 +38,6 @@ class CourseState extends ChangeNotifier {
 
   TextEditingController get courseDurationController =>
       _courseDurationController;
-
-  GlobalKey<FormState> get courseFormKey => _courseFormKey;
 
   selectCourse(Course course) {
     _course = course;

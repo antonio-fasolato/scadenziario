@@ -84,8 +84,11 @@ class _CertificationsListState extends State<CertificationsList> {
                   ? const Icon(Icons.edit)
                   : const Icon(Icons.edit_off),
               tooltip: "Dettagli certificato",
-              onPressed: () =>
-                  _editCertification(c.certification?.id as String, c.person),
+              onPressed: () {
+                if (state.checkedCertifications.isEmpty) {
+                  _editCertification(c.certification?.id as String, c.person);
+                }
+              },
             ),
           ],
         ),

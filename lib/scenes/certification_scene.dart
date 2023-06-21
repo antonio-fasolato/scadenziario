@@ -33,7 +33,7 @@ class _CertificateSceneState extends State<CertificateScene> {
     res = await CertificationRepository(widget._connection)
         .getPersonsAndCertificationsByCourse(state.course.id as String);
 
-    state.setCertificates(res);
+    state.setCertifications(res);
   }
 
   _certificateSaved() {

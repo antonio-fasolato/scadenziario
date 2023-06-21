@@ -21,7 +21,8 @@ class CourseState extends ChangeNotifier {
   TextEditingController _certificationExpirationController =
       TextEditingController();
   TextEditingController _certificationNoteController = TextEditingController();
-  List<CertificationDto> _certificates = [];
+  List<CertificationDto> _certifications = [];
+  List<String> _selectedCertifications = [];
 
   bool get hasCourse => _course != null;
 
@@ -74,7 +75,7 @@ class CourseState extends ChangeNotifier {
   TextEditingController get certificationNoteController =>
       _certificationNoteController;
 
-  List<CertificationDto> get certificates => _certificates;
+  List<CertificationDto> get certifications => _certifications;
 
   selectCertification(Certification c, Person person) {
     _certification = c;
@@ -107,8 +108,8 @@ class CourseState extends ChangeNotifier {
     notifyListeners();
   }
 
-  setCertificates(List<CertificationDto> certificates) {
-    _certificates = certificates;
+  setCertifications(List<CertificationDto> certificates) {
+    _certifications = certificates;
     notifyListeners();
   }
 }

@@ -40,7 +40,7 @@ class Person {
       map["id"],
       map["name"],
       map["surname"],
-      DateFormat.yMd('it_IT').parse(map["birthdate"]),
+      DateFormat("yyyy-MM-dd").parse(map["birthdate"]),
       map["duty"],
       map["email"],
       map["phone"],
@@ -56,7 +56,7 @@ class Person {
       "name": name,
       "surname": surname,
       "birthdate": birthdate != null
-          ? DateFormat.yMd('it_IT').format(birthdate ?? DateTime.now())
+          ? DateFormat("yyyy-MM-dd").format(birthdate as DateTime)
           : null,
       "duty": duty,
       "email": email,

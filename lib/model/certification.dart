@@ -7,8 +7,8 @@ class Certification {
   String? id;
   String? courseId;
   String? personId;
-  String? issuingDate;
-  String? expirationDate;
+  DateTime? issuingDate;
+  DateTime? expirationDate;
   String? note;
   String? attachmentId;
 
@@ -27,8 +27,8 @@ class Certification {
       map["${prefix}id"],
       map["${prefix}course_id"],
       map["${prefix}person_id"],
-      map["${prefix}issuing_date"],
-      map["${prefix}expiration_date"],
+      DateFormat("yyyy-MM-dd").parse(map["${prefix}issuing_date"]),
+      DateFormat("yyyy-MM-dd").parse(map["${prefix}expiration_date"]),
       map["${prefix}note"],
       map["${prefix}attachment_id"],
     );
@@ -67,8 +67,8 @@ class Certification {
         map["id"],
         map["course_id"],
         map["person_id"],
-        map["issuing_date"],
-        map["expiration_date"],
+        DateFormat("yyyy-MM-dd").parse(map["issuing_date"]),
+        DateFormat("yyyy-MM-dd").parse(map["expiration_date"]),
         map["note"],
         map["attachment_id"]);
 
@@ -84,8 +84,12 @@ class Certification {
       "id": id,
       "course_id": courseId,
       "person_id": personId,
-      "issuing_date": issuingDate,
-      "expiration_date": expirationDate,
+      "issuing_date": issuingDate != null
+          ? DateFormat("yyyy-MM-dd").format(issuingDate as DateTime)
+          : null,
+      "expiration_date": expirationDate != null
+          ? DateFormat("yyyy-MM-dd").format(expirationDate as DateTime)
+          : null,
       "note": note,
       "attachment_id": attachmentId
     };

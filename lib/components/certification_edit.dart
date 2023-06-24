@@ -154,7 +154,8 @@ class _CertificationEditState extends State<CertificationEdit> {
         Padding(
           padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
           child: ElevatedButton.icon(
-            onPressed: () => _deleteAttachment(state.certification?.attachmentId),
+            onPressed: () =>
+                _deleteAttachment(state.certification?.attachmentId),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.redAccent,
             ),
@@ -196,8 +197,10 @@ class _CertificationEditState extends State<CertificationEdit> {
                   state.certification?.id as String,
                   state.course.id,
                   state.person.id,
-                  state.certificationIssuingController.text,
-                  state.certificationExpirationController.text,
+                  DateFormat.yMd('it_IT')
+                      .parse(state.certificationIssuingController.text),
+                  DateFormat.yMd('it_IT')
+                      .parse(state.certificationExpirationController.text),
                   state.certificationNoteController.text,
                   state.certification?.attachmentId,
                 );
@@ -210,8 +213,9 @@ class _CertificationEditState extends State<CertificationEdit> {
                     const Uuid().v4(),
                     state.course.id,
                     personId,
-                    state.certificationIssuingController.text,
-                    state.certificationExpirationController.text,
+                    DateFormat.yMd('it_IT').parse(state.certificationIssuingController.text),
+                    DateFormat.yMd('it_IT').parse(
+                        state.certificationExpirationController.text),
                     state.certificationNoteController.text,
                     null,
                   );
@@ -286,7 +290,8 @@ class _CertificationEditState extends State<CertificationEdit> {
             ),
             TextButton(
               onPressed: () async {
-                await AttachmentRepository(widget._connection).delete(id, AttachmentType.certification);
+                await AttachmentRepository(widget._connection)
+                    .delete(id, AttachmentType.certification);
                 widget._confirm();
                 navigator.pop();
               },

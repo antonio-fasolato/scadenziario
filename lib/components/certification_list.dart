@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -111,7 +112,7 @@ class _CertificationsListState extends State<CertificationsList> {
       return ListTile(
         title: Text("${c.person?.surname ?? ""} ${c.person?.name ?? ""}"),
         subtitle: Text(
-            "Conseguito il ${c.certification?.issuingDate} - Prossima scadenza il ${c.certification?.expirationDate}"),
+            "Conseguito il ${DateFormat.yMd('it_IT').format(c.certification?.issuingDate as DateTime)} - Prossima scadenza il ${DateFormat.yMd('it_IT').format(c.certification?.expirationDate as DateTime)}"),
         leading: const Icon(Icons.workspace_premium_outlined),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,

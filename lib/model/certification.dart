@@ -41,7 +41,7 @@ class Certification {
       id: map["person_id"],
       name: map["name"],
       surname: map["surname"],
-      birthdate: DateFormat.yMd('it_IT').parse(map["birthdate"]),
+      birthdate: DateFormat("yyyy-MM-dd").parse(map["birthdate"]),
       email: map["email"],
       phone: map["phone"],
       mobile: map["mobile"],

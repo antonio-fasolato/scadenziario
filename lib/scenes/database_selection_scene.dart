@@ -116,61 +116,83 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
       appBar: AppBar(
         title: const Text("Scadenziario - Selezione archivio di lavoro"),
       ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 450,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        "Selezionare file di archivio",
-                        style: TextStyle(
-                            fontSize: 26, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          await _selectDatabaseFile(context);
-                        },
-                        icon: const Icon(Icons.file_open),
-                        label: const Text("Apri o crea file"),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Visibility(
-                        visible: !_showRecentFiles,
-                        child: TextButton(
-                          child: const Text(
-                              "Oppure seleziona uno dei file usati recentemente",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          onPressed: () => setState(() {
-                            _showRecentFiles = true;
-                          }),
-                        ),
-                      ),
-                      Visibility(
-                        visible: _showRecentFiles,
-                        child: ListView(
-                          shrinkWrap: true,
-                          children: _recentFilesTilesBuilder(),
-                        ),
-                      )
-                    ],
+      body: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Expanded(
+            flex: 50,
+            child: Center(
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/backgrounds/neve.jpg"),
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            flex: 50,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 450,
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              "Selezionare file di archivio",
+                              style: TextStyle(
+                                  fontSize: 26, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                await _selectDatabaseFile(context);
+                              },
+                              icon: const Icon(Icons.file_open),
+                              label: const Text("Apri o crea file"),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Visibility(
+                              visible: !_showRecentFiles,
+                              child: TextButton(
+                                child: const Text(
+                                    "Oppure seleziona uno dei file usati recentemente",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                onPressed: () => setState(() {
+                                  _showRecentFiles = true;
+                                }),
+                              ),
+                            ),
+                            Visibility(
+                              visible: _showRecentFiles,
+                              child: ListView(
+                                shrinkWrap: true,
+                                children: _recentFilesTilesBuilder(),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       // bottomNavigationBar: const Footer(),
     );

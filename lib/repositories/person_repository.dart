@@ -1,9 +1,7 @@
-import 'package:logger/logger.dart';
-import 'package:scadenziario/model/person.dart';
+  import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class PersonRepository {
-  static final Logger log = Logger();
   final SqliteConnection _connection;
 
   PersonRepository(SqliteConnection connection) : _connection = connection;

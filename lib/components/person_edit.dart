@@ -1,14 +1,10 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/date_symbol_data_custom.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:scadenziario/components/attachments_list.dart';
-import 'package:scadenziario/model/duty.dart';
 import 'package:scadenziario/model/person.dart';
-import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/duty_repository.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';

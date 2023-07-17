@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import 'package:intl/intl.dart';
 import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/model/certification.dart';
@@ -7,7 +7,6 @@ import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class CertificationRepository {
-  static final Logger log = Logger();
   final SqliteConnection _connection;
 
   CertificationRepository(SqliteConnection connection)

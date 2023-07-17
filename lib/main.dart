@@ -14,6 +14,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
+  Logger.root.onRecord.listen((record) {
+    debugPrint('${record.time}: ${record.level.name} [${record.loggerName}]: ${record.message}');
+  });
+  Logger.root.level = Level.WARNING;
+  if (kDebugMode) {
+    Logger.root.level = Level.ALL;
+    var log = Logger('main');
+    log.info("Application started in debug mode");
+  }
+
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+  initializeDateFormatting('it_IT', null).then(
+    (_) => runApp(
+      Scadenziario(
+        sharedPreferences: sharedPreferences,
+      ),
+    ),
+  );
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   initializeDateFormatting('it_IT', null).then((_) => runApp(Scadenziario(
         sharedPreferences: sharedPreferences,

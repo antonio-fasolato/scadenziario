@@ -1,9 +1,9 @@
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class CourseRepository {
-  static final Logger log = Logger();
+  final log = Logger((CourseRepository).toString());
   final SqliteConnection _connection;
 
   CourseRepository(SqliteConnection connection) : _connection = connection;
@@ -51,12 +51,12 @@ class CourseRepository {
     var db = await _connection.connect();
     var res = await db.query("course", where: "id = ?", whereArgs: [c.id]);
     if (res.isEmpty) {
-      log.d("New course $c");
+      log.info("New course $c");
       int res = await db.insert("course", c.toMap());
       await db.close();
       return res;
     } else {
-      log.d("Update course $c");
+      log.info("Update course $c");
       int res = await db
           .update("course", c.toMap(), where: "id = ?", whereArgs: [c.id]);
       await db.close();

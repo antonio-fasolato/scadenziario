@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
@@ -40,7 +40,7 @@ class AttachmentsList extends StatefulWidget {
 }
 
 class _AttachmentsListState extends State<AttachmentsList> {
-  final Logger log = Logger();
+  final log = Logger((AttachmentsList).toString());
   List<Attachment> _attachments = [];
 
   _loadAttachments() async {
@@ -85,7 +85,7 @@ class _AttachmentsListState extends State<AttachmentsList> {
       dialogTitle: "Selezionare la cartella dove salvare l'allegato",
     );
     if (selectedPath != null) {
-      log.d("Save file to $selectedPath");
+      log.info("Save file to $selectedPath");
 
       File f = File(
           selectedPath + Platform.pathSeparator + (attachment.fileName ?? ""));

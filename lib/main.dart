@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/scenes/certification_scene.dart';
@@ -14,10 +16,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
+  Logger.root.onRecord.listen((record) {
+    debugPrint('${record.time}: ${record.level.name} [${record.loggerName}]: ${record.message}');
+  });
+  Logger.root.level = Level.WARNING;
+  if (kDebugMode) {
+    Logger.root.level = Level.ALL;
+    var log = Logger('main');
+    log.info("Application started in debug mode");
+  }
+
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  initializeDateFormatting('it_IT', null).then((_) => runApp(Scadenziario(
+
+  initializeDateFormatting('it_IT', null).then(
+    (_) => runApp(
+      Scadenziario(
         sharedPreferences: sharedPreferences,
-      )));
+      ),
+    ),
+  );
 }
 
 class Scadenziario extends StatefulWidget {
@@ -55,9 +72,13 @@ class _ScadenziarioState extends State<Scadenziario> {
         "/home": (buildContext) => const HomepageScene(),
         "/people": (buildContext) => ChangeNotifierProvider<PersonState>(
               create: (context) => PersonState(),
-              child: PersonsScene(connection: _connection as SqliteConnection),
+              child: PersonsScene(
+                connection: _connection as SqliteConnection,
+              ),
             ),
-        "/calendar": (buildContext) => const CalendarScene(),
+        "/calendar": (buildContext) => CalendarScene(
+              connection: _connection as SqliteConnection,
+            ),
         "/courses": (buildContext) => ChangeNotifierProvider<CourseState>.value(
               value: courseState,
               child: CoursesScene(

@@ -144,6 +144,20 @@ class _CalendarSceneState extends State<CalendarScene> {
                   ),
                 );
               },
+              markerBuilder: (context, day, events) {
+                if (events.isNotEmpty) {
+                  return CircleAvatar(
+                    maxRadius: 8,
+                    child: Text(
+                      "${events.length}",
+                      style: const TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
+                  );
+                }
+                return null;
+              },
             ),
           ),
         ),

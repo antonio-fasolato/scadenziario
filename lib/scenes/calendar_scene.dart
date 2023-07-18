@@ -86,35 +86,60 @@ class _CalendarSceneState extends State<CalendarScene> {
             eventLoader: _eventLoader,
             calendarBuilders: CalendarBuilders(
               dowBuilder: (context, day) {
+                final text = DateFormat.E().format(day);
                 if (day.weekday == DateTime.sunday ||
                     day.weekday == DateTime.saturday) {
-                  final text = DateFormat.E().format(day);
-
                   return Center(
                     child: Text(
                       text,
                       style: const TextStyle(
-                        color: Colors.red,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: Text(
+                      text,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   );
                 }
               },
               defaultBuilder: (context, day, focusedDay) {
-                return Center(
-                  child: Text(
-                    DateFormat.d().format(day),
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                );
+                final text = DateFormat.d().format(day);
+                if (day.weekday == DateTime.sunday ||
+                    day.weekday == DateTime.saturday) {
+                  return Center(
+                    child: Text(
+                      text,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: Text(
+                      text,
+                      style: const TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                }
               },
               todayBuilder: (context, day, focusedDay) {
                 return Center(
-                  child: Text(
-                    DateFormat.d().format(day),
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    child: Text(
+                      DateFormat.d().format(day),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 );

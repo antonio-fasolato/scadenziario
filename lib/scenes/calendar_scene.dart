@@ -58,6 +58,19 @@ class _CalendarSceneState extends State<CalendarScene> {
     return res;
   }
 
+  String _buildEventsTooltip(List<Object?> events) {
+    String toReturn = "";
+
+    for (var e in events) {
+      if (e != null) {
+        EventDto event = e as EventDto;
+        toReturn += "${event.title} ";
+      }
+    }
+
+    return toReturn;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,12 +159,15 @@ class _CalendarSceneState extends State<CalendarScene> {
               },
               markerBuilder: (context, day, events) {
                 if (events.isNotEmpty) {
-                  return CircleAvatar(
-                    maxRadius: 8,
-                    child: Text(
-                      "${events.length}",
-                      style: const TextStyle(
-                        fontSize: 10,
+                  return Tooltip(
+                    message: _buildEventsTooltip(events),
+                    child: CircleAvatar(
+                      maxRadius: 8,
+                      child: Text(
+                        "${events.length <= 10 ? events.length : "+"}",
+                        style: const TextStyle(
+                          fontSize: 10,
+                        ),
                       ),
                     ),
                   );

@@ -78,102 +78,104 @@ class _CalendarSceneState extends State<CalendarScene> {
         title: const Text("Scadenziario - Calendario"),
       ),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: TableCalendar(
-            firstDay: DateTime.utc(2010, 10, 16),
-            lastDay: DateTime.utc(2030, 3, 14),
-            focusedDay: DateTime.now(),
-            calendarFormat: CalendarFormat.month,
-            locale: "it_IT",
-            startingDayOfWeek: StartingDayOfWeek.monday,
-            selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
-            },
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-            },
-            eventLoader: _eventLoader,
-            calendarBuilders: CalendarBuilders(
-              dowBuilder: (context, day) {
-                final text = DateFormat.E().format(day);
-                if (day.weekday == DateTime.sunday ||
-                    day.weekday == DateTime.saturday) {
-                  return Center(
-                    child: Text(
-                      text,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  );
-                } else {
-                  return Center(
-                    child: Text(
-                      text,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                }
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: TableCalendar(
+              firstDay: DateTime.utc(2010, 10, 16),
+              lastDay: DateTime.utc(2030, 3, 14),
+              focusedDay: DateTime.now(),
+              calendarFormat: CalendarFormat.month,
+              locale: "it_IT",
+              startingDayOfWeek: StartingDayOfWeek.monday,
+              selectedDayPredicate: (day) {
+                return isSameDay(_selectedDay, day);
               },
-              defaultBuilder: (context, day, focusedDay) {
-                final text = DateFormat.d().format(day);
-                if (day.weekday == DateTime.sunday ||
-                    day.weekday == DateTime.saturday) {
-                  return Center(
-                    child: Text(
-                      text,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  );
-                } else {
-                  return Center(
-                    child: Text(
-                      text,
-                      style: const TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  );
-                }
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
               },
-              todayBuilder: (context, day, focusedDay) {
-                return Center(
-                  child: CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    child: Text(
-                      DateFormat.d().format(day),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                );
-              },
-              markerBuilder: (context, day, events) {
-                if (events.isNotEmpty) {
-                  return Tooltip(
-                    message: _buildEventsTooltip(events),
-                    child: CircleAvatar(
-                      maxRadius: 8,
+              eventLoader: _eventLoader,
+              calendarBuilders: CalendarBuilders(
+                dowBuilder: (context, day) {
+                  final text = DateFormat.E().format(day);
+                  if (day.weekday == DateTime.sunday ||
+                      day.weekday == DateTime.saturday) {
+                    return Center(
                       child: Text(
-                        "${events.length <= 10 ? events.length : "+"}",
+                        text,
                         style: const TextStyle(
-                          fontSize: 10,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Center(
+                      child: Text(
+                        text,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                defaultBuilder: (context, day, focusedDay) {
+                  final text = DateFormat.d().format(day);
+                  if (day.weekday == DateTime.sunday ||
+                      day.weekday == DateTime.saturday) {
+                    return Center(
+                      child: Text(
+                        text,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Center(
+                      child: Text(
+                        text,
+                        style: const TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                todayBuilder: (context, day, focusedDay) {
+                  return Center(
+                    child: CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      child: Text(
+                        DateFormat.d().format(day),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   );
-                }
-                return null;
-              },
+                },
+                markerBuilder: (context, day, events) {
+                  if (events.isNotEmpty) {
+                    return Tooltip(
+                      message: _buildEventsTooltip(events),
+                      child: CircleAvatar(
+                        maxRadius: 8,
+                        child: Text(
+                          "${events.length <= 10 ? events.length : "+"}",
+                          style: const TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return null;
+                },
+              ),
             ),
           ),
         ),

@@ -108,18 +108,20 @@ class _PersonsSceneState extends State<PersonsScene> {
                     onChanged: (value) => _getAllPersons(),
                   ),
                 ),
-                ListView(
-                  shrinkWrap: true,
-                  children: _persons
-                      .map((p) => ListTile(
-                            title: Text("${p.surname} ${p.name}"),
-                            leading: const Icon(Icons.account_circle),
-                            onTap: () {
-                              Provider.of<PersonState>(context, listen: false)
-                                  .selectPerson(p);
-                            },
-                          ))
-                      .toList(),
+                Expanded(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: _persons
+                        .map((p) => ListTile(
+                              title: Text("${p.surname} ${p.name}"),
+                              leading: const Icon(Icons.account_circle),
+                              onTap: () {
+                                Provider.of<PersonState>(context, listen: false)
+                                    .selectPerson(p);
+                              },
+                            ))
+                        .toList(),
+                  ),
                 ),
               ],
             ),

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:scadenziario/components/footer.dart';
-import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/dto/event_dto.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';

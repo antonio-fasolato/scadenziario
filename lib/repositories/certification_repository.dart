@@ -141,6 +141,9 @@ class CertificationRepository {
     var db = await _connection.connect();
     List<Certification> toReturn = [];
 
+    DateTime start = DateTime(d.year, d.month, 1);
+    DateTime end = DateTime(d.year, d.month + 1, 0);
+
     String sql = """
       select ce.*, 
         p.name, p.surname, p.birthdate, p.email, p.phone, p.mobile, 
@@ -151,7 +154,7 @@ class CertificationRepository {
       inner join course c on
         ce.course_id = c.id
       where 1 = 1
-        and date(ce.expiration_date) between date('${DateFormat("yyyy-MM-dd").format(d)}') and date('${DateFormat("yyyy-MM-dd").format(DateTime(d.year, d.month + 1, 0))}')
+        and date(ce.expiration_date) between date('${DateFormat("yyyy-MM-dd").format(start)}') and date('${DateFormat("yyyy-MM-dd").format(end)}')
     """;
 
     log.info(sql);

@@ -108,25 +108,28 @@ class _CoursesSceneState extends State<CoursesScene> {
                     onChanged: (value) => _getAllCourses(),
                   ),
                 ),
-                ListView(
-                  shrinkWrap: true,
-                  children: _courses
-                      .map(
-                        (course) => ListTile(
-                          title: Text("${course.name}"),
-                          subtitle: Text("${course.description}"),
-                          leading: const Icon(Icons.business_center),
-                          onTap: () {
-                            setState(() {
-                              CourseState state = Provider.of<CourseState>(
-                                  context,
-                                  listen: false);
-                              state.selectCourse(course);
-                            });
-                          },
-                        ),
-                      )
-                      .toList(),
+                Expanded(
+                  child: ListView(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    children: _courses
+                        .map(
+                          (course) => ListTile(
+                            title: Text("${course.name}"),
+                            subtitle: Text("${course.description}"),
+                            leading: const Icon(Icons.business_center),
+                            onTap: () {
+                              setState(() {
+                                CourseState state = Provider.of<CourseState>(
+                                    context,
+                                    listen: false);
+                                state.selectCourse(course);
+                              });
+                            },
+                          ),
+                        )
+                        .toList(),
+                  ),
                 ),
               ],
             ),

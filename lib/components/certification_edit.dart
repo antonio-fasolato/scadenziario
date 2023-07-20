@@ -305,43 +305,45 @@ class _CertificationEditState extends State<CertificationEdit> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Card(
-          elevation: 4,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _titleBuilder(),
-                Flexible(
-                  child: Column(
-                    children: [
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 8, bottom: 8),
-                            child: Text(
-                              "Dati della certificazione",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        ],
-                      ),
-                      _formBuilder(),
-                    ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Card(
+            elevation: 4,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _titleBuilder(),
+                  Flexible(
+                    child: Column(
+                      children: [
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 8, bottom: 8),
+                              child: Text(
+                                "Dati della certificazione",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            )
+                          ],
+                        ),
+                        _formBuilder(),
+                      ],
+                    ),
                   ),
-                ),
-                Row(
-                  children: _buttonsBuilder(),
-                ),
-              ],
+                  Row(
+                    children: _buttonsBuilder(),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

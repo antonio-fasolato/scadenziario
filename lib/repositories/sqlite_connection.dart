@@ -74,7 +74,6 @@ class SqliteConnection {
         "name" text NOT NULL,
         "description" text,
         "duration" INTEGER NOT NULL,
-        "mobile" text,
         "enabled" integer NOT NULL DEFAULT(1),
         "deleted" integer NOT NULL DEFAULT(0)
       ); 

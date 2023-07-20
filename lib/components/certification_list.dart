@@ -189,13 +189,15 @@ class _CertificationsListState extends State<CertificationsList> {
           ),
         ),
         Consumer<CourseState>(
-          builder: (context, state, child) => ListView(
-            shrinkWrap: true,
-            children: state.certifications
-                .map(
-                  (c) => _buildCertificationTile(c),
-                )
-                .toList(),
+          builder: (context, state, child) => Expanded(
+            child: ListView(
+              shrinkWrap: true,
+              children: state.certifications
+                  .map(
+                    (c) => _buildCertificationTile(c),
+                  )
+                  .toList(),
+            ),
           ),
         ),
       ],

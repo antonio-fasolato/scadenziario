@@ -12,12 +12,31 @@ import 'package:scadenziario/state/course_state.dart';
 import 'package:scadenziario/state/person_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  initializeDateFormatting('it_IT', null).then((_) => runApp(Scadenziario(
+
+  WidgetsFlutterBinding.ensureInitialized();
+  // Must add this line.
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    minimumSize: Size(1024, 768),
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
+  initializeDateFormatting('it_IT', null).then(
+    (_) => runApp(
+      Scadenziario(
         sharedPreferences: sharedPreferences,
-      )));
+      ),
+    ),
+  );
 }
 
 class Scadenziario extends StatefulWidget {

@@ -33,10 +33,10 @@ class _CalendarSceneState extends State<CalendarScene> {
   @override
   void initState() {
     super.initState();
-    _getEventsForDayMonth(_calendarDate);
+    _getEventsForMonth(_calendarDate);
   }
 
-  _getEventsForDayMonth(DateTime day) async {
+  _getEventsForMonth(DateTime day) async {
     var certifications = await CertificationRepository(widget._connection)
         .getCertificationExpiringInMonth(day);
     LinkedHashMap<String, EventDto> res = LinkedHashMap();
@@ -81,114 +81,135 @@ class _CalendarSceneState extends State<CalendarScene> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
-            child: TableCalendar(
-              firstDay:
-                  DateTime.now().add(const Duration(days: -365 * 10)).toUtc(),
-              lastDay:
-                  DateTime.now().add(const Duration(days: 365 * 10)).toUtc(),
-              focusedDay: _focusedDay,
-              calendarFormat: _calendarFormat,
-              locale: "it_IT",
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              selectedDayPredicate: (day) {
-                return isSameDay(_selectedDay, day);
-              },
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              },
-              onFormatChanged: (format) {
-                if (_calendarFormat != format) {
-                  setState(() {
-                    _calendarFormat = format;
-                  });
-                }
-              },
-              onPageChanged: (focusedDay) {
-                _focusedDay = focusedDay;
-                _getEventsForDayMonth(focusedDay);
-              },
-              eventLoader: _eventLoader,
-              calendarBuilders: CalendarBuilders(
-                dowBuilder: (context, day) {
-                  final text = DateFormat.E().format(day);
-                  if (day.weekday == DateTime.sunday ||
-                      day.weekday == DateTime.saturday) {
-                    return Center(
-                      child: Text(
-                        text,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    );
-                  } else {
-                    return Center(
-                      child: Text(
-                        text,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    );
-                  }
-                },
-                defaultBuilder: (context, day, focusedDay) {
-                  final text = DateFormat.d().format(day);
-                  if (day.weekday == DateTime.sunday ||
-                      day.weekday == DateTime.saturday) {
-                    return Center(
-                      child: Text(
-                        text,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    );
-                  } else {
-                    return Center(
-                      child: Text(
-                        text,
-                        style: const TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    );
-                  }
-                },
-                todayBuilder: (context, day, focusedDay) {
-                  return Center(
-                    child: CircleAvatar(
-                      backgroundColor: Colors.grey,
-                      child: Text(
-                        DateFormat.d().format(day),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                markerBuilder: (context, day, events) {
-                  if (events.isNotEmpty) {
-                    return Tooltip(
-                      message: _buildEventsTooltip(events),
-                      child: CircleAvatar(
-                        maxRadius: 8,
-                        child: Text(
-                          "${events.length <= 10 ? events.length : "+"}",
-                          style: const TextStyle(
-                            fontSize: 10,
+            child: Column(
+              children: [
+                TableCalendar(
+                  firstDay: DateTime.now()
+                      .add(const Duration(days: -365 * 10))
+                      .toUtc(),
+                  lastDay: DateTime.now()
+                      .add(const Duration(days: 365 * 10))
+                      .toUtc(),
+                  focusedDay: _focusedDay,
+                  calendarFormat: _calendarFormat,
+                  locale: "it_IT",
+                  startingDayOfWeek: StartingDayOfWeek.monday,
+                  selectedDayPredicate: (day) {
+                    return isSameDay(_selectedDay, day);
+                  },
+                  onDaySelected: (selectedDay, focusedDay) {
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                    });
+                  },
+                  onFormatChanged: (format) {
+                    if (_calendarFormat != format) {
+                      setState(() {
+                        _calendarFormat = format;
+                      });
+                    }
+                  },
+                  onPageChanged: (focusedDay) {
+                    _focusedDay = focusedDay;
+                    _getEventsForMonth(focusedDay);
+                  },
+                  eventLoader: _eventLoader,
+                  calendarBuilders: CalendarBuilders(
+                    dowBuilder: (context, day) {
+                      final text = DateFormat.E().format(day);
+                      if (day.weekday == DateTime.sunday ||
+                          day.weekday == DateTime.saturday) {
+                        return Center(
+                          child: Text(
+                            text,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Center(
+                          child: Text(
+                            text,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    defaultBuilder: (context, day, focusedDay) {
+                      final text = DateFormat.d().format(day);
+                      if (day.weekday == DateTime.sunday ||
+                          day.weekday == DateTime.saturday) {
+                        return Center(
+                          child: Text(
+                            text,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Center(
+                          child: Text(
+                            text,
+                            style: const TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    todayBuilder: (context, day, focusedDay) {
+                      return Center(
+                        child: CircleAvatar(
+                          backgroundColor: Colors.grey,
+                          child: Text(
+                            DateFormat.d().format(day),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }
-                  return null;
-                },
-              ),
+                      );
+                    },
+                    markerBuilder: (context, day, events) {
+                      if (events.isNotEmpty) {
+                        return Tooltip(
+                          message: _buildEventsTooltip(events),
+                          child: CircleAvatar(
+                            maxRadius: 8,
+                            child: Text(
+                              "${events.length <= 10 ? events.length : "+"}",
+                              style: const TextStyle(
+                                fontSize: 10,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Visibility(
+                  visible: _selectedDay != null &&
+                      _monthEvents.containsKey(
+                          _compactDateFormat.format(_selectedDay as DateTime)),
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      _selectedDay == null
+                          ? Container()
+                          : ListTile(
+                              title: Text("Evento"),
+                            ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),

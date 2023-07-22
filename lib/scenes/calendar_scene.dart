@@ -24,9 +24,10 @@ class CalendarScene extends StatefulWidget {
 class _CalendarSceneState extends State<CalendarScene> {
   final log = Logger((_CalendarSceneState).toString());
   final DateFormat _compactDateFormat = DateFormat("yyyyMMdd");
+  CalendarFormat _calendarFormat = CalendarFormat.month;
   final DateTime _calendarDate = DateTime.now();
   LinkedHashMap<String, EventDto> _monthEvents = LinkedHashMap();
-  DateTime _selectedDay = DateTime.now();
+  DateTime? _selectedDay;
   DateTime _focusedDay = DateTime.now();
 
   @override
@@ -81,10 +82,12 @@ class _CalendarSceneState extends State<CalendarScene> {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: TableCalendar(
-              firstDay: DateTime.utc(2010, 10, 16),
-              lastDay: DateTime.utc(2030, 3, 14),
-              focusedDay: DateTime.now(),
-              calendarFormat: CalendarFormat.month,
+              firstDay:
+                  DateTime.now().add(const Duration(days: -365 * 10)).toUtc(),
+              lastDay:
+                  DateTime.now().add(const Duration(days: 365 * 10)).toUtc(),
+              focusedDay: _focusedDay,
+              calendarFormat: _calendarFormat,
               locale: "it_IT",
               startingDayOfWeek: StartingDayOfWeek.monday,
               selectedDayPredicate: (day) {
@@ -95,6 +98,17 @@ class _CalendarSceneState extends State<CalendarScene> {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
                 });
+              },
+              onFormatChanged: (format) {
+                if (_calendarFormat != format) {
+                  setState(() {
+                    _calendarFormat = format;
+                  });
+                }
+              },
+              onPageChanged: (focusedDay) {
+                _focusedDay = focusedDay;
+                _getEventsForDayMonth(focusedDay);
               },
               eventLoader: _eventLoader,
               calendarBuilders: CalendarBuilders(

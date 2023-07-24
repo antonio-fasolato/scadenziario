@@ -28,7 +28,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
   final DateFormat _compactDateFormat = DateFormat("yyyyMMdd");
   CalendarFormat _calendarFormat = CalendarFormat.month;
   final DateTime _calendarDate = DateTime.now();
-  LinkedHashMap<String, EventDto> _monthEvents = LinkedHashMap();
+  LinkedHashMap<String, List<EventDto>> _monthEvents = LinkedHashMap();
   DateTime? _selectedDay;
   DateTime _focusedDay = DateTime.now();
 
@@ -39,11 +39,11 @@ class _EventsCalendarState extends State<EventsCalendar> {
   }
 
   List<EventDto?> _eventLoader(DateTime day) {
-    List<EventDto?> res =
-        _monthEvents.containsKey(_compactDateFormat.format(day))
-            ? [_monthEvents[_compactDateFormat.format(day)]]
-            : [];
-    return res;
+    if (_monthEvents.containsKey(_compactDateFormat.format(day))) {
+      return _monthEvents[_compactDateFormat.format(day)] as List<EventDto>;
+    } else {
+      return [];
+    }
   }
 
   String _buildEventsTooltip(List<Object?> events) {
@@ -62,11 +62,15 @@ class _EventsCalendarState extends State<EventsCalendar> {
   _getEventsForMonth(DateTime day) async {
     var certifications = await CertificationRepository(widget._connection)
         .getCertificationsExpiringInMonth(day);
-    LinkedHashMap<String, EventDto> res = LinkedHashMap();
+    LinkedHashMap<String, List<EventDto>> res = LinkedHashMap();
     for (var c in certifications) {
-      res[c.expirationDate != null
+      String date = c.expirationDate != null
           ? _compactDateFormat.format(c.expirationDate as DateTime)
-          : ""] = EventDto.fromCertification(c);
+          : "";
+      if (res[date] == null) {
+        res[date] = [];
+      }
+      res[date]!.add(EventDto.fromCertification(c));
     }
     setState(() {
       _monthEvents = res;
@@ -75,8 +79,8 @@ class _EventsCalendarState extends State<EventsCalendar> {
 
   _selectDay(DateTime selectedDay, DateTime focusedDay) {
     if (_monthEvents.containsKey(_compactDateFormat.format(selectedDay))) {
-      widget._setEvents(
-          List.from([_monthEvents[_compactDateFormat.format(selectedDay)]]));
+      widget._setEvents(_monthEvents[_compactDateFormat.format(selectedDay)]
+          as List<EventDto>);
     } else {
       widget._setEvents([]);
     }

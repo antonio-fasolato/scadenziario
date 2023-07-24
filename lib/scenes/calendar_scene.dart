@@ -31,31 +31,46 @@ class _CalendarSceneState extends State<CalendarScene> {
       appBar: AppBar(
         title: const Text("Scadenziario - Calendario"),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                EventsCalendar(
-                  connection: widget._connection,
-                  setEvents: _setEvents,
-                ),
-                Visibility(
-                  visible: _events.isNotEmpty,
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: _events
-                        .map(
-                          (e) => ListTile(
-                            title: Text(e.title),
-                          ),
-                        )
-                        .toList(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              EventsCalendar(
+                connection: widget._connection,
+                setEvents: _setEvents,
+              ),
+              Visibility(
+                visible: _events.isNotEmpty,
+                child: const Padding(
+                  padding: EdgeInsets.only(
+                    top: 16,
+                    left: 16,
+                  ),
+                  child: Text(
+                    "Eventi",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                    ),
                   ),
                 ),
-              ],
-            ),
+              ),
+              Visibility(
+                visible: _events.isNotEmpty,
+                child: ListView(
+                  shrinkWrap: true,
+                  children: _events
+                      .map(
+                        (e) => ListTile(
+                          title: Text(e.title),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ],
           ),
         ),
       ),

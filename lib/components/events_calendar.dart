@@ -61,7 +61,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
 
   _getEventsForMonth(DateTime day) async {
     var certifications = await CertificationRepository(widget._connection)
-        .getCertificationExpiringInMonth(day);
+        .getCertificationsExpiringInMonth(day);
     LinkedHashMap<String, EventDto> res = LinkedHashMap();
     for (var c in certifications) {
       res[c.expirationDate != null

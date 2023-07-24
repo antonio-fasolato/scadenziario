@@ -136,7 +136,7 @@ class CertificationRepository {
     return toReturn;
   }
 
-  Future<List<Certification>> getCertificationExpiringInMonth(
+  Future<List<Certification>> getCertificationsExpiringInMonth(
       DateTime d) async {
     var db = await _connection.connect();
     List<Certification> toReturn = [];

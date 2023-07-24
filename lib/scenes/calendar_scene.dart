@@ -1,13 +1,8 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:logging/logging.dart';
+import 'package:scadenziario/components/events_calendar.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/dto/event_dto.dart';
-import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScene extends StatefulWidget {
   final SqliteConnection _connection;
@@ -22,53 +17,12 @@ class CalendarScene extends StatefulWidget {
 }
 
 class _CalendarSceneState extends State<CalendarScene> {
-  final log = Logger((_CalendarSceneState).toString());
-  final DateFormat _compactDateFormat = DateFormat("yyyyMMdd");
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  final DateTime _calendarDate = DateTime.now();
-  LinkedHashMap<String, EventDto> _monthEvents = LinkedHashMap();
-  DateTime? _selectedDay;
-  DateTime _focusedDay = DateTime.now();
+  List<EventDto> _events = [];
 
-  @override
-  void initState() {
-    super.initState();
-    _getEventsForMonth(_calendarDate);
-  }
-
-  _getEventsForMonth(DateTime day) async {
-    var certifications = await CertificationRepository(widget._connection)
-        .getCertificationExpiringInMonth(day);
-    LinkedHashMap<String, EventDto> res = LinkedHashMap();
-    for (var c in certifications) {
-      res[c.expirationDate != null
-          ? _compactDateFormat.format(c.expirationDate as DateTime)
-          : ""] = EventDto.fromCertification(c);
-    }
+  _setEvents(List<EventDto> events) {
     setState(() {
-      _monthEvents = res;
+      _events = events;
     });
-  }
-
-  List<EventDto?> _eventLoader(DateTime day) {
-    List<EventDto?> res =
-        _monthEvents.containsKey(_compactDateFormat.format(day))
-            ? [_monthEvents[_compactDateFormat.format(day)]]
-            : [];
-    return res;
-  }
-
-  String _buildEventsTooltip(List<Object?> events) {
-    String toReturn = "";
-
-    for (var e in events) {
-      if (e != null) {
-        EventDto event = e as EventDto;
-        toReturn += "${event.title} ";
-      }
-    }
-
-    return toReturn;
   }
 
   @override
@@ -83,130 +37,21 @@ class _CalendarSceneState extends State<CalendarScene> {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-                TableCalendar(
-                  firstDay: DateTime.now()
-                      .add(const Duration(days: -365 * 10))
-                      .toUtc(),
-                  lastDay: DateTime.now()
-                      .add(const Duration(days: 365 * 10))
-                      .toUtc(),
-                  focusedDay: _focusedDay,
-                  calendarFormat: _calendarFormat,
-                  locale: "it_IT",
-                  startingDayOfWeek: StartingDayOfWeek.monday,
-                  selectedDayPredicate: (day) {
-                    return isSameDay(_selectedDay, day);
-                  },
-                  onDaySelected: (selectedDay, focusedDay) {
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
-                    });
-                  },
-                  onFormatChanged: (format) {
-                    if (_calendarFormat != format) {
-                      setState(() {
-                        _calendarFormat = format;
-                      });
-                    }
-                  },
-                  onPageChanged: (focusedDay) {
-                    _focusedDay = focusedDay;
-                    _getEventsForMonth(focusedDay);
-                  },
-                  eventLoader: _eventLoader,
-                  calendarBuilders: CalendarBuilders(
-                    dowBuilder: (context, day) {
-                      final text = DateFormat.E().format(day);
-                      if (day.weekday == DateTime.sunday ||
-                          day.weekday == DateTime.saturday) {
-                        return Center(
-                          child: Text(
-                            text,
-                            style: const TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Center(
-                          child: Text(
-                            text,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    defaultBuilder: (context, day, focusedDay) {
-                      final text = DateFormat.d().format(day);
-                      if (day.weekday == DateTime.sunday ||
-                          day.weekday == DateTime.saturday) {
-                        return Center(
-                          child: Text(
-                            text,
-                            style: const TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Center(
-                          child: Text(
-                            text,
-                            style: const TextStyle(
-                              color: Colors.black,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    todayBuilder: (context, day, focusedDay) {
-                      return Center(
-                        child: CircleAvatar(
-                          backgroundColor: Colors.grey,
-                          child: Text(
-                            DateFormat.d().format(day),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    markerBuilder: (context, day, events) {
-                      if (events.isNotEmpty) {
-                        return Tooltip(
-                          message: _buildEventsTooltip(events),
-                          child: CircleAvatar(
-                            maxRadius: 8,
-                            child: Text(
-                              "${events.length <= 10 ? events.length : "+"}",
-                              style: const TextStyle(
-                                fontSize: 10,
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                      return null;
-                    },
-                  ),
+                EventsCalendar(
+                  connection: widget._connection,
+                  setEvents: _setEvents,
                 ),
                 Visibility(
-                  visible: _selectedDay != null &&
-                      _monthEvents.containsKey(
-                          _compactDateFormat.format(_selectedDay as DateTime)),
+                  visible: _events.isNotEmpty,
                   child: ListView(
                     shrinkWrap: true,
-                    children: [
-                      _selectedDay == null
-                          ? Container()
-                          : ListTile(
-                              title: Text("Evento"),
-                            ),
-                    ],
+                    children: _events
+                        .map(
+                          (e) => ListTile(
+                            title: Text(e.title),
+                          ),
+                        )
+                        .toList(),
                   ),
                 ),
               ],

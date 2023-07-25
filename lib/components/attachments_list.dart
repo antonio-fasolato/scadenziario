@@ -3,13 +3,12 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:uuid/uuid.dart';
 
-class AttachmentsList extends StatefulWidget {
+class AttachmentsList extends StatelessWidget {
   final SqliteConnection _connection;
   final AttachmentType _type;
   final List<Attachment> _attachments;
@@ -53,24 +52,12 @@ class AttachmentsList extends StatefulWidget {
         _connection = connection,
         _reloadAttachments = reloadAttachments;
 
-  @override
-  State<AttachmentsList> createState() => _AttachmentsListState();
-}
-
-class _AttachmentsListState extends State<AttachmentsList> {
-  final log = Logger((AttachmentsList).toString());
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future<bool> _download(String id) async {
+  Future<bool> _download(BuildContext context, String id) async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
     Attachment? attachment =
-        await AttachmentRepository(widget._connection).getById(id);
+        await AttachmentRepository(_connection).getById(id);
     if (attachment == null) {
       scaffoldMessenger.showSnackBar(
         SnackBar(
@@ -91,8 +78,6 @@ class _AttachmentsListState extends State<AttachmentsList> {
       dialogTitle: "Selezionare la cartella dove salvare l'allegato",
     );
     if (selectedPath != null) {
-      log.info("Save file to $selectedPath");
-
       File f = File(
           selectedPath + Platform.pathSeparator + (attachment.fileName ?? ""));
 
@@ -125,11 +110,11 @@ class _AttachmentsListState extends State<AttachmentsList> {
     return true;
   }
 
-  _delete(String id) async {
+  _delete(BuildContext context, String id) async {
     final navigator = Navigator.of(context);
-    await AttachmentRepository(widget._connection).delete(id, widget._type);
+    await AttachmentRepository(_connection).delete(id, _type);
     navigator.pop();
-    widget._reloadAttachments();
+    _reloadAttachments();
   }
 
   _addAttachment() async {
@@ -143,10 +128,9 @@ class _AttachmentsListState extends State<AttachmentsList> {
       Uint8List raw = await f.readAsBytes();
       Attachment attachment = Attachment(
           const Uuid().v4(), f.path.split(Platform.pathSeparator).last, raw);
-      await AttachmentRepository(widget._connection)
-          .save(attachment, widget._id as String, widget._type);
+      await AttachmentRepository(_connection).save(attachment, _id, _type);
     }
-    widget._reloadAttachments();
+    _reloadAttachments();
   }
 
   @override
@@ -169,12 +153,12 @@ class _AttachmentsListState extends State<AttachmentsList> {
               ),
               ListView(
                 shrinkWrap: true,
-                children: widget._attachments
+                children: _attachments
                     .map(
                       (a) => ListTile(
                         title: Text("${a.fileName}"),
                         leading: IconButton(
-                          onPressed: () => _download(a.id as String),
+                          onPressed: () => _download(context, a.id as String),
                           icon: const Icon(Icons.attachment_outlined),
                         ),
                         trailing: IconButton(
@@ -192,7 +176,8 @@ class _AttachmentsListState extends State<AttachmentsList> {
                                       child: const Text("No"),
                                     ),
                                     TextButton(
-                                      onPressed: () => _delete(a.id as String),
+                                      onPressed: () =>
+                                          _delete(context, a.id as String),
                                       child: const Text("Si"),
                                     ),
                                   ],

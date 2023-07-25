@@ -18,7 +18,8 @@ import 'package:window_manager/window_manager.dart';
 
 void main() async {
   Logger.root.onRecord.listen((record) {
-    debugPrint('${record.time}: ${record.level.name} [${record.loggerName}]: ${record.message}');
+    debugPrint(
+        '${record.time}: ${record.level.name} [${record.loggerName}]: ${record.message}');
   });
   Logger.root.level = Level.WARNING;
   if (kDebugMode) {
@@ -90,8 +91,12 @@ class _ScadenziarioState extends State<Scadenziario> {
                 connection: _connection as SqliteConnection,
               ),
             ),
-        "/calendar": (buildContext) => CalendarScene(
-              connection: _connection as SqliteConnection,
+        "/calendar": (buildContext) =>
+            ChangeNotifierProvider<CourseState>.value(
+              value: courseState,
+              child: CalendarScene(
+                connection: _connection as SqliteConnection,
+              ),
             ),
         "/courses": (buildContext) => ChangeNotifierProvider<CourseState>.value(
               value: courseState,

@@ -8,6 +8,25 @@ class CourseRepository {
 
   CourseRepository(SqliteConnection connection) : _connection = connection;
 
+  Future<Course?> getById(String id) async {
+    var db = await _connection.connect();
+    Course? toReturn;
+
+    String sql = '''
+      select *
+      from course
+      where 1 = 1 
+        and id = '$id'
+    ''';
+    var res = await db.rawQuery(sql);
+    if (res.isNotEmpty) {
+      toReturn = Course.fromMap(map: res.first);
+    }
+
+    await db.close();
+    return toReturn;
+  }
+
   Future<List<Course>> getAll() async {
     var db = await _connection.connect();
 

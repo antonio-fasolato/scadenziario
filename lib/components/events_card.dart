@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scadenziario/dto/event_dto.dart';
+import 'package:scadenziario/model/certification.dart';
+import 'package:scadenziario/model/course.dart';
+import 'package:scadenziario/model/person.dart';
+import 'package:scadenziario/repositories/certification_repository.dart';
+import 'package:scadenziario/repositories/course_repository.dart';
+import 'package:scadenziario/repositories/person_repository.dart';
+import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:scadenziario/state/course_state.dart';
 
 class EventsCard extends StatelessWidget {
   final EventDto _event;
+  final SqliteConnection _connection;
 
-  const EventsCard({super.key, required EventDto event}) : _event = event;
+  const EventsCard(
+      {super.key,
+      required EventDto event,
+      required SqliteConnection connection})
+      : _event = event,
+        _connection = connection;
 
   Widget _getCardSubtitle() {
     DateTime expirationDateOnly = DateUtils.dateOnly(_event.expirationDate);
@@ -35,6 +50,22 @@ class EventsCard extends StatelessWidget {
     }
   }
 
+  _goToCourse(BuildContext context) async {
+    CourseState state = Provider.of<CourseState>(context, listen: false);
+    Certification? certification = await CertificationRepository(_connection)
+        .getById(_event.certificationId);
+    Course? course =
+        await CourseRepository(_connection).getById(_event.courseId);
+    Person? person =
+        await PersonRepository(_connection).getById(_event.personId);
+    if (certification != null && course != null && person != null) {
+      state.selectCourse(course);
+      state.selectCertification(certification, person);
+    }
+
+    Navigator.of(context).pushNamed("/certificates");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -44,6 +75,7 @@ class EventsCard extends StatelessWidget {
         subtitle: _getCardSubtitle(),
         leading: const Icon(Icons.event),
         tileColor: _getCardColor(),
+        onTap: () => _goToCourse(context),
       ),
     );
   }

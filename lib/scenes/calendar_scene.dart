@@ -64,7 +64,10 @@ class _CalendarSceneState extends State<CalendarScene> {
                   shrinkWrap: true,
                   children: _events
                       .map(
-                        (e) => EventsCard(event: e),
+                        (e) => EventsCard(
+                          event: e,
+                          connection: widget._connection,
+                        ),
                       )
                       .toList(),
                 ),

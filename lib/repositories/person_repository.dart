@@ -1,10 +1,28 @@
-  import 'package:scadenziario/model/person.dart';
+import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class PersonRepository {
   final SqliteConnection _connection;
 
   PersonRepository(SqliteConnection connection) : _connection = connection;
+
+  Future<Person?> getById(String id) async {
+    var db = await _connection.connect();
+
+    Person? toReturn;
+    var sql = '''
+      select *
+      from persons
+      where 1 = 1
+        and id = '$id' 
+    ''';
+    var res = await db.rawQuery(sql);
+    if (res.isNotEmpty) {
+      toReturn = Person.fromMap(res.first);
+    }
+    await db.close();
+    return toReturn;
+  }
 
   Future<List<Person>> getAll() async {
     var db = await _connection.connect();

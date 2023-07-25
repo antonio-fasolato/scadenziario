@@ -62,13 +62,14 @@ class AttachmentsList extends StatelessWidget {
       scaffoldMessenger.showSnackBar(
         SnackBar(
           content: Container(
-              padding: const EdgeInsets.all(16),
-              height: 90,
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              ),
-              child: const Text("Errore nel download del file'")),
+            padding: const EdgeInsets.all(16),
+            height: 90,
+            decoration: const BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+            ),
+            child: const Text("Errore nel download del file'"),
+          ),
         ),
       );
       return false;
@@ -79,30 +80,35 @@ class AttachmentsList extends StatelessWidget {
     );
     if (selectedPath != null) {
       File f = File(
-          selectedPath + Platform.pathSeparator + (attachment.fileName ?? ""));
+        selectedPath + Platform.pathSeparator + (attachment.fileName ?? ""),
+      );
 
       if (await f.exists()) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text("Il file esiste già, sovrascrivere."),
-              actions: [
-                TextButton(
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Il file esiste già, sovrascrivere."),
+                actions: [
+                  TextButton(
                     onPressed: () {
                       navigator.pop();
                     },
-                    child: const Text("No")),
-                TextButton(
+                    child: const Text("No"),
+                  ),
+                  TextButton(
                     onPressed: () async {
                       await f.writeAsBytes(attachment.data!.toList());
                       navigator.pop();
                     },
-                    child: const Text("Si"))
-              ],
-            );
-          },
-        );
+                    child: const Text("Si"),
+                  )
+                ],
+              );
+            },
+          );
+        }
       } else {
         await f.writeAsBytes(attachment.data!.toList());
       }
@@ -127,7 +133,10 @@ class AttachmentsList extends StatelessWidget {
       File f = File(path);
       Uint8List raw = await f.readAsBytes();
       Attachment attachment = Attachment(
-          const Uuid().v4(), f.path.split(Platform.pathSeparator).last, raw);
+        const Uuid().v4(),
+        f.path.split(Platform.pathSeparator).last,
+        raw,
+      );
       await AttachmentRepository(_connection).save(attachment, _id, _type);
     }
     _reloadAttachments();

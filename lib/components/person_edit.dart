@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/components/attachments_list.dart';
 import 'package:scadenziario/model/person.dart';
+import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/duty_repository.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
@@ -43,35 +45,17 @@ class _PersonEditState extends State<PersonEdit> {
     state.loadDuties(duties);
   }
 
-  _attachmentsPopup(BuildContext context) {
+  Future<void> _loadAttachments() async {
     PersonState state = Provider.of<PersonState>(context, listen: false);
 
     if (state.isSelected) {
-      return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Row(
-              children: [
-                const Text("Allegati"),
-                const Spacer(),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Icon(Icons.close),
-                )
-              ],
-            ),
-            content: AttachmentsList.person(
-              connection: widget._connection,
-              id: state.person.id as String,
-            ),
-          );
-        },
+      var attachments = await AttachmentRepository(widget._connection)
+          .getAttachmentsByLinkedEntity(
+        state.person.id as String,
+        AttachmentType.person,
       );
-    } else {
-      return Container();
+
+      state.setAttachments(attachments);
     }
   }
 
@@ -91,11 +75,14 @@ class _PersonEditState extends State<PersonEdit> {
                     padding: const EdgeInsets.only(top: 8, bottom: 8),
                     child: Consumer<PersonState>(
                       builder: (context, state, child) => Text(
-                          state.person.id != null
-                              ? "Modifica dati persona"
-                              : "Nuova persona",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 24)),
+                        state.person.id != null
+                            ? "Modifica dati persona"
+                            : "Nuova persona",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                        ),
+                      ),
                     ),
                   ),
                   const Row(
@@ -254,14 +241,6 @@ class _PersonEditState extends State<PersonEdit> {
                       ),
                       const Spacer(),
                       Padding(
-                        padding: const EdgeInsets.only(top: 16, bottom: 8),
-                        child: ElevatedButton.icon(
-                          onPressed: () => _attachmentsPopup(context),
-                          label: const Text("Allegati"),
-                          icon: const Icon(Icons.attachment_outlined),
-                        ),
-                      ),
-                      Padding(
                         padding:
                             const EdgeInsets.only(left: 16, top: 16, bottom: 8),
                         child: ElevatedButton(
@@ -324,16 +303,18 @@ class _PersonEditState extends State<PersonEdit> {
               ),
             ),
           ),
-          // Consumer<PersonState>(
-          //   builder: (context, state, child) => Visibility(
-          //     visible: state.person.id != null,
-          //     child: AttachmentsList(
-          //       connection: widget._connection,
-          //       type: AttachmentType.person,
-          //       id: state.person.id,
-          //     ),
-          //   ),
-          // ),
+          Consumer<PersonState>(
+            builder: (context, state, child) => Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: AttachmentsList(
+                type: AttachmentType.person,
+                attachments: state.attachments,
+                id: state.person.id as String,
+                connection: widget._connection,
+                reloadAttachments: _loadAttachments,
+              ),
+            ),
+          )
         ],
       ),
     );

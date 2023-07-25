@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/components/person_edit.dart';
 import 'package:scadenziario/model/person.dart';
+import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/person_state.dart';
@@ -61,6 +63,17 @@ class _PersonsSceneState extends State<PersonsScene> {
         : Container();
   }
 
+  Future<void> _selectPerson(Person p) async {
+    final state = Provider.of<PersonState>(context, listen: false);
+
+    state.selectPerson(p);
+    state.setAttachments(await AttachmentRepository(widget._connection)
+        .getAttachmentsByLinkedEntity(
+      p.id as String,
+      AttachmentType.person,
+    ));
+  }
+
   void _personSaved() {
     Provider.of<PersonState>(context, listen: false).deselectPerson();
 
@@ -115,10 +128,7 @@ class _PersonsSceneState extends State<PersonsScene> {
                         .map((p) => ListTile(
                               title: Text("${p.surname} ${p.name}"),
                               leading: const Icon(Icons.account_circle),
-                              onTap: () {
-                                Provider.of<PersonState>(context, listen: false)
-                                    .selectPerson(p);
-                              },
+                              onTap: () => _selectPerson(p),
                             ))
                         .toList(),
                   ),

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scadenziario/model/duty.dart';
 import 'package:scadenziario/model/person.dart';
+import 'package:scadenziario/state/with_attachments.dart';
 
-class PersonState extends ChangeNotifier {
+class PersonState extends WithAttachments {
   Person? _person;
   List<Duty> _duties = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

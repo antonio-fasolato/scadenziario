@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/components/course_edit.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/model/course.dart';
+import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/course_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
@@ -40,6 +42,16 @@ class _CoursesSceneState extends State<CoursesScene> {
     setState(() {
       _courses = res;
     });
+  }
+
+  Future<void> _selectCourse(Course c) async {
+    final state = Provider.of<CourseState>(context, listen: false);
+    state.selectCourse(c);
+    state.setAttachments(await AttachmentRepository(widget._connection)
+        .getAttachmentsByLinkedEntity(
+      c.id as String,
+      AttachmentType.course,
+    ));
   }
 
   _courseSaved() {
@@ -118,14 +130,7 @@ class _CoursesSceneState extends State<CoursesScene> {
                             title: Text("${course.name}"),
                             subtitle: Text("${course.description}"),
                             leading: const Icon(Icons.business_center),
-                            onTap: () {
-                              setState(() {
-                                CourseState state = Provider.of<CourseState>(
-                                    context,
-                                    listen: false);
-                                state.selectCourse(course);
-                              });
-                            },
+                            onTap: () => _selectCourse(course),
                           ),
                         )
                         .toList(),

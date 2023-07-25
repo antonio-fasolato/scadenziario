@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/model/certification.dart';

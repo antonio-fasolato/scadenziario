@@ -12,28 +12,46 @@ import 'package:uuid/uuid.dart';
 class AttachmentsList extends StatefulWidget {
   final SqliteConnection _connection;
   final AttachmentType _type;
+  final List<Attachment> _attachments;
   final String _id;
+  final Function() _reloadAttachments;
 
-  const AttachmentsList(
-      {super.key,
-      required AttachmentType type,
-      required String id,
-      required SqliteConnection connection})
-      : _type = type,
+  const AttachmentsList({
+    super.key,
+    required AttachmentType type,
+    required List<Attachment> attachments,
+    required String id,
+    required SqliteConnection connection,
+    required Function() reloadAttachments,
+  })  : _type = type,
+        _attachments = attachments,
         _id = id,
-        _connection = connection;
+        _connection = connection,
+        _reloadAttachments = reloadAttachments;
 
-  const AttachmentsList.person(
-      {super.key, required String id, required SqliteConnection connection})
-      : _id = id,
+  const AttachmentsList.person({
+    super.key,
+    required List<Attachment> attachments,
+    required String id,
+    required SqliteConnection connection,
+    required Function() reloadAttachments,
+  })  : _id = id,
+        _attachments = attachments,
         _type = AttachmentType.person,
-        _connection = connection;
+        _connection = connection,
+        _reloadAttachments = reloadAttachments;
 
-  const AttachmentsList.course(
-      {super.key, required String id, required SqliteConnection connection})
-      : _id = id,
+  const AttachmentsList.course({
+    super.key,
+    required List<Attachment> attachments,
+    required String id,
+    required SqliteConnection connection,
+    required Function() reloadAttachments,
+  })  : _id = id,
+        _attachments = attachments,
         _type = AttachmentType.course,
-        _connection = connection;
+        _connection = connection,
+        _reloadAttachments = reloadAttachments;
 
   @override
   State<AttachmentsList> createState() => _AttachmentsListState();
@@ -41,22 +59,10 @@ class AttachmentsList extends StatefulWidget {
 
 class _AttachmentsListState extends State<AttachmentsList> {
   final log = Logger((AttachmentsList).toString());
-  List<Attachment> _attachments = [];
-
-  _loadAttachments() async {
-    List<Attachment> res = [];
-
-    res = await AttachmentRepository(widget._connection)
-        .getAttachmentsByLinkedEntity(widget._id, widget._type);
-    setState(() {
-      _attachments = res;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    _loadAttachments();
   }
 
   Future<bool> _download(String id) async {
@@ -120,8 +126,10 @@ class _AttachmentsListState extends State<AttachmentsList> {
   }
 
   _delete(String id) async {
+    final navigator = Navigator.of(context);
     await AttachmentRepository(widget._connection).delete(id, widget._type);
-    await _loadAttachments();
+    navigator.pop();
+    widget._reloadAttachments();
   }
 
   _addAttachment() async {
@@ -137,28 +145,39 @@ class _AttachmentsListState extends State<AttachmentsList> {
           const Uuid().v4(), f.path.split(Platform.pathSeparator).last, raw);
       await AttachmentRepository(widget._connection)
           .save(attachment, widget._id as String, widget._type);
-      await _loadAttachments();
     }
+    widget._reloadAttachments();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
       children: [
-        SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
+        Card(
+          elevation: 4,
           child: Column(
-            children: _attachments
-                .map((a) => ListTile(
-                      title: Text(a.fileName ?? ""),
-                      leading: IconButton(
-                          onPressed: () {
-                            _download(a.id ?? "");
-                          },
-                          icon: const Icon(Icons.download)),
-                      trailing: IconButton(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text(
+                  "Allegati",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+              ListView(
+                shrinkWrap: true,
+                children: widget._attachments
+                    .map(
+                      (a) => ListTile(
+                        title: Text("${a.fileName}"),
+                        leading: IconButton(
+                          onPressed: () => _download(a.id as String),
+                          icon: const Icon(Icons.attachment_outlined),
+                        ),
+                        trailing: IconButton(
                           onPressed: () {
                             showDialog(
                               context: context,
@@ -168,35 +187,44 @@ class _AttachmentsListState extends State<AttachmentsList> {
                                       "Confermare la cancellazione del file ${a.fileName}?"),
                                   actions: [
                                     TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text("No")),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: const Text("No"),
+                                    ),
                                     TextButton(
-                                        onPressed: () {
-                                          _delete(a.id ?? "");
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text("Si")),
+                                      onPressed: () => _delete(a.id as String),
+                                      child: const Text("Si"),
+                                    ),
                                   ],
                                 );
                               },
                             );
                           },
-                          icon: const Icon(Icons.delete,
-                              color: Colors.redAccent)),
-                    ))
-                .toList(),
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton.icon(
+                      onPressed: () => _addAttachment(),
+                      icon: const Icon(Icons.attachment_outlined),
+                      label: const Text("Aggungi"),
+                    ),
+                  )
+                ],
+              ),
+            ],
           ),
-        ),
-        Row(
-          children: [
-            const Spacer(),
-            ElevatedButton.icon(
-              onPressed: () => _addAttachment(),
-              icon: const Icon(Icons.add),
-              label: const Text("Aggiungi"),
-            ),
-          ],
         ),
       ],
     );

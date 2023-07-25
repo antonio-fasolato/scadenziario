@@ -29,37 +29,37 @@ class CourseEdit extends StatefulWidget {
 class _CourseEditState extends State<CourseEdit> {
   final GlobalKey<FormState> _courseFormKey = GlobalKey<FormState>();
 
-  _attachmentsPopup(BuildContext context) {
-    CourseState state = Provider.of<CourseState>(context, listen: false);
-
-    if (state.hasCourse) {
-      return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Row(
-              children: [
-                const Text("Allegati"),
-                const Spacer(),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Icon(Icons.close),
-                )
-              ],
-            ),
-            content: AttachmentsList.course(
-              connection: widget._connection,
-              id: state.course.id as String,
-            ),
-          );
-        },
-      );
-    } else {
-      return Container();
-    }
-  }
+  // _attachmentsPopup(BuildContext context) {
+  //   CourseState state = Provider.of<CourseState>(context, listen: false);
+  //
+  //   if (state.hasCourse) {
+  //     return showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //           title: Row(
+  //             children: [
+  //               const Text("Allegati"),
+  //               const Spacer(),
+  //               TextButton(
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: const Icon(Icons.close),
+  //               )
+  //             ],
+  //           ),
+  //           content: AttachmentsList.course(
+  //             connection: widget._connection,
+  //             id: state.course.id as String,
+  //           ),
+  //         );
+  //       },
+  //     );
+  //   } else {
+  //     return Container();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -158,15 +158,15 @@ class _CourseEditState extends State<CourseEdit> {
                           label: const Text("Certificati"),
                         ),
                       ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(left: 16, top: 16, bottom: 8),
-                        child: ElevatedButton.icon(
-                          onPressed: () => _attachmentsPopup(context),
-                          icon: const Icon(Icons.attachment_outlined),
-                          label: const Text("Allegati"),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding:
+                      //       const EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                      //   child: ElevatedButton.icon(
+                      //     onPressed: () => _attachmentsPopup(context),
+                      //     icon: const Icon(Icons.attachment_outlined),
+                      //     label: const Text("Allegati"),
+                      //   ),
+                      // ),
                       Padding(
                         padding:
                             const EdgeInsets.only(left: 16, top: 16, bottom: 8),

@@ -51,6 +51,8 @@ class EventsCard extends StatelessWidget {
   }
 
   _goToCourse(BuildContext context) async {
+    final navigator = Navigator.of(context);
+
     CourseState state = Provider.of<CourseState>(context, listen: false);
     Certification? certification = await CertificationRepository(_connection)
         .getById(_event.certificationId);
@@ -63,7 +65,7 @@ class EventsCard extends StatelessWidget {
       state.selectCertification(certification, person);
     }
 
-    Navigator.of(context).pushNamed("/certificates");
+    navigator.pushNamed("/certificates");
   }
 
   @override

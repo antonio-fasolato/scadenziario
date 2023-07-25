@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/model/course.dart';
@@ -82,10 +83,14 @@ class CourseState extends ChangeNotifier {
     _certification = c;
     _person = person;
     _certificationFormKey = GlobalKey<FormState>();
-    _certificationIssuingController =
-        TextEditingController(text: c.issuingDate ?? "");
-    _certificationExpirationController =
-        TextEditingController(text: c.expirationDate ?? "");
+    _certificationIssuingController = TextEditingController(
+        text: c.issuingDate != null
+            ? DateFormat.yMd('it_IT').format(c.issuingDate as DateTime)
+            : "");
+    _certificationExpirationController = TextEditingController(
+        text: c.expirationDate != null
+            ? DateFormat.yMd('it_IT').format(c.expirationDate as DateTime)
+            : "");
     _certificationNoteController = TextEditingController(text: c.note ?? "");
     notifyListeners();
   }
@@ -117,8 +122,7 @@ class CourseState extends ChangeNotifier {
 
   List<String> get checkedCertifications => _checkedCertifications;
 
-  bool isCertificationChecked(String id) =>
-      _checkedCertifications.contains(id);
+  bool isCertificationChecked(String id) => _checkedCertifications.contains(id);
 
   checkCertification(String id) {
     if (isCertificationChecked(id)) {

@@ -1,11 +1,9 @@
-import 'package:logger/logger.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 enum AttachmentType { person, course, certification }
 
 class AttachmentRepository {
-  static final Logger log = Logger();
   final SqliteConnection _connection;
 
   AttachmentRepository(SqliteConnection connection) : _connection = connection;

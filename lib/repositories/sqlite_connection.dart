@@ -1,13 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:sqflite_common/sqflite_logger.dart';
-import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'dart:io' as io;
 
 class SqliteConnection {
-  final Logger log = Logger();
+  final log = Logger((SqliteConnection).toString());
   final String _databasePath;
 
   SqliteConnection(this._databasePath);
@@ -17,14 +16,16 @@ class SqliteConnection {
 
     bool newFile = !(await io.File(_databasePath).exists());
     DatabaseFactory factory = kDebugMode
-        ? SqfliteDatabaseFactoryLogger(databaseFactoryFfi,
+        ? SqfliteDatabaseFactoryLogger(
+            databaseFactoryFfi,
             options: SqfliteLoggerOptions(
               type: SqfliteDatabaseFactoryLoggerType.all,
-              log: (event) => log.d(event),
-            ))
+              log: (event) => log.info(event),
+            ),
+          )
         : databaseFactoryFfi;
     var db = await factory.openDatabase(_databasePath);
-    log.d("Connected to $_databasePath");
+    log.info("Connected to $_databasePath");
     if (newFile) {
       await _initDb(db);
     }
@@ -33,7 +34,7 @@ class SqliteConnection {
   }
 
   Future<void> _initDb(Database db) async {
-    log.d("Initializing new database");
+    log.info("Initializing new database");
 
     String sql = """
       CREATE TABLE IF NOT EXISTS "persons" (

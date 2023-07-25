@@ -1,12 +1,31 @@
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class CourseRepository {
-  static final Logger log = Logger();
+  final log = Logger((CourseRepository).toString());
   final SqliteConnection _connection;
 
   CourseRepository(SqliteConnection connection) : _connection = connection;
+
+  Future<Course?> getById(String id) async {
+    var db = await _connection.connect();
+    Course? toReturn;
+
+    String sql = '''
+      select *
+      from course
+      where 1 = 1 
+        and id = '$id'
+    ''';
+    var res = await db.rawQuery(sql);
+    if (res.isNotEmpty) {
+      toReturn = Course.fromMap(map: res.first);
+    }
+
+    await db.close();
+    return toReturn;
+  }
 
   Future<List<Course>> getAll() async {
     var db = await _connection.connect();
@@ -51,12 +70,12 @@ class CourseRepository {
     var db = await _connection.connect();
     var res = await db.query("course", where: "id = ?", whereArgs: [c.id]);
     if (res.isEmpty) {
-      log.d("New course $c");
+      log.info("New course $c");
       int res = await db.insert("course", c.toMap());
       await db.close();
       return res;
     } else {
-      log.d("Update course $c");
+      log.info("Update course $c");
       int res = await db
           .update("course", c.toMap(), where: "id = ?", whereArgs: [c.id]);
       await db.close();

@@ -1,9 +1,7 @@
-import 'package:logger/logger.dart';
 import 'package:scadenziario/model/duty.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class DutyRepository {
-  static final Logger log = Logger();
   final SqliteConnection _connection;
 
   DutyRepository(SqliteConnection connection) : _connection = connection;

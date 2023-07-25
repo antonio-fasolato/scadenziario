@@ -1,4 +1,5 @@
-import 'package:logger/logger.dart';
+import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
 import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/model/certification.dart';
@@ -7,7 +8,7 @@ import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class CertificationRepository {
-  static final Logger log = Logger();
+  final log = Logger((CertificationRepository).toString());
   final SqliteConnection _connection;
 
   CertificationRepository(SqliteConnection connection)
@@ -125,6 +126,38 @@ class CertificationRepository {
         and c.deleted = 0
     """;
 
+    var res = await db.rawQuery(sql);
+    if (res.isNotEmpty) {
+      toReturn =
+          List.from(res.map((e) => Certification.fromMapWithRelationships(e)));
+    }
+
+    await db.close();
+    return toReturn;
+  }
+
+  Future<List<Certification>> getCertificationsExpiringInMonth(
+      DateTime d) async {
+    var db = await _connection.connect();
+    List<Certification> toReturn = [];
+
+    DateTime start = DateTime(d.year, d.month, 1);
+    DateTime end = DateTime(d.year, d.month + 1, 0);
+
+    String sql = """
+      select ce.*, 
+        p.name, p.surname, p.birthdate, p.email, p.phone, p.mobile, 
+        c.name as course_name, c.description as course_description, c.duration 
+      from certification ce
+      inner join persons p on
+        ce.person_id = p.id
+      inner join course c on
+        ce.course_id = c.id
+      where 1 = 1
+        and date(ce.expiration_date) between date('${DateFormat("yyyy-MM-dd").format(start)}') and date('${DateFormat("yyyy-MM-dd").format(end)}')
+    """;
+
+    log.info(sql);
     var res = await db.rawQuery(sql);
     if (res.isNotEmpty) {
       toReturn =

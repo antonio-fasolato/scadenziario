@@ -59,6 +59,7 @@ class _CertificateSceneState extends State<CertificateScene> {
       ),
       body: Row(
         mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Consumer<CourseState>(

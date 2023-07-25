@@ -160,49 +160,55 @@ class AttachmentsList extends StatelessWidget {
                   ),
                 ),
               ),
-              ListView(
-                shrinkWrap: true,
-                children: _attachments
-                    .map(
-                      (a) => ListTile(
-                        title: Text("${a.fileName}"),
-                        leading: IconButton(
-                          onPressed: () => _download(context, a.id as String),
-                          icon: const Icon(Icons.attachment_outlined),
-                        ),
-                        trailing: IconButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text(
-                                      "Confermare la cancellazione del file ${a.fileName}?"),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(),
-                                      child: const Text("No"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () =>
-                                          _delete(context, a.id as String),
-                                      child: const Text("Si"),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.redAccent,
-                          ),
-                        ),
-                      ),
+              _attachments.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: Text("Nessun allegato presente"),
                     )
-                    .toList(),
-              ),
+                  : ListView(
+                      shrinkWrap: true,
+                      children: _attachments
+                          .map(
+                            (a) => ListTile(
+                              title: Text("${a.fileName}"),
+                              leading: IconButton(
+                                onPressed: () =>
+                                    _download(context, a.id as String),
+                                icon: const Icon(Icons.attachment_outlined),
+                              ),
+                              trailing: IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text(
+                                            "Confermare la cancellazione del file ${a.fileName}?"),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Text("No"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () => _delete(
+                                                context, a.id as String),
+                                            child: const Text("Si"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.redAccent,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
               Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.end,

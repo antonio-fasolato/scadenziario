@@ -303,17 +303,14 @@ class _PersonEditState extends State<PersonEdit> {
             ),
           ),
           Consumer<PersonState>(
-            builder: (context, state, child) => Visibility(
-              visible: state.isSelected && state.attachments.isNotEmpty,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: AttachmentsList(
-                  type: AttachmentType.person,
-                  attachments: state.attachments,
-                  id: state.person.id as String,
-                  connection: widget._connection,
-                  reloadAttachments: _loadAttachments,
-                ),
+            builder: (context, state, child) => Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: AttachmentsList(
+                type: AttachmentType.person,
+                attachments: state.attachments,
+                id: state.person.id as String,
+                connection: widget._connection,
+                reloadAttachments: _loadAttachments,
               ),
             ),
           )

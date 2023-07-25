@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/components/events_calendar.dart';
+import 'package:scadenziario/components/events_card.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/dto/event_dto.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
@@ -63,9 +64,7 @@ class _CalendarSceneState extends State<CalendarScene> {
                   shrinkWrap: true,
                   children: _events
                       .map(
-                        (e) => ListTile(
-                          title: Text(e.title),
-                        ),
+                        (e) => EventsCard(event: e),
                       )
                       .toList(),
                 ),

@@ -52,7 +52,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
     for (var e in events) {
       if (e != null) {
         EventDto event = e as EventDto;
-        toReturn += "${event.title} ";
+        toReturn += "${event.courseName} - ${event.personName}";
       }
     }
 
@@ -111,6 +111,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
         }
       },
       onPageChanged: (focusedDay) {
+        widget._setEvents([]);
         _focusedDay = focusedDay;
         _getEventsForMonth(focusedDay);
       },

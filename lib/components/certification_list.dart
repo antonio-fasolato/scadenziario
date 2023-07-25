@@ -17,7 +17,6 @@ import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
 import 'package:uuid/uuid.dart';
-import 'package:path_provider/path_provider.dart';
 
 class CertificationsList extends StatefulWidget {
   final SqliteConnection _connection;
@@ -36,19 +35,11 @@ class CertificationsList extends StatefulWidget {
 
 class _CertificationsListState extends State<CertificationsList> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     widget._getAllCertifications();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-
-    super.dispose();
   }
 
   _attachFile(String id) async {
@@ -180,12 +171,22 @@ class _CertificationsListState extends State<CertificationsList> {
       children: [
         Form(
           key: _formKey,
-          child: TextFormField(
-            controller: _searchController,
-            decoration: const InputDecoration(
-              label: Text("Cerca"),
-              prefixIcon: Icon(Icons.search),
-              suffixIcon: Icon(Icons.backspace),
+          child: Consumer<CourseState>(
+            builder: (context, state, child) => TextFormField(
+              controller: state.searchController,
+              decoration: InputDecoration(
+                label: const Text("Cerca"),
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    Provider.of<CourseState>(context, listen: false)
+                        .changeSearchController("");
+                    widget._getAllCertifications();
+                  },
+                  icon: const Icon(Icons.backspace),
+                ),
+              ),
+              onChanged: (value) => widget._getAllCertifications(),
             ),
           ),
         ),

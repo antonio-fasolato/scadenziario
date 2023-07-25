@@ -15,7 +15,9 @@ class CertificationRepository {
       : _connection = connection;
 
   Future<List<CertificationDto>> getPersonsAndCertificationsByCourse(
-      String id) async {
+    String id,
+    String q,
+  ) async {
     var db = await _connection.connect();
     List<CertificationDto> toReturn = [];
 
@@ -38,6 +40,17 @@ class CertificationRepository {
     ) as x on
       x.c_person_id = p.id
 	    """;
+
+    if (q.isNotEmpty) {
+      sql += """
+        where 1 = 1
+          and (
+            p.name like '%$q%'
+            or p.surname like '%$q%'
+            or p.email like '%$q%'
+          );
+      """;
+    }
 
     var res = await db.rawQuery(sql);
     if (res.isNotEmpty) {

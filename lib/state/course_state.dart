@@ -17,6 +17,7 @@ class CourseState extends WithAttachments {
   Certification? _certification;
   Person? _person;
   GlobalKey<FormState> _certificationFormKey = GlobalKey<FormState>();
+  TextEditingController _searchController = TextEditingController();
   TextEditingController _certificationIssuingController =
       TextEditingController();
   TextEditingController _certificationExpirationController =
@@ -32,6 +33,8 @@ class CourseState extends WithAttachments {
   bool get hasPerson => _person != null;
 
   Person get person => _person as Person;
+
+  TextEditingController get searchController => _searchController;
 
   TextEditingController get courseNameController => _courseNameController;
 
@@ -103,6 +106,11 @@ class CourseState extends WithAttachments {
     _certificationExpirationController = TextEditingController();
     _certificationNoteController = TextEditingController();
     _checkedCertifications = [];
+    notifyListeners();
+  }
+
+  changeSearchController(String q) {
+    _searchController.text = q;
     notifyListeners();
   }
 

@@ -31,7 +31,10 @@ class _CertificateSceneState extends State<CertificateScene> {
     List<CertificationDto> res = [];
 
     res = await CertificationRepository(widget._connection)
-        .getPersonsAndCertificationsByCourse(state.course.id as String);
+        .getPersonsAndCertificationsByCourse(
+      state.course.id as String,
+      state.searchController.text,
+    );
 
     state.setCertifications(res);
   }

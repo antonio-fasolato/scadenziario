@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/model/duty.dart';
 import 'package:scadenziario/model/person.dart';
+import 'package:scadenziario/state/with_attachments.dart';
 
-class PersonState extends ChangeNotifier {
+class PersonState extends WithAttachments {
   Person? _person;
   List<Duty> _duties = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -15,7 +15,6 @@ class PersonState extends ChangeNotifier {
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _mobileController = TextEditingController();
   TextEditingController _dutyController = TextEditingController();
-  List<Attachment> _attachments = [];
 
   List<Duty> get duties => _duties;
 
@@ -38,8 +37,6 @@ class PersonState extends ChangeNotifier {
   TextEditingController get surnameController => _surnameController;
 
   Person get person => _person as Person;
-
-  List<Attachment> get attachments => _attachments;
 
   loadDuties(List<Duty> duties) {
     _duties = duties;
@@ -80,11 +77,6 @@ class PersonState extends ChangeNotifier {
 
   changePersonDuty(String duty) {
     _dutyController.text = duty;
-    notifyListeners();
-  }
-
-  setAttachments(List<Attachment> attachments) {
-    _attachments = attachments;
     notifyListeners();
   }
 }

@@ -4,8 +4,9 @@ import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/model/person.dart';
+import 'package:scadenziario/state/with_attachments.dart';
 
-class CourseState extends ChangeNotifier {
+class CourseState extends WithAttachments {
   // COURSES
   Course? _course;
   TextEditingController _courseNameController = TextEditingController();

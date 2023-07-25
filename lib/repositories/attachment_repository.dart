@@ -1,7 +1,6 @@
+import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
-
-enum AttachmentType { person, course, certification }
 
 class AttachmentRepository {
   final SqliteConnection _connection;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/components/person_edit.dart';
 import 'package:scadenziario/model/person.dart';

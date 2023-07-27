@@ -27,7 +27,7 @@ jobs:
         with:
           ref: "develop"
           
-      - uses: subosito/flutter-action@v3
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.10.6'
           channel: 'stable'

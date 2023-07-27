@@ -48,6 +48,14 @@ jobs:
       - run: flutter config --enable-linux-desktop
       - run: flutter build linux
 
+      - run: |
+          cd build/linux/x64/release/bundle
+          tar cvzf scadenziario-${{ github.run_number }}.tar.gz scadenziario data lib
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: test-linux
+          path: build/linux/x64/release/bundle/scadenziario-${{ github.run_number }}.tar.gz
 
       # Runs a single command using the runners shell
       #- name: Run a one-line script

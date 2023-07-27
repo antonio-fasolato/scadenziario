@@ -41,4 +41,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: test-windows-${{ github.run_number }}
-          path: build/windows/
+          path: build\windows\runner\Release\

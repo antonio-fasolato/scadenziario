@@ -79,8 +79,13 @@ class PersonCertificationsList extends StatelessWidget {
                                 ?.map(
                                   (c) => ListTile(
                                     title: Text("${c.course?.name}"),
-                                    subtitle: Text(
-                                        "${_certificationSubtitle(c.certification)}"),
+                                    subtitle: Text(_certificationSubtitle(
+                                        c.certification)),
+                                    tileColor: c.isExpiring
+                                        ? Colors.yellowAccent
+                                        : c.isExpired
+                                            ? Colors.redAccent
+                                            : null,
                                   ),
                                 )
                                 .toList() ??

@@ -18,7 +18,7 @@ class PersonRepository {
     ''';
     var res = await db.rawQuery(sql);
     if (res.isNotEmpty) {
-      toReturn = Person.fromMap(res.first);
+      toReturn = Person.fromMap(map: res.first);
     }
     await db.close();
     return toReturn;
@@ -30,7 +30,7 @@ class PersonRepository {
     List<Person> toReturn = [];
     var res = await db.query("persons", orderBy: "surname, name");
     if (res.isNotEmpty) {
-      toReturn = List.from(res.map((e) => Person.fromMap(e)));
+      toReturn = List.from(res.map((e) => Person.fromMap(map: e)));
     }
     await db.close();
     return toReturn;
@@ -52,7 +52,7 @@ class PersonRepository {
     ''';
     var res = await db.rawQuery(sql);
     if (res.isNotEmpty) {
-      toReturn = List.from(res.map((e) => Person.fromMap(e)));
+      toReturn = List.from(res.map((e) => Person.fromMap(map: e)));
     }
     await db.close();
     return toReturn;

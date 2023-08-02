@@ -58,7 +58,7 @@ class CertificationRepository {
         res.map(
           (e) {
             var toReturn = CertificationDto(
-              person: Person.fromMap(e),
+              person: Person.fromMap(map: e),
               certification: e["c_id"] == null
                   ? null
                   : Certification.fromMap(map: e, prefix: "c_"),
@@ -196,6 +196,44 @@ class CertificationRepository {
     if (res.isNotEmpty) {
       toReturn = List.from(res.map((e) => e["person_id"]));
     }
+
+    await db.close();
+    return toReturn;
+  }
+
+  Future<List<CertificationDto>> getCertificationsFromPersonId(
+      String personId) async {
+    var db = await _connection.connect();
+    List<CertificationDto> toReturn = [];
+
+    String sql = """
+      select
+        ce.*
+          , p.name, p.surname, p.birthdate, p.email, p.phone, p.mobile
+        , c.id as c_id, c.name as c_name, c.description as c_description, c.duration as c_duration, c.enabled as c_enabled, c.deleted as c_deleted
+      from certification ce
+      inner join persons p on
+        ce.person_id = p.id
+      inner join course as c on
+        ce.course_id = c.id
+      where 1 = 1
+        and p.id = '$personId'
+        and p.deleted = 0
+        and p.enabled = 1
+        and c.deleted = 0
+        and c.enabled = 1
+      order by ce.expiration_date desc, ce.issuing_date desc
+    """;
+
+    var res = await db.rawQuery(sql);
+    toReturn = res.map((r) {
+      var toReturn = CertificationDto(
+        person: Person.fromMap(map: r, prefix: "p_"),
+        certification: Certification.fromMap(map: r),
+        course: r["c_id"] == null ? null : Course.fromMap(map: r, prefix: "c_"),
+      );
+      return toReturn;
+    }).toList();
 
     await db.close();
     return toReturn;

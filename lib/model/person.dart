@@ -35,18 +35,21 @@ class Person {
     return 'Person{id: $id, name: $name, surname: $surname, birthdate: $birthdate, duty: $duty, email: $email, phone: $phone, mobile: $mobile, enabled: $enabled, deleted: $deleted}';
   }
 
-  factory Person.fromMap(Map<String, dynamic> map) {
+  factory Person.fromMap(
+      {required Map<String, dynamic> map, String prefix = ""}) {
     return Person(
-      map["id"],
-      map["name"],
-      map["surname"],
-      DateFormat("yyyy-MM-dd").parse(map["birthdate"]),
-      map["duty"],
-      map["email"],
-      map["phone"],
-      map["mobile"],
-      map["enabled"] == 1,
-      map["deleted"] == 1,
+      map["${prefix}id"],
+      map["${prefix}name"],
+      map["${prefix}surname"],
+      map["${prefix}birthdate"] == null
+          ? null
+          : DateFormat("yyyy-MM-dd").parse(map["${prefix}birthdate"]),
+      map["${prefix}duty"],
+      map["${prefix}email"],
+      map["${prefix}phone"],
+      map["${prefix}mobile"],
+      map["${prefix}enabled"] == 1,
+      map["${prefix}deleted"] == 1,
     );
   }
 

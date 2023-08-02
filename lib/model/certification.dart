@@ -27,8 +27,12 @@ class Certification {
       map["${prefix}id"],
       map["${prefix}course_id"],
       map["${prefix}person_id"],
-      DateFormat("yyyy-MM-dd").parse(map["${prefix}issuing_date"]),
-      DateFormat("yyyy-MM-dd").parse(map["${prefix}expiration_date"]),
+      map["${prefix}issuing_date"] == null
+          ? null
+          : DateFormat("yyyy-MM-dd").parse(map["${prefix}issuing_date"]),
+      map["${prefix}expiration_date"] == null
+          ? null
+          : DateFormat("yyyy-MM-dd").parse(map["${prefix}expiration_date"]),
       map["${prefix}note"],
       map["${prefix}attachment_id"],
     );

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/components/attachments_list.dart';
+import 'package:scadenziario/components/person_certifications_list.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/duty_repository.dart';
@@ -303,18 +304,36 @@ class _PersonEditState extends State<PersonEdit> {
               ),
             ),
           ),
-          Consumer<PersonState>(
-            builder: (context, state, child) => Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: AttachmentsList(
-                type: AttachmentType.person,
-                attachments: state.attachments,
-                id: state.person.id as String,
-                connection: widget._connection,
-                reloadAttachments: _loadAttachments,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Flexible(
+                child: Consumer<PersonState>(
+                  builder: (context, state, child) => Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: AttachmentsList(
+                      type: AttachmentType.person,
+                      attachments: state.attachments,
+                      id: state.person.id as String,
+                      connection: widget._connection,
+                      reloadAttachments: _loadAttachments,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          )
+              Flexible(
+                child: Consumer<PersonState>(
+                  builder: (context, state, child) => Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: PersonCertificationsList(
+                      connection: widget._connection,
+                      personId: state?.person.id ?? "",
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

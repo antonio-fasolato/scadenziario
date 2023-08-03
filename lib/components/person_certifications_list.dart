@@ -62,38 +62,39 @@ class PersonCertificationsList extends StatelessWidget {
             ),
           ),
           FutureBuilder<List<CertificationDto>>(
-              future: _getCertifications(),
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                    return const Text('Press button to start');
-                  case ConnectionState.waiting:
-                    return const Text('Awaiting result...');
-                  default:
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return ListView(
+            future: _getCertifications(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return const Text('Press button to start');
+                case ConnectionState.waiting:
+                  return const Text('Awaiting result...');
+                default:
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    if (snapshot.data != null) {
+                      return ListView.builder(
+                        itemBuilder: (context, index) => ListTile(
+                          title: Text("${snapshot.data![index].course?.name}"),
+                          subtitle: Text(_certificationSubtitle(
+                              snapshot.data![index].certification)),
+                          tileColor: snapshot.data![index].isExpiring
+                              ? Colors.yellowAccent
+                              : snapshot.data![index].isExpired
+                                  ? Colors.redAccent
+                                  : null,
+                        ),
+                        itemCount: snapshot.data!.length,
                         shrinkWrap: true,
-                        children: snapshot.data
-                                ?.map(
-                                  (c) => ListTile(
-                                    title: Text("${c.course?.name}"),
-                                    subtitle: Text(_certificationSubtitle(
-                                        c.certification)),
-                                    tileColor: c.isExpiring
-                                        ? Colors.yellowAccent
-                                        : c.isExpired
-                                            ? Colors.redAccent
-                                            : null,
-                                  ),
-                                )
-                                .toList() ??
-                            [],
+                        physics: const NeverScrollableScrollPhysics(),
                       );
                     }
-                }
-              }),
+                    return Container();
+                  }
+              }
+            },
+          ),
         ],
       ),
     );

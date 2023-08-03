@@ -85,10 +85,13 @@ class _ScadenziarioState extends State<Scadenziario> {
               setSqliteConnection: _setConnection,
             ),
         "/home": (buildContext) => const HomepageScene(),
-        "/people": (buildContext) => ChangeNotifierProvider<PersonState>(
-              create: (context) => PersonState(),
-              child: PersonsScene(
-                connection: _connection as SqliteConnection,
+        "/people": (buildContext) => ChangeNotifierProvider<CourseState>.value(
+              value: courseState,
+              child: ChangeNotifierProvider<PersonState>(
+                create: (context) => PersonState(),
+                child: PersonsScene(
+                  connection: _connection as SqliteConnection,
+                ),
               ),
             ),
         "/calendar": (buildContext) =>

@@ -1,4 +1,6 @@
+import 'package:scadenziario/dto/person_dto.dart';
 import 'package:scadenziario/model/person.dart';
+import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class PersonRepository {
@@ -54,6 +56,34 @@ class PersonRepository {
     if (res.isNotEmpty) {
       toReturn = List.from(res.map((e) => Person.fromMap(map: e)));
     }
+    await db.close();
+    return toReturn;
+  }
+
+  Future<List<PersonDto>> getPersonsFromCourse(String courseId) async {
+    var db = await _connection.connect();
+
+    List<PersonDto> toReturn = [];
+    var sql = '''
+        select distinct p.*
+        from persons p
+        inner join certification ce on
+          ce.person_id = p.id
+        inner join course c on
+          ce.course_id = c.id
+        where 1 = 1
+          and c.id = '$courseId'
+	      order by surname, name
+    ''';
+    var res = await db.rawQuery(sql);
+    for (var r in res) {
+      Person p = Person.fromMap(map: r);
+
+      var certs = await CertificationRepository(_connection).getCertificationsFromPersonId(p.id as String);
+
+      toReturn.add(PersonDto.fromPerson(p, certs));
+    }
+
     await db.close();
     return toReturn;
   }

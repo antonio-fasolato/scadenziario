@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/model/person.dart';
+import 'package:scadenziario/constants.dart' as Constants;
 
 class Certification {
   String? id;
@@ -97,6 +99,23 @@ class Certification {
       "note": note,
       "attachment_id": attachmentId
     };
+  }
+
+  bool get isExpired {
+    DateTime expirationDateOnly =
+        DateUtils.dateOnly(expirationDate as DateTime);
+    DateTime nowDateOnly = DateUtils.dateOnly(DateTime.now());
+
+    return nowDateOnly.compareTo(expirationDateOnly) > 0;
+  }
+
+  bool get isExpiring {
+    DateTime expirationDateOnly =
+        DateUtils.dateOnly(expirationDate as DateTime);
+    DateTime nowDateOnly = DateUtils.dateOnly(DateTime.now());
+
+    return nowDateOnly.difference(expirationDateOnly).inDays.abs() <=
+        Constants.daysToExpirationWarning;
   }
 
   @override

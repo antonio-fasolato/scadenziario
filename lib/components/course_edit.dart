@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/components/attachments_list.dart';
+import 'package:scadenziario/components/course_persons_list.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/course_repository.dart';
@@ -215,17 +216,35 @@ class _CourseEditState extends State<CourseEdit> {
               ),
             ),
           ),
-          Consumer<CourseState>(
-            builder: (context, state, child) => Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: AttachmentsList(
-                type: AttachmentType.course,
-                attachments: state.attachments,
-                id: state.course.id as String,
-                connection: widget._connection,
-                reloadAttachments: _loadAttachments,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Flexible(
+                child: Consumer<CourseState>(
+                  builder: (context, state, child) => Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: AttachmentsList(
+                      type: AttachmentType.course,
+                      attachments: state.attachments,
+                      id: state.course.id as String,
+                      connection: widget._connection,
+                      reloadAttachments: _loadAttachments,
+                    ),
+                  ),
+                ),
               ),
-            ),
+              Flexible(
+                child: Consumer<CourseState>(
+                  builder: (context, state, child) => Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: CoursePersonsList(
+                      connection: widget._connection,
+                      courseId: state.course.id as String,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           )
         ],
       ),

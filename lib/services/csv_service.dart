@@ -1,25 +1,35 @@
 import 'dart:io';
 
-import 'package:logging/logging.dart';
-import 'package:scadenziario/constants.dart' as Constants;
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:scadenziario/constants.dart' as constants;
 import 'package:scadenziario/lineseparator_extension.dart';
 
 class CsvService {
-  final _log = Logger((CsvService).toString());
-
-  String toCsv(List<List<dynamic>> data) {
+  static String toCsv(List<List<dynamic>> data) {
     String toReturn = "";
 
     for (var r in data) {
       var changed = r.map((e) => e is String
-          ? "${Constants.csvStringFieldIdentifier}$e${Constants.csvStringFieldIdentifier}"
+          ? "${constants.csvStringFieldIdentifier}$e${constants.csvStringFieldIdentifier}"
           : e);
       toReturn +=
-          "${changed.join(Constants.csvFieldSeparator)}${Platform().lineSeparator}";
+          "${changed.join(constants.csvFieldSeparator)}${Platform().lineSeparator}";
     }
 
-    _log.info(toReturn);
-
     return toReturn;
+  }
+
+  static save(String data) async {
+    String? selectedPath = await FilePicker.platform.saveFile(
+      dialogTitle: "Selezionare la cartella dove salvare l'allegato",
+      allowedExtensions: ["csv"],
+    );
+    if (selectedPath != null) {
+      File f = File(selectedPath);
+
+      await f.writeAsString(data);
+    }
   }
 }

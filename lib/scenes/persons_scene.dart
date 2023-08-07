@@ -91,14 +91,14 @@ class _PersonsSceneState extends State<PersonsScene> {
     Provider.of<PersonState>(context, listen: false).deselectPerson();
   }
 
-  _toCsv() {
+  _toCsv() async {
     List<List<dynamic>> data = [];
     data.add(Person.csvHeader);
     for (var p in _persons) {
       data.add(p.csvArray);
     }
 
-    CsvService().toCsv(data);
+    await CsvService.save(CsvService.toCsv(data));
   }
 
   @override

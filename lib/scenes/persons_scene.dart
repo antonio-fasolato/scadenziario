@@ -7,6 +7,7 @@ import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:scadenziario/services/csv_service.dart';
 import 'package:scadenziario/state/person_state.dart';
 
 class PersonsScene extends StatefulWidget {
@@ -90,6 +91,16 @@ class _PersonsSceneState extends State<PersonsScene> {
     Provider.of<PersonState>(context, listen: false).deselectPerson();
   }
 
+  _toCsv() {
+    List<List<dynamic>> data = [];
+    data.add(Person.csvHeader);
+    for (var p in _persons) {
+      data.add(p.csvArray);
+    }
+
+    CsvService().toCsv(data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,6 +144,11 @@ class _PersonsSceneState extends State<PersonsScene> {
                         .toList(),
                   ),
                 ),
+                ElevatedButton.icon(
+                  onPressed: () => _toCsv(),
+                  icon: const Icon(Icons.save_alt_outlined),
+                  label: const Text("CSV"),
+                )
               ],
             ),
           ),

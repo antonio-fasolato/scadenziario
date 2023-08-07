@@ -71,4 +71,32 @@ class Person {
 
     return res;
   }
+
+  static List<String> get csvHeader => [
+        "Id",
+        "Nome",
+        "Cognome",
+        "Data di nascita",
+        "Ruolo",
+        "Email",
+        "Telefono",
+        "Cellulare",
+        "Attivo",
+        "Cancellato",
+      ];
+
+  List<dynamic> get csvArray => [
+        id,
+        name,
+        surname,
+        birthdate != null
+            ? DateFormat("yyyy-MM-dd").format(birthdate as DateTime)
+            : null,
+        duty,
+        email,
+        phone,
+        mobile,
+        enabled ?? false ? 1 : 0,
+        deleted ?? false ? 1 : 0,
+      ];
 }

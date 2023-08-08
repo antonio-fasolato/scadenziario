@@ -54,9 +54,9 @@ class EventsCard extends StatelessWidget {
 
     CourseState state = Provider.of<CourseState>(context, listen: false);
     Certification? certification =
-        await CertificationRepository().getById(_event.certificationId);
-    Course? course = await CourseRepository().getById(_event.courseId);
-    Person? person = await PersonRepository().getById(_event.personId);
+        await CertificationRepository.getById(_event.certificationId);
+    Course? course = await CourseRepository.getById(_event.courseId);
+    Person? person = await PersonRepository.getById(_event.personId);
     if (certification != null && course != null && person != null) {
       state.selectCourse(course);
       state.selectCertification(certification, person);

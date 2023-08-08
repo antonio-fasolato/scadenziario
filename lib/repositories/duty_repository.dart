@@ -2,7 +2,7 @@ import 'package:scadenziario/model/duty.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class DutyRepository {
-  Future<List<Duty>> getAllDuties() async {
+  static Future<List<Duty>> getAllDuties() async {
     var db = SqliteConnection().db;
 
     var res = await db.query("duties", columns: ["id", "description"]);

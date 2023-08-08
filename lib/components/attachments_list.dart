@@ -49,7 +49,7 @@ class AttachmentsList extends StatelessWidget {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
-    Attachment? attachment = await AttachmentRepository().getById(id);
+    Attachment? attachment = await AttachmentRepository.getById(id);
     if (attachment == null) {
       scaffoldMessenger.showSnackBar(
         SnackBar(
@@ -110,7 +110,7 @@ class AttachmentsList extends StatelessWidget {
 
   _delete(BuildContext context, String id) async {
     final navigator = Navigator.of(context);
-    await AttachmentRepository().delete(id, _type);
+    await AttachmentRepository.delete(id, _type);
     navigator.pop();
     _reloadAttachments();
   }
@@ -129,7 +129,7 @@ class AttachmentsList extends StatelessWidget {
         f.path.split(Platform.pathSeparator).last,
         raw,
       );
-      await AttachmentRepository().save(attachment, _id, _type);
+      await AttachmentRepository.save(attachment, _id, _type);
     }
     _reloadAttachments();
   }

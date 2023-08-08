@@ -3,9 +3,9 @@ import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class CourseRepository {
-  final log = Logger((CourseRepository).toString());
+  static final log = Logger((CourseRepository).toString());
 
-  Future<Course?> getById(String id) async {
+  static Future<Course?> getById(String id) async {
     var db = SqliteConnection().db;
     Course? toReturn;
 
@@ -23,7 +23,7 @@ class CourseRepository {
     return toReturn;
   }
 
-  Future<List<Course>> getAll() async {
+  static Future<List<Course>> getAll() async {
     var db = SqliteConnection().db;
 
     List<Course> toReturn = [];
@@ -35,7 +35,7 @@ class CourseRepository {
     return toReturn;
   }
 
-  Future<List<Course>> findByName(String q) async {
+  static Future<List<Course>> findByName(String q) async {
     var db = SqliteConnection().db;
 
     List<Course> toReturn = [];
@@ -56,7 +56,7 @@ class CourseRepository {
     return toReturn;
   }
 
-  Future<int> save(Course c) async {
+  static Future<int> save(Course c) async {
     if (c.id == null) {
       throw Exception("Course with null id");
     }

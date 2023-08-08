@@ -202,7 +202,7 @@ class _CertificationEditState extends State<CertificationEdit> {
                   state.certification?.attachmentId,
                 );
 
-                await CertificationRepository().save(cert);
+                await CertificationRepository.save(cert);
               } else {
                 // New certifications
                 for (var personId in state.checkedCertifications) {
@@ -218,7 +218,7 @@ class _CertificationEditState extends State<CertificationEdit> {
                     null,
                   );
 
-                  await CertificationRepository().save(cert);
+                  await CertificationRepository.save(cert);
                 }
               }
 
@@ -256,7 +256,7 @@ class _CertificationEditState extends State<CertificationEdit> {
             ),
             TextButton(
               onPressed: () async {
-                await CertificationRepository().delete(id);
+                await CertificationRepository.delete(id);
                 widget._confirm();
                 navigator.pop();
               },
@@ -288,8 +288,10 @@ class _CertificationEditState extends State<CertificationEdit> {
             ),
             TextButton(
               onPressed: () async {
-                await AttachmentRepository()
-                    .delete(id, AttachmentType.certification);
+                await AttachmentRepository.delete(
+                  id,
+                  AttachmentType.certification,
+                );
                 widget._confirm();
                 navigator.pop();
               },

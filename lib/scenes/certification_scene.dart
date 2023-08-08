@@ -24,7 +24,7 @@ class _CertificateSceneState extends State<CertificateScene> {
     CourseState state = Provider.of<CourseState>(context, listen: false);
     List<CertificationDto> res = [];
 
-    res = await CertificationRepository().getPersonsAndCertificationsByCourse(
+    res = await CertificationRepository.getPersonsAndCertificationsByCourse(
       state.course.id as String,
       state.searchController.text,
     );

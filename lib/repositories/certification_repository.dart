@@ -8,9 +8,9 @@ import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class CertificationRepository {
-  final log = Logger((CertificationRepository).toString());
+  static final log = Logger((CertificationRepository).toString());
 
-  Future<List<CertificationDto>> getPersonsAndCertificationsByCourse(
+  static Future<List<CertificationDto>> getPersonsAndCertificationsByCourse(
     String id,
     String q,
   ) async {
@@ -77,7 +77,7 @@ class CertificationRepository {
     return toReturn;
   }
 
-  Future<Certification?> getById(String id) async {
+  static Future<Certification?> getById(String id) async {
     var db = SqliteConnection().db;
 
     String sql = """
@@ -109,7 +109,7 @@ class CertificationRepository {
     return toReturn;
   }
 
-  Future<List<Certification>> getCertificationByCourse(String id) async {
+  static Future<List<Certification>> getCertificationByCourse(String id) async {
     var db = SqliteConnection().db;
     List<Certification> toReturn = [];
 
@@ -142,7 +142,7 @@ class CertificationRepository {
     return toReturn;
   }
 
-  Future<List<Certification>> getCertificationsExpiringInMonth(
+  static Future<List<Certification>> getCertificationsExpiringInMonth(
       DateTime d) async {
     var db = SqliteConnection().db;
     List<Certification> toReturn = [];
@@ -173,7 +173,8 @@ class CertificationRepository {
     return toReturn;
   }
 
-  Future<List<String>> getPersonsFromCourseCertificate(String courseId) async {
+  static Future<List<String>> getPersonsFromCourseCertificate(
+      String courseId) async {
     var db = SqliteConnection().db;
     List<String> toReturn = [];
 
@@ -192,7 +193,7 @@ class CertificationRepository {
     return toReturn;
   }
 
-  Future<List<CertificationDto>> getCertificationsFromPersonId(
+  static Future<List<CertificationDto>> getCertificationsFromPersonId(
       String personId) async {
     var db = SqliteConnection().db;
     List<CertificationDto> toReturn = [];
@@ -229,7 +230,7 @@ class CertificationRepository {
     return toReturn;
   }
 
-  Future<int> save(Certification c) async {
+  static Future<int> save(Certification c) async {
     var db = SqliteConnection().db;
     int toReturn = 0;
 
@@ -245,7 +246,7 @@ class CertificationRepository {
     return toReturn;
   }
 
-  delete(String id) async {
+  static delete(String id) async {
     var db = SqliteConnection().db;
 
     await db.delete("certification", where: "id = ?", whereArgs: [id]);

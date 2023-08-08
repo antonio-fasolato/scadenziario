@@ -57,7 +57,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
 
   _getEventsForMonth(DateTime day) async {
     var certifications =
-        await CertificationRepository().getCertificationsExpiringInMonth(day);
+        await CertificationRepository.getCertificationsExpiringInMonth(day);
     LinkedHashMap<String, List<EventDto>> res = LinkedHashMap();
     for (var c in certifications) {
       String date = c.expirationDate != null

@@ -18,8 +18,8 @@ class PersonCertificationsList extends StatelessWidget {
   Future<List<CertificationDto>> _getCertifications() async {
     List<CertificationDto> toReturn = [];
 
-    toReturn = await CertificationRepository()
-        .getCertificationsFromPersonId(_personId);
+    toReturn =
+        await CertificationRepository.getCertificationsFromPersonId(_personId);
 
     return toReturn;
   }

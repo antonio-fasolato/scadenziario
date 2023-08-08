@@ -38,7 +38,7 @@ class _PersonEditState extends State<PersonEdit> {
 
   Future<void> _loadDuties() async {
     PersonState state = Provider.of<PersonState>(context, listen: false);
-    var duties = await DutyRepository().getAllDuties();
+    var duties = await DutyRepository.getAllDuties();
     state.loadDuties(duties);
   }
 
@@ -46,8 +46,7 @@ class _PersonEditState extends State<PersonEdit> {
     PersonState state = Provider.of<PersonState>(context, listen: false);
 
     if (state.isSelected) {
-      var attachments =
-          await AttachmentRepository().getAttachmentsByLinkedEntity(
+      var attachments = await AttachmentRepository.getAttachmentsByLinkedEntity(
         state.person.id as String,
         AttachmentType.person,
       );
@@ -260,7 +259,7 @@ class _PersonEditState extends State<PersonEdit> {
                                   state.mobileController.text,
                                   true,
                                   false);
-                              int res = await PersonRepository().save(person);
+                              int res = await PersonRepository.save(person);
                               if (res == 0) {
                                 if (!context.mounted) {
                                   return;

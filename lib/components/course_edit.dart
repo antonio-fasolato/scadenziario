@@ -32,8 +32,7 @@ class _CourseEditState extends State<CourseEdit> {
     CourseState state = Provider.of<CourseState>(context, listen: false);
 
     if (state.hasCourse) {
-      var attachments =
-          await AttachmentRepository().getAttachmentsByLinkedEntity(
+      var attachments = await AttachmentRepository.getAttachmentsByLinkedEntity(
         state.course.id as String,
         AttachmentType.course,
       );
@@ -172,7 +171,7 @@ class _CourseEditState extends State<CourseEdit> {
                                   true,
                                   false);
 
-                              int res = await CourseRepository().save(activity);
+                              int res = await CourseRepository.save(activity);
                               if (res == 0) {
                                 if (!context.mounted) {
                                   return;

@@ -4,7 +4,7 @@ import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class PersonRepository {
-  Future<Person?> getById(String id) async {
+  static Future<Person?> getById(String id) async {
     var db = SqliteConnection().db;
 
     Person? toReturn;
@@ -21,7 +21,7 @@ class PersonRepository {
     return toReturn;
   }
 
-  Future<List<Person>> getAll() async {
+  static Future<List<Person>> getAll() async {
     var db = SqliteConnection().db;
 
     List<Person> toReturn = [];
@@ -32,7 +32,7 @@ class PersonRepository {
     return toReturn;
   }
 
-  Future<List<Person>> searchByName(String q) async {
+  static Future<List<Person>> searchByName(String q) async {
     var db = SqliteConnection().db;
 
     List<Person> toReturn = [];
@@ -53,7 +53,7 @@ class PersonRepository {
     return toReturn;
   }
 
-  Future<List<PersonDto>> getPersonsFromCourse(String courseId) async {
+  static Future<List<PersonDto>> getPersonsFromCourse(String courseId) async {
     var db = SqliteConnection().db;
 
     List<PersonDto> toReturn = [];
@@ -72,8 +72,8 @@ class PersonRepository {
     for (var r in res) {
       Person p = Person.fromMap(map: r);
 
-      var certs = await CertificationRepository()
-          .getCertificationsFromPersonId(p.id as String);
+      var certs = await CertificationRepository.getCertificationsFromPersonId(
+          p.id as String);
 
       toReturn.add(PersonDto.fromPerson(p, certs));
     }
@@ -81,7 +81,7 @@ class PersonRepository {
     return toReturn;
   }
 
-  Future<int> save(Person m) async {
+  static Future<int> save(Person m) async {
     if (m.id == null) {
       throw Exception("Person has null id");
     } else {

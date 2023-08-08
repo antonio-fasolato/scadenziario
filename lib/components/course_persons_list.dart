@@ -13,7 +13,7 @@ class CoursePersonsList extends StatelessWidget {
   }) : _courseId = courseId;
 
   Future<List<PersonDto>> _getPersons() async {
-    return await PersonRepository().getPersonsFromCourse(_courseId);
+    return await PersonRepository.getPersonsFromCourse(_courseId);
   }
 
   _goToPerson(BuildContext context, PersonDto p) async {

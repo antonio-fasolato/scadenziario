@@ -49,14 +49,17 @@ class _CertificationsListState extends State<CertificationsList> {
       Uint8List raw = await f.readAsBytes();
       Attachment attachment = Attachment(
           const Uuid().v4(), f.path.split(Platform.pathSeparator).last, raw);
-      await AttachmentRepository()
-          .save(attachment, id, AttachmentType.certification);
+      await AttachmentRepository.save(
+        attachment,
+        id,
+        AttachmentType.certification,
+      );
       widget._getAllCertifications();
     }
   }
 
   _openAttachment(String id) async {
-    Attachment? attachment = await AttachmentRepository().getById(id);
+    Attachment? attachment = await AttachmentRepository.getById(id);
 
     if (attachment == null) {
       return;
@@ -153,7 +156,7 @@ class _CertificationsListState extends State<CertificationsList> {
   _editCertification(String id, Person p) async {
     CourseState state = Provider.of<CourseState>(context, listen: false);
 
-    Certification? c = await CertificationRepository().getById(id);
+    Certification? c = await CertificationRepository.getById(id);
     if (c != null) {
       state.selectCertification(c, p);
     }

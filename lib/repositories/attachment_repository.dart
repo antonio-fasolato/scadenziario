@@ -3,7 +3,7 @@ import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class AttachmentRepository {
-  Future<List<Attachment>> getAttachmentsByLinkedEntity(
+  static Future<List<Attachment>> getAttachmentsByLinkedEntity(
       String id, AttachmentType type) async {
     var db = SqliteConnection().db;
     List<Attachment> toReturn = [];
@@ -36,7 +36,7 @@ class AttachmentRepository {
     return toReturn;
   }
 
-  Future<Attachment?> getById(String id) async {
+  static Future<Attachment?> getById(String id) async {
     var db = SqliteConnection().db;
     Attachment? toReturn;
 
@@ -48,7 +48,7 @@ class AttachmentRepository {
     return toReturn;
   }
 
-  delete(String id, AttachmentType type) async {
+  static delete(String id, AttachmentType type) async {
     var db = SqliteConnection().db;
 
     switch (type) {
@@ -72,7 +72,7 @@ class AttachmentRepository {
     await db.delete("attachment", where: "id = ?", whereArgs: [id]);
   }
 
-  save(Attachment a, String linkedId, AttachmentType type) async {
+  static save(Attachment a, String linkedId, AttachmentType type) async {
     var db = SqliteConnection().db;
 
     await db.insert("attachment", a.toMap());

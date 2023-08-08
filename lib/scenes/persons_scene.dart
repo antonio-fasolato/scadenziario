@@ -35,9 +35,9 @@ class _PersonsSceneState extends State<PersonsScene> {
   Future<void> _getAllPersons() async {
     List<Person> res = [];
     if (_searchController.text.isNotEmpty) {
-      res = await PersonRepository().searchByName(_searchController.text);
+      res = await PersonRepository.searchByName(_searchController.text);
     } else {
-      res = await PersonRepository().getAll();
+      res = await PersonRepository.getAll();
     }
     setState(() {
       _persons = res;
@@ -61,8 +61,8 @@ class _PersonsSceneState extends State<PersonsScene> {
     final state = Provider.of<PersonState>(context, listen: false);
 
     state.selectPerson(p);
-    state.setAttachments(
-        await AttachmentRepository().getAttachmentsByLinkedEntity(
+    state
+        .setAttachments(await AttachmentRepository.getAttachmentsByLinkedEntity(
       p.id as String,
       AttachmentType.person,
     ));

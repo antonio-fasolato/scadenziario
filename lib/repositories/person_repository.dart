@@ -25,7 +25,15 @@ class PersonRepository {
     var db = SqliteConnection().db;
 
     List<Person> toReturn = [];
-    var res = await db.query("persons", orderBy: "surname, name");
+    var sql = '''
+      select p.*, d.description as dutydescription
+      from persons p
+      inner join duties d on
+      	p.duty = d.id
+      where 1 = 1
+      order by surname, name
+    ''';
+    var res = await db.rawQuery(sql);
     if (res.isNotEmpty) {
       toReturn = List.from(res.map((e) => Person.fromMap(map: e)));
     }
@@ -37,8 +45,10 @@ class PersonRepository {
 
     List<Person> toReturn = [];
     var sql = '''
-      select *
-      from persons
+      select p.*, d.description as dutydescription
+      from persons p
+      inner join duties d on
+      	p.duty = d.id
       where 1 = 1 and (
         name like '%$q%'
         or surname like '%$q%'

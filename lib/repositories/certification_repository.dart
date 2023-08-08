@@ -9,16 +9,12 @@ import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class CertificationRepository {
   final log = Logger((CertificationRepository).toString());
-  final SqliteConnection _connection;
-
-  CertificationRepository(SqliteConnection connection)
-      : _connection = connection;
 
   Future<List<CertificationDto>> getPersonsAndCertificationsByCourse(
     String id,
     String q,
   ) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
     List<CertificationDto> toReturn = [];
 
     String sql = """
@@ -78,12 +74,11 @@ class CertificationRepository {
       );
     }
 
-    await db.close();
     return toReturn;
   }
 
   Future<Certification?> getById(String id) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
 
     String sql = """
       select ce.*, 
@@ -111,12 +106,11 @@ class CertificationRepository {
       toReturn = Certification.fromMapWithRelationships(res[0]);
     }
 
-    await db.close();
     return toReturn;
   }
 
   Future<List<Certification>> getCertificationByCourse(String id) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
     List<Certification> toReturn = [];
 
     String sql = """
@@ -145,13 +139,12 @@ class CertificationRepository {
           List.from(res.map((e) => Certification.fromMapWithRelationships(e)));
     }
 
-    await db.close();
     return toReturn;
   }
 
   Future<List<Certification>> getCertificationsExpiringInMonth(
       DateTime d) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
     List<Certification> toReturn = [];
 
     DateTime start = DateTime(d.year, d.month, 1);
@@ -177,12 +170,11 @@ class CertificationRepository {
           List.from(res.map((e) => Certification.fromMapWithRelationships(e)));
     }
 
-    await db.close();
     return toReturn;
   }
 
   Future<List<String>> getPersonsFromCourseCertificate(String courseId) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
     List<String> toReturn = [];
 
     String sql = """
@@ -197,13 +189,12 @@ class CertificationRepository {
       toReturn = List.from(res.map((e) => e["person_id"]));
     }
 
-    await db.close();
     return toReturn;
   }
 
   Future<List<CertificationDto>> getCertificationsFromPersonId(
       String personId) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
     List<CertificationDto> toReturn = [];
 
     String sql = """
@@ -235,12 +226,11 @@ class CertificationRepository {
       return toReturn;
     }).toList();
 
-    await db.close();
     return toReturn;
   }
 
   Future<int> save(Certification c) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
     int toReturn = 0;
 
     var res =
@@ -252,15 +242,12 @@ class CertificationRepository {
           where: "id = ?", whereArgs: [c.id]);
     }
 
-    await db.close();
     return toReturn;
   }
 
   delete(String id) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
 
     await db.delete("certification", where: "id = ?", whereArgs: [id]);
-
-    await db.close();
   }
 }

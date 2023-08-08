@@ -6,14 +6,10 @@ import 'package:scadenziario/components/person_edit.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/person_state.dart';
 
 class PersonsScene extends StatefulWidget {
-  final SqliteConnection _connection;
-
-  const PersonsScene({super.key, required SqliteConnection connection})
-      : _connection = connection;
+  const PersonsScene({super.key});
 
   @override
   State<StatefulWidget> createState() => _PersonsSceneState();
@@ -39,10 +35,9 @@ class _PersonsSceneState extends State<PersonsScene> {
   Future<void> _getAllPersons() async {
     List<Person> res = [];
     if (_searchController.text.isNotEmpty) {
-      res = await PersonRepository(widget._connection)
-          .searchByName(_searchController.text);
+      res = await PersonRepository().searchByName(_searchController.text);
     } else {
-      res = await PersonRepository(widget._connection).getAll();
+      res = await PersonRepository().getAll();
     }
     setState(() {
       _persons = res;
@@ -57,7 +52,6 @@ class _PersonsSceneState extends State<PersonsScene> {
             child: PersonEdit(
               confirm: _personSaved,
               cancel: _editCancelled,
-              connection: widget._connection,
             ),
           )
         : Container();
@@ -67,8 +61,8 @@ class _PersonsSceneState extends State<PersonsScene> {
     final state = Provider.of<PersonState>(context, listen: false);
 
     state.selectPerson(p);
-    state.setAttachments(await AttachmentRepository(widget._connection)
-        .getAttachmentsByLinkedEntity(
+    state.setAttachments(
+        await AttachmentRepository().getAttachmentsByLinkedEntity(
       p.id as String,
       AttachmentType.person,
     ));

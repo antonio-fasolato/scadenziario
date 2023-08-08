@@ -14,20 +14,16 @@ import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
 import 'package:uuid/uuid.dart';
 
 class CertificationsList extends StatefulWidget {
-  final SqliteConnection _connection;
   final void Function() _getAllCertifications;
 
   const CertificationsList({
     super.key,
-    required SqliteConnection connection,
     required Function() getAllCertifications,
-  })  : _connection = connection,
-        _getAllCertifications = getAllCertifications;
+  }) : _getAllCertifications = getAllCertifications;
 
   @override
   State<CertificationsList> createState() => _CertificationsListState();
@@ -53,15 +49,14 @@ class _CertificationsListState extends State<CertificationsList> {
       Uint8List raw = await f.readAsBytes();
       Attachment attachment = Attachment(
           const Uuid().v4(), f.path.split(Platform.pathSeparator).last, raw);
-      await AttachmentRepository(widget._connection)
+      await AttachmentRepository()
           .save(attachment, id, AttachmentType.certification);
       widget._getAllCertifications();
     }
   }
 
   _openAttachment(String id) async {
-    Attachment? attachment =
-        await AttachmentRepository(widget._connection).getById(id);
+    Attachment? attachment = await AttachmentRepository().getById(id);
 
     if (attachment == null) {
       return;
@@ -158,8 +153,7 @@ class _CertificationsListState extends State<CertificationsList> {
   _editCertification(String id, Person p) async {
     CourseState state = Provider.of<CourseState>(context, listen: false);
 
-    Certification? c =
-        await CertificationRepository(widget._connection).getById(id);
+    Certification? c = await CertificationRepository().getById(id);
     if (c != null) {
       state.selectCertification(c, p);
     }

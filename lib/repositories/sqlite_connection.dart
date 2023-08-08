@@ -1,20 +1,43 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'dart:io' as io;
+
 import 'package:sqflite_common/sqflite_logger.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'dart:io' as io;
 
 class SqliteConnection {
   final log = Logger((SqliteConnection).toString());
-  final String _databasePath;
+  Database? _database;
 
-  SqliteConnection(this._databasePath);
+  static final SqliteConnection _instance = SqliteConnection._internal();
 
-  Future<Database> connect() async {
+  factory SqliteConnection() {
+    return _instance;
+  }
+
+  SqliteConnection._internal();
+
+  bool get isConnected => _database != null && _database!.isOpen;
+
+  Database get db {
+    if (!isConnected) {
+      throw Exception("Database not connected");
+    }
+    return _database as Database;
+  }
+
+  connect(String databasePath) async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    bool newFile = !(await io.File(_databasePath).exists());
+    if (isConnected && _database!.path == databasePath) {
+      log.info("Databse already connected");
+      return;
+    } else if (isConnected && _database!.path != databasePath) {
+      disconnect();
+    }
+
+    bool newFile = !(await io.File(databasePath).exists());
     DatabaseFactory factory = kDebugMode
         ? SqfliteDatabaseFactoryLogger(
             databaseFactoryFfi,
@@ -24,13 +47,19 @@ class SqliteConnection {
             ),
           )
         : databaseFactoryFfi;
-    var db = await factory.openDatabase(_databasePath);
-    log.info("Connected to $_databasePath");
+    _database = await factory.openDatabase(databasePath);
+    log.info("Connected to $databasePath");
     if (newFile) {
-      await _initDb(db);
+      await _initDb(_database as Database);
     }
+  }
 
-    return db;
+  Future<void> disconnect() async {
+    if (isConnected) {
+      String path = _database!.path;
+      await _database!.close();
+      log.info("Disconnected from $path");
+    }
   }
 
   Future<void> _initDb(Database db) async {

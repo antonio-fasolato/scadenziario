@@ -7,20 +7,16 @@ import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/repositories/course_repository.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
 import 'package:scadenziario/constants.dart' as Constants;
 
 class EventsCard extends StatelessWidget {
   final EventDto _event;
-  final SqliteConnection _connection;
 
-  const EventsCard(
-      {super.key,
-      required EventDto event,
-      required SqliteConnection connection})
-      : _event = event,
-        _connection = connection;
+  const EventsCard({
+    super.key,
+    required EventDto event,
+  }) : _event = event;
 
   Widget _getCardSubtitle() {
     DateTime expirationDateOnly = DateUtils.dateOnly(_event.expirationDate);
@@ -57,12 +53,10 @@ class EventsCard extends StatelessWidget {
     final navigator = Navigator.of(context);
 
     CourseState state = Provider.of<CourseState>(context, listen: false);
-    Certification? certification = await CertificationRepository(_connection)
-        .getById(_event.certificationId);
-    Course? course =
-        await CourseRepository(_connection).getById(_event.courseId);
-    Person? person =
-        await PersonRepository(_connection).getById(_event.personId);
+    Certification? certification =
+        await CertificationRepository().getById(_event.certificationId);
+    Course? course = await CourseRepository().getById(_event.courseId);
+    Person? person = await PersonRepository().getById(_event.personId);
     if (certification != null && course != null && person != null) {
       state.selectCourse(course);
       state.selectCertification(certification, person);

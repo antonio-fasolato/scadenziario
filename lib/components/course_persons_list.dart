@@ -2,22 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scadenziario/dto/person_dto.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/person_state.dart';
 
 class CoursePersonsList extends StatelessWidget {
-  final SqliteConnection _connection;
   final String _courseId;
 
   const CoursePersonsList({
     super.key,
-    required SqliteConnection connection,
     required String courseId,
-  })  : _connection = connection,
-        _courseId = courseId;
+  }) : _courseId = courseId;
 
   Future<List<PersonDto>> _getPersons() async {
-    return await PersonRepository(_connection).getPersonsFromCourse(_courseId);
+    return await PersonRepository().getPersonsFromCourse(_courseId);
   }
 
   _goToPerson(BuildContext context, PersonDto p) async {
@@ -122,26 +118,3 @@ class CoursePersonsList extends StatelessWidget {
     );
   }
 }
-
-// class _CoursePersonsListState extends State<CoursePersonsList> {
-//   Future<String> _getPersonSubtitle(Person p) async {
-//     var certifications = await CertificationRepository(widget._connection)
-//         .getCertificationsFromPersonId(p.id as String);
-//     if (certifications.isEmpty) {
-//       return "Nessuna certificazione";
-//     }
-//
-//     int count = 0, expiring = 0, expired = 0;
-//     for (var c in certifications) {
-//       count++;
-//       if (c.isExpiring) {
-//         expiring++;
-//       }
-//       if (c.isExpired) {
-//         expired++;
-//       }
-//     }
-//
-//     return "$count certificazioni, $expiring in scadenza, $expired scadute";
-//   }
-// }

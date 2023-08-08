@@ -4,12 +4,9 @@ import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class CourseRepository {
   final log = Logger((CourseRepository).toString());
-  final SqliteConnection _connection;
-
-  CourseRepository(SqliteConnection connection) : _connection = connection;
 
   Future<Course?> getById(String id) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
     Course? toReturn;
 
     String sql = '''
@@ -23,12 +20,11 @@ class CourseRepository {
       toReturn = Course.fromMap(map: res.first);
     }
 
-    await db.close();
     return toReturn;
   }
 
   Future<List<Course>> getAll() async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
 
     List<Course> toReturn = [];
     var res = await db.query("course", orderBy: "name");
@@ -36,12 +32,11 @@ class CourseRepository {
       toReturn = List.from(res.map((e) => Course.fromMap(map: e)));
     }
 
-    await db.close();
     return toReturn;
   }
 
   Future<List<Course>> findByName(String q) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
 
     List<Course> toReturn = [];
     String sql = '''
@@ -58,7 +53,6 @@ class CourseRepository {
       toReturn = List.from(res.map((e) => Course.fromMap(map: e)));
     }
 
-    await db.close();
     return toReturn;
   }
 
@@ -67,18 +61,16 @@ class CourseRepository {
       throw Exception("Course with null id");
     }
 
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
     var res = await db.query("course", where: "id = ?", whereArgs: [c.id]);
     if (res.isEmpty) {
       log.info("New course $c");
       int res = await db.insert("course", c.toMap());
-      await db.close();
       return res;
     } else {
       log.info("Update course $c");
       int res = await db
           .update("course", c.toMap(), where: "id = ?", whereArgs: [c.id]);
-      await db.close();
       return res;
     }
   }

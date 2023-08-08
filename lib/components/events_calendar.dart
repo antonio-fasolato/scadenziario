@@ -5,19 +5,15 @@ import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:scadenziario/dto/event_dto.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class EventsCalendar extends StatefulWidget {
-  final SqliteConnection _connection;
   final Function(List<EventDto>) _setEvents;
 
   const EventsCalendar({
     super.key,
-    required SqliteConnection connection,
     required Function(List<EventDto>) setEvents,
-  })  : _connection = connection,
-        _setEvents = setEvents;
+  }) : _setEvents = setEvents;
 
   @override
   State<EventsCalendar> createState() => _EventsCalendarState();
@@ -60,8 +56,8 @@ class _EventsCalendarState extends State<EventsCalendar> {
   }
 
   _getEventsForMonth(DateTime day) async {
-    var certifications = await CertificationRepository(widget._connection)
-        .getCertificationsExpiringInMonth(day);
+    var certifications =
+        await CertificationRepository().getCertificationsExpiringInMonth(day);
     LinkedHashMap<String, List<EventDto>> res = LinkedHashMap();
     for (var c in certifications) {
       String date = c.expirationDate != null

@@ -5,12 +5,10 @@ import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
 import 'package:uuid/uuid.dart';
 
 class CertificationEdit extends StatefulWidget {
-  final SqliteConnection _connection;
   final void Function() _confirm;
   final void Function() _cancel;
 
@@ -18,10 +16,8 @@ class CertificationEdit extends StatefulWidget {
     super.key,
     required void Function() confirm,
     required void Function() cancel,
-    required SqliteConnection connection,
   })  : _confirm = confirm,
-        _cancel = cancel,
-        _connection = connection;
+        _cancel = cancel;
 
   @override
   State<CertificationEdit> createState() => _CertificationEditState();
@@ -206,7 +202,7 @@ class _CertificationEditState extends State<CertificationEdit> {
                   state.certification?.attachmentId,
                 );
 
-                await CertificationRepository(widget._connection).save(cert);
+                await CertificationRepository().save(cert);
               } else {
                 // New certifications
                 for (var personId in state.checkedCertifications) {
@@ -214,14 +210,15 @@ class _CertificationEditState extends State<CertificationEdit> {
                     const Uuid().v4(),
                     state.course.id,
                     personId,
-                    DateFormat.yMd('it_IT').parse(state.certificationIssuingController.text),
-                    DateFormat.yMd('it_IT').parse(
-                        state.certificationExpirationController.text),
+                    DateFormat.yMd('it_IT')
+                        .parse(state.certificationIssuingController.text),
+                    DateFormat.yMd('it_IT')
+                        .parse(state.certificationExpirationController.text),
                     state.certificationNoteController.text,
                     null,
                   );
 
-                  await CertificationRepository(widget._connection).save(cert);
+                  await CertificationRepository().save(cert);
                 }
               }
 
@@ -259,7 +256,7 @@ class _CertificationEditState extends State<CertificationEdit> {
             ),
             TextButton(
               onPressed: () async {
-                await CertificationRepository(widget._connection).delete(id);
+                await CertificationRepository().delete(id);
                 widget._confirm();
                 navigator.pop();
               },
@@ -291,7 +288,7 @@ class _CertificationEditState extends State<CertificationEdit> {
             ),
             TextButton(
               onPressed: () async {
-                await AttachmentRepository(widget._connection)
+                await AttachmentRepository()
                     .delete(id, AttachmentType.certification);
                 widget._confirm();
                 navigator.pop();

@@ -10,23 +10,19 @@ import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/duty_repository.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/person_state.dart';
 import 'package:uuid/uuid.dart';
 
 class PersonEdit extends StatefulWidget {
-  final SqliteConnection _connection;
   final void Function() _confirm;
   final void Function() _cancel;
 
-  const PersonEdit(
-      {super.key,
-      required void Function() confirm,
-      required void Function() cancel,
-      required SqliteConnection connection})
-      : _confirm = confirm,
-        _cancel = cancel,
-        _connection = connection;
+  const PersonEdit({
+    super.key,
+    required void Function() confirm,
+    required void Function() cancel,
+  })  : _confirm = confirm,
+        _cancel = cancel;
 
   @override
   State<PersonEdit> createState() => _PersonEditState();
@@ -42,7 +38,7 @@ class _PersonEditState extends State<PersonEdit> {
 
   Future<void> _loadDuties() async {
     PersonState state = Provider.of<PersonState>(context, listen: false);
-    var duties = await DutyRepository(widget._connection).getAllDuties();
+    var duties = await DutyRepository().getAllDuties();
     state.loadDuties(duties);
   }
 
@@ -50,8 +46,8 @@ class _PersonEditState extends State<PersonEdit> {
     PersonState state = Provider.of<PersonState>(context, listen: false);
 
     if (state.isSelected) {
-      var attachments = await AttachmentRepository(widget._connection)
-          .getAttachmentsByLinkedEntity(
+      var attachments =
+          await AttachmentRepository().getAttachmentsByLinkedEntity(
         state.person.id as String,
         AttachmentType.person,
       );
@@ -264,9 +260,7 @@ class _PersonEditState extends State<PersonEdit> {
                                   state.mobileController.text,
                                   true,
                                   false);
-                              int res =
-                                  await PersonRepository(widget._connection)
-                                      .save(person);
+                              int res = await PersonRepository().save(person);
                               if (res == 0) {
                                 if (!context.mounted) {
                                   return;
@@ -315,7 +309,6 @@ class _PersonEditState extends State<PersonEdit> {
                       type: AttachmentType.person,
                       attachments: state.attachments,
                       id: state.person.id as String,
-                      connection: widget._connection,
                       reloadAttachments: _loadAttachments,
                     ),
                   ),
@@ -326,7 +319,6 @@ class _PersonEditState extends State<PersonEdit> {
                   builder: (context, state, child) => Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: PersonCertificationsList(
-                      connection: widget._connection,
                       personId: state?.person.id ?? "",
                     ),
                   ),

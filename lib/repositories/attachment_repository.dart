@@ -3,13 +3,9 @@ import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class AttachmentRepository {
-  final SqliteConnection _connection;
-
-  AttachmentRepository(SqliteConnection connection) : _connection = connection;
-
   Future<List<Attachment>> getAttachmentsByLinkedEntity(
       String id, AttachmentType type) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
     List<Attachment> toReturn = [];
     String joinTable = "";
     String foreignKey = "";
@@ -37,12 +33,11 @@ class AttachmentRepository {
       toReturn = List.from(res.map((e) => Attachment.fromMap(e)));
     }
 
-    await db.close();
     return toReturn;
   }
 
   Future<Attachment?> getById(String id) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
     Attachment? toReturn;
 
     var res = await db.query("attachment", where: "id = ?", whereArgs: [id]);
@@ -50,12 +45,11 @@ class AttachmentRepository {
       toReturn = Attachment.fromMap(res.first);
     }
 
-    await db.close();
     return toReturn;
   }
 
   delete(String id, AttachmentType type) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
 
     switch (type) {
       case AttachmentType.course:
@@ -76,12 +70,10 @@ class AttachmentRepository {
         break;
     }
     await db.delete("attachment", where: "id = ?", whereArgs: [id]);
-
-    await db.close();
   }
 
   save(Attachment a, String linkedId, AttachmentType type) async {
-    var db = await _connection.connect();
+    var db = SqliteConnection().db;
 
     await db.insert("attachment", a.toMap());
     switch (type) {
@@ -105,7 +97,5 @@ class AttachmentRepository {
           whereArgs: [linkedId],
         );
     }
-
-    await db.close();
   }
 }

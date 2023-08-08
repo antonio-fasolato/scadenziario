@@ -111,19 +111,30 @@ class _PersonsSceneState extends State<PersonsScene> {
               children: [
                 Form(
                   key: _formKey,
-                  child: TextFormField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                        label: const Text("Cerca"),
-                        prefixIcon: const Icon(Icons.search),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            _searchController.clear();
-                            _getAllPersons();
-                          },
-                          icon: const Icon(Icons.backspace),
-                        )),
-                    onChanged: (value) => _getAllPersons(),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                              label: const Text("Cerca"),
+                              prefixIcon: const Icon(Icons.search),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  _searchController.clear();
+                                  _getAllPersons();
+                                },
+                                icon: const Icon(Icons.backspace),
+                              )),
+                          onChanged: (value) => _getAllPersons(),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () async => await _toCsv(),
+                        icon: const Icon(Icons.save),
+                        tooltip: "Salva i nominativi come csv",
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
@@ -138,11 +149,6 @@ class _PersonsSceneState extends State<PersonsScene> {
                         .toList(),
                   ),
                 ),
-                ElevatedButton.icon(
-                  onPressed: () => _toCsv(),
-                  icon: const Icon(Icons.save_alt_outlined),
-                  label: const Text("CSV"),
-                )
               ],
             ),
           ),

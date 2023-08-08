@@ -21,7 +21,7 @@ class CsvService {
     return toReturn;
   }
 
-  static Future<String> save(String data) async {
+  static Future<String?> save(String data) async {
     String? selectedPath = await FilePicker.platform.saveFile(
       dialogTitle: "Selezionare la cartella dove salvare l'allegato",
       allowedExtensions: ["csv"],

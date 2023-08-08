@@ -4,27 +4,22 @@ import 'package:provider/provider.dart';
 import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/model/course.dart';
-import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
 
 class PersonCertificationsList extends StatelessWidget {
-  final SqliteConnection _connection;
   final String _personId;
 
   const PersonCertificationsList({
     super.key,
-    required SqliteConnection connection,
     required String personId,
-  })  : _connection = connection,
-        _personId = personId;
+  }) : _personId = personId;
 
   Future<List<CertificationDto>> _getCertifications() async {
     List<CertificationDto> toReturn = [];
 
-    toReturn = await CertificationRepository(_connection)
-        .getCertificationsFromPersonId(_personId);
+    toReturn =
+        await CertificationRepository.getCertificationsFromPersonId(_personId);
 
     return toReturn;
   }

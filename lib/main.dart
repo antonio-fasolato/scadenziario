@@ -63,14 +63,7 @@ class Scadenziario extends StatefulWidget {
 }
 
 class _ScadenziarioState extends State<Scadenziario> {
-  SqliteConnection? _connection;
   final courseState = CourseState();
-
-  void _setConnection(SqliteConnection connection) {
-    setState(() {
-      _connection = connection;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,41 +74,39 @@ class _ScadenziarioState extends State<Scadenziario> {
       ),
       routes: {
         "/": (buildContext) => DatabaseSelectionScene(
-              sharedPreferences: widget._sharedPreferences,
-              setSqliteConnection: _setConnection,
-            ),
+            sharedPreferences: widget._sharedPreferences),
         "/home": (buildContext) => const HomepageScene(),
         "/people": (buildContext) => ChangeNotifierProvider<CourseState>.value(
               value: courseState,
               child: ChangeNotifierProvider<PersonState>(
                 create: (context) => PersonState(),
-                child: PersonsScene(
-                  connection: _connection as SqliteConnection,
-                ),
+                child: const PersonsScene(),
               ),
             ),
         "/calendar": (buildContext) =>
             ChangeNotifierProvider<CourseState>.value(
               value: courseState,
-              child: CalendarScene(
-                connection: _connection as SqliteConnection,
-              ),
+              child: const CalendarScene(),
             ),
         "/courses": (buildContext) => ChangeNotifierProvider<CourseState>.value(
               value: courseState,
-              child: CoursesScene(
-                connection: _connection as SqliteConnection,
-              ),
+              child: const CoursesScene(),
             ),
         "/settings": (buildContext) => SettingsScene(),
         "/certificates": (buildContext) =>
             ChangeNotifierProvider<CourseState>.value(
               value: courseState,
-              child:
-                  CertificateScene(connection: _connection as SqliteConnection),
+              child: const CertificateScene(),
             )
       },
       initialRoute: '/',
     );
+  }
+
+  @override
+  void dispose() {
+    SqliteConnection().disconnect();
+
+    super.dispose();
   }
 }

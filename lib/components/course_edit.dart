@@ -156,6 +156,9 @@ class _CourseEditState extends State<CourseEdit> {
                             const EdgeInsets.only(left: 16, top: 16, bottom: 8),
                         child: ElevatedButton(
                           onPressed: () async {
+                            final scaffoldMessenger =
+                                ScaffoldMessenger.of(context);
+
                             CourseState state = Provider.of<CourseState>(
                                 context,
                                 listen: false);
@@ -173,10 +176,7 @@ class _CourseEditState extends State<CourseEdit> {
 
                               int res = await CourseRepository.save(activity);
                               if (res == 0) {
-                                if (!context.mounted) {
-                                  return;
-                                }
-                                ScaffoldMessenger.of(context).showSnackBar(
+                                scaffoldMessenger.showSnackBar(
                                   SnackBar(
                                     content: Container(
                                         padding: const EdgeInsets.all(16),

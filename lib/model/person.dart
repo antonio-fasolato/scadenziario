@@ -12,6 +12,8 @@ class Person {
   bool? enabled;
   bool? deleted;
 
+  String dutyDescription = "";
+
   Person(this.id, this.name, this.surname, this.birthdate, this.duty,
       this.email, this.phone, this.mobile, this.enabled, this.deleted);
 
@@ -30,24 +32,28 @@ class Person {
     this.deleted,
   });
 
-  @override
-  String toString() {
-    return 'Person{id: $id, name: $name, surname: $surname, birthdate: $birthdate, duty: $duty, email: $email, phone: $phone, mobile: $mobile, enabled: $enabled, deleted: $deleted}';
-  }
-
-  factory Person.fromMap(Map<String, dynamic> map) {
-    return Person(
-      map["id"],
-      map["name"],
-      map["surname"],
-      DateFormat("yyyy-MM-dd").parse(map["birthdate"]),
-      map["duty"],
-      map["email"],
-      map["phone"],
-      map["mobile"],
-      map["enabled"] == 1,
-      map["deleted"] == 1,
+  factory Person.fromMap(
+      {required Map<String, dynamic> map, String prefix = ""}) {
+    var p = Person(
+      map["${prefix}id"],
+      map["${prefix}name"],
+      map["${prefix}surname"],
+      map["${prefix}birthdate"] == null
+          ? null
+          : DateFormat("yyyy-MM-dd").parse(map["${prefix}birthdate"]),
+      map["${prefix}duty"],
+      map["${prefix}email"],
+      map["${prefix}phone"],
+      map["${prefix}mobile"],
+      map["${prefix}enabled"] == 1,
+      map["${prefix}deleted"] == 1,
     );
+
+    if (map.containsKey("${prefix}dutydescription")) {
+      p.dutyDescription = map["${prefix}dutydescription"];
+    }
+
+    return p;
   }
 
   Map<String, dynamic> toMap() {
@@ -68,4 +74,32 @@ class Person {
 
     return res;
   }
+
+  static List<String> get csvHeader => [
+        "Id",
+        "Nome",
+        "Cognome",
+        "Data di nascita",
+        "Ruolo",
+        "Email",
+        "Telefono",
+        "Cellulare",
+        "Attivo",
+        "Cancellato",
+      ];
+
+  List<dynamic> get csvArray => [
+        id,
+        name,
+        surname,
+        birthdate != null
+            ? DateFormat("yyyy-MM-dd").format(birthdate as DateTime)
+            : null,
+        dutyDescription,
+        email,
+        phone,
+        mobile,
+        enabled ?? false ? 1 : 0,
+        deleted ?? false ? 1 : 0,
+      ];
 }

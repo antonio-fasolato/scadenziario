@@ -318,7 +318,7 @@ class _PersonEditState extends State<PersonEdit> {
                   builder: (context, state, child) => Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: PersonCertificationsList(
-                      person: state?.person as Person,
+                      person: state.person as Person,
                     ),
                   ),
                 ),

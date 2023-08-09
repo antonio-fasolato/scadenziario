@@ -47,6 +47,7 @@ class EventsCard extends StatelessWidget {
         Constants.daysToExpirationWarning) {
       return Colors.yellowAccent;
     }
+    return null;
   }
 
   _goToCourse(BuildContext context) async {

@@ -11,7 +11,6 @@ import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/model/certification.dart';
-import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
@@ -81,7 +80,7 @@ class _CertificationsListState extends State<CertificationsList> {
 
     if (c.certification == null) {
       return ListTile(
-        title: Text("${c.person?.surname ?? ""} ${c.person?.name ?? ""}"),
+        title: Text("${c.person.surname ?? ""} ${c.person.name ?? ""}"),
         leading: const Icon(Icons.workspace_premium_outlined),
         trailing: IconButton(
           icon: c.certification != null
@@ -96,13 +95,13 @@ class _CertificationsListState extends State<CertificationsList> {
             }
           },
         ),
-        selected: state.hasPerson && state.person.id == c.person?.id,
+        selected: state.hasPerson && state.person.id == c.person.id,
         selectedTileColor: Colors.grey,
         selectedColor: Colors.white70,
       );
     } else {
       return ListTile(
-        title: Text("${c.person?.surname ?? ""} ${c.person?.name ?? ""}"),
+        title: Text("${c.person.surname ?? ""} ${c.person.name ?? ""}"),
         subtitle: Text(
             "Conseguito il ${DateFormat.yMd('it_IT').format(c.certification?.issuingDate as DateTime)} - Prossima scadenza il ${DateFormat.yMd('it_IT').format(c.certification?.expirationDate as DateTime)}"),
         leading: const Icon(Icons.workspace_premium_outlined),
@@ -147,12 +146,6 @@ class _CertificationsListState extends State<CertificationsList> {
         selectedColor: Colors.white70,
       );
     }
-  }
-
-  _addCertification(Person p) {
-    CourseState state = Provider.of<CourseState>(context, listen: false);
-
-    state.selectCertification(Certification.empty(), p);
   }
 
   _editCertification(String id, Person p) async {

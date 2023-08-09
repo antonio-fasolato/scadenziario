@@ -92,7 +92,7 @@ class _ScadenziarioState extends State<Scadenziario> {
               value: courseState,
               child: const CoursesScene(),
             ),
-        "/settings": (buildContext) => SettingsScene(),
+        "/settings": (buildContext) => const SettingsScene(),
         "/certificates": (buildContext) =>
             ChangeNotifierProvider<CourseState>.value(
               value: courseState,

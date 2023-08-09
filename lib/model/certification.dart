@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/model/person.dart';
-import 'package:scadenziario/constants.dart' as Constants;
+import 'package:scadenziario/constants.dart' as constants;
 
 class Certification {
   String? id;
@@ -115,7 +115,7 @@ class Certification {
     DateTime nowDateOnly = DateUtils.dateOnly(DateTime.now());
 
     return nowDateOnly.difference(expirationDateOnly).inDays.abs() <=
-        Constants.daysToExpirationWarning;
+        constants.daysToExpirationWarning;
   }
 
   @override

@@ -8,7 +8,7 @@ import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/repositories/course_repository.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
 import 'package:scadenziario/state/course_state.dart';
-import 'package:scadenziario/constants.dart' as Constants;
+import 'package:scadenziario/constants.dart' as constants;
 
 class EventsCard extends StatelessWidget {
   final EventDto _event;
@@ -29,7 +29,7 @@ class EventsCard extends StatelessWidget {
       return Text(
           "${_event.personName} - scaduto da ${nowDateOnly.difference(expirationDateOnly).inDays} giorni");
     } else if (nowDateOnly.difference(expirationDateOnly).inDays.abs() <=
-        Constants.daysToExpirationWarning) {
+        constants.daysToExpirationWarning) {
       return Text(
           "${_event.personName} - scade tra ${nowDateOnly.difference(expirationDateOnly).inDays.abs()} giorni");
     }
@@ -44,7 +44,7 @@ class EventsCard extends StatelessWidget {
     if (nowDateOnly.compareTo(expirationDateOnly) > 0) {
       return Colors.redAccent;
     } else if (nowDateOnly.difference(expirationDateOnly).inDays.abs() <=
-        Constants.daysToExpirationWarning) {
+        constants.daysToExpirationWarning) {
       return Colors.yellowAccent;
     }
     return null;

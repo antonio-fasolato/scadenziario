@@ -11,9 +11,11 @@ import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/model/certification.dart';
+import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
+import 'package:scadenziario/services/csv_service.dart';
 import 'package:scadenziario/state/course_state.dart';
 import 'package:uuid/uuid.dart';
 
@@ -162,6 +164,20 @@ class _CertificationsListState extends State<CertificationsList> {
     }
   }
 
+  _toCsv() async {
+    CourseState state = Provider.of<CourseState>(context, listen: false);
+
+    List<List<dynamic>> data = [];
+    data.add(CertificationDto.csvHeader);
+    for (var c in state.certifications) {
+      if (c.certification != null) {
+        data.add(c.csvArray);
+      }
+    }
+
+    await CsvService.save(CsvService.toCsv(data));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -169,21 +185,32 @@ class _CertificationsListState extends State<CertificationsList> {
         Form(
           key: _formKey,
           child: Consumer<CourseState>(
-            builder: (context, state, child) => TextFormField(
-              controller: state.searchController,
-              decoration: InputDecoration(
-                label: const Text("Cerca"),
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    Provider.of<CourseState>(context, listen: false)
-                        .changeSearchController("");
-                    widget._getAllCertifications();
-                  },
-                  icon: const Icon(Icons.backspace),
+            builder: (context, state, child) => Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: state.searchController,
+                    decoration: InputDecoration(
+                      label: const Text("Cerca"),
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          Provider.of<CourseState>(context, listen: false)
+                              .changeSearchController("");
+                          widget._getAllCertifications();
+                        },
+                        icon: const Icon(Icons.backspace),
+                      ),
+                    ),
+                    onChanged: (value) => widget._getAllCertifications(),
+                  ),
                 ),
-              ),
-              onChanged: (value) => widget._getAllCertifications(),
+                IconButton(
+                  onPressed: () async => await _toCsv(),
+                  icon: const Icon(Icons.save),
+                  tooltip: "Salva come csv",
+                )
+              ],
             ),
           ),
         ),

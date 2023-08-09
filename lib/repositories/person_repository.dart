@@ -68,15 +68,19 @@ class PersonRepository {
 
     List<PersonDto> toReturn = [];
     var sql = '''
-        select distinct p.*
-        from persons p
-        inner join certification ce on
-          ce.person_id = p.id
-        inner join course c on
-          ce.course_id = c.id
-        where 1 = 1
-          and c.id = '$courseId'
-	      order by surname, name
+      select p.*, d.description as dutydescription
+      from persons p
+      inner join duties d on
+        p.duty = d.id 
+      where 1 = 1
+        and p.id in (
+          select distinct person_id
+          from certification
+          where 1 = 1
+            and course_id = '$courseId'
+        )
+        and p.enabled = 1
+        and p.deleted  = 0
     ''';
     var res = await db.rawQuery(sql);
     for (var r in res) {

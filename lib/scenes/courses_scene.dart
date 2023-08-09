@@ -6,6 +6,7 @@ import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/course_repository.dart';
+import 'package:scadenziario/services/csv_service.dart';
 import 'package:scadenziario/state/course_state.dart';
 
 class CoursesScene extends StatefulWidget {
@@ -82,6 +83,16 @@ class _CoursesSceneState extends State<CoursesScene> {
     return Container();
   }
 
+  _toCsv() async {
+    List<List<dynamic>> data = [];
+    data.add(Course.csvHeader);
+    for (var c in _courses) {
+      data.add(c.csvArray);
+    }
+
+    await CsvService.save(CsvService.toCsv(data));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,20 +109,31 @@ class _CoursesSceneState extends State<CoursesScene> {
               children: [
                 Form(
                   key: _formKey,
-                  child: TextFormField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      label: Text("Cerca"),
-                      prefixIcon: Icon(Icons.search),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          _searchController.clear();
-                          _getAllCourses();
-                        },
-                        icon: const Icon(Icons.backspace),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            label: Text("Cerca"),
+                            prefixIcon: Icon(Icons.search),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                _searchController.clear();
+                                _getAllCourses();
+                              },
+                              icon: const Icon(Icons.backspace),
+                            ),
+                          ),
+                          onChanged: (value) => _getAllCourses(),
+                        ),
                       ),
-                    ),
-                    onChanged: (value) => _getAllCourses(),
+                      IconButton(
+                        onPressed: () async => await _toCsv(),
+                        icon: const Icon(Icons.save),
+                        tooltip: "Salva come csv",
+                      )
+                    ],
                   ),
                 ),
                 Expanded(

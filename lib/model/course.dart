@@ -47,4 +47,22 @@ class Course {
       "deleted": deleted! ? 1 : 0,
     };
   }
+
+  static List<String> get csvHeader => [
+        "Id",
+        "Nome",
+        "Descrizione",
+        "Durata (mesi)",
+        "Attivo",
+        "Cancellato",
+      ];
+
+  List<dynamic> get csvArray => [
+        id,
+        name,
+        description,
+        duration,
+        enabled ?? false ? 1 : 0,
+        deleted ?? false ? 1 : 0,
+      ];
 }

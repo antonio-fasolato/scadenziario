@@ -7,23 +7,19 @@ import 'package:scadenziario/components/course_persons_list.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/course_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
 import 'package:uuid/uuid.dart';
 
 class CourseEdit extends StatefulWidget {
-  final SqliteConnection _connection;
   final void Function() _confirm;
   final void Function() _cancel;
 
-  const CourseEdit(
-      {super.key,
-      required void Function() confirm,
-      required void Function() cancel,
-      required SqliteConnection connection})
-      : _confirm = confirm,
-        _cancel = cancel,
-        _connection = connection;
+  const CourseEdit({
+    super.key,
+    required void Function() confirm,
+    required void Function() cancel,
+  })  : _confirm = confirm,
+        _cancel = cancel;
 
   @override
   State<CourseEdit> createState() => _CourseEditState();
@@ -36,8 +32,7 @@ class _CourseEditState extends State<CourseEdit> {
     CourseState state = Provider.of<CourseState>(context, listen: false);
 
     if (state.hasCourse) {
-      var attachments = await AttachmentRepository(widget._connection)
-          .getAttachmentsByLinkedEntity(
+      var attachments = await AttachmentRepository.getAttachmentsByLinkedEntity(
         state.course.id as String,
         AttachmentType.course,
       );
@@ -176,9 +171,7 @@ class _CourseEditState extends State<CourseEdit> {
                                   true,
                                   false);
 
-                              int res =
-                                  await CourseRepository(widget._connection)
-                                      .save(activity);
+                              int res = await CourseRepository.save(activity);
                               if (res == 0) {
                                 if (!context.mounted) {
                                   return;
@@ -227,7 +220,6 @@ class _CourseEditState extends State<CourseEdit> {
                       type: AttachmentType.course,
                       attachments: state.attachments,
                       id: state.course.id as String,
-                      connection: widget._connection,
                       reloadAttachments: _loadAttachments,
                     ),
                   ),
@@ -238,7 +230,6 @@ class _CourseEditState extends State<CourseEdit> {
                   builder: (context, state, child) => Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: CoursePersonsList(
-                      connection: widget._connection,
                       courseId: state.course.id as String,
                     ),
                   ),

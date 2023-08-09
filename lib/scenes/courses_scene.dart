@@ -6,14 +6,11 @@ import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/course_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:scadenziario/services/csv_service.dart';
 import 'package:scadenziario/state/course_state.dart';
 
 class CoursesScene extends StatefulWidget {
-  final SqliteConnection _connection;
-
-  const CoursesScene({super.key, required SqliteConnection connection})
-      : _connection = connection;
+  const CoursesScene({super.key});
 
   @override
   State<CoursesScene> createState() => _CoursesSceneState();
@@ -34,10 +31,9 @@ class _CoursesSceneState extends State<CoursesScene> {
     List<Course> res = [];
 
     if (_searchController.text.isNotEmpty) {
-      res = await CourseRepository(widget._connection)
-          .findByName(_searchController.text);
+      res = await CourseRepository.findByName(_searchController.text);
     } else {
-      res = await CourseRepository(widget._connection).getAll();
+      res = await CourseRepository.getAll();
     }
     setState(() {
       _courses = res;
@@ -47,8 +43,8 @@ class _CoursesSceneState extends State<CoursesScene> {
   Future<void> _selectCourse(Course c) async {
     final state = Provider.of<CourseState>(context, listen: false);
     state.selectCourse(c);
-    state.setAttachments(await AttachmentRepository(widget._connection)
-        .getAttachmentsByLinkedEntity(
+    state
+        .setAttachments(await AttachmentRepository.getAttachmentsByLinkedEntity(
       c.id as String,
       AttachmentType.course,
     ));
@@ -80,12 +76,21 @@ class _CoursesSceneState extends State<CoursesScene> {
         child: CourseEdit(
           confirm: _courseSaved,
           cancel: _editCancelled,
-          connection: widget._connection,
         ),
       );
     }
 
     return Container();
+  }
+
+  _toCsv() async {
+    List<List<dynamic>> data = [];
+    data.add(Course.csvHeader);
+    for (var c in _courses) {
+      data.add(c.csvArray);
+    }
+
+    await CsvService.save(CsvService.toCsv(data));
   }
 
   @override
@@ -104,20 +109,31 @@ class _CoursesSceneState extends State<CoursesScene> {
               children: [
                 Form(
                   key: _formKey,
-                  child: TextFormField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      label: Text("Cerca"),
-                      prefixIcon: Icon(Icons.search),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          _searchController.clear();
-                          _getAllCourses();
-                        },
-                        icon: const Icon(Icons.backspace),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            label: Text("Cerca"),
+                            prefixIcon: Icon(Icons.search),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                _searchController.clear();
+                                _getAllCourses();
+                              },
+                              icon: const Icon(Icons.backspace),
+                            ),
+                          ),
+                          onChanged: (value) => _getAllCourses(),
+                        ),
                       ),
-                    ),
-                    onChanged: (value) => _getAllCourses(),
+                      IconButton(
+                        onPressed: () async => await _toCsv(),
+                        icon: const Icon(Icons.save),
+                        tooltip: "Salva come csv",
+                      )
+                    ],
                   ),
                 ),
                 Expanded(

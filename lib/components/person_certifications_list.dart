@@ -6,25 +6,22 @@ import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:scadenziario/services/csv_service.dart';
 import 'package:scadenziario/state/course_state.dart';
 
 class PersonCertificationsList extends StatelessWidget {
-  final SqliteConnection _connection;
-  final String _personId;
+  final Person _person;
 
   const PersonCertificationsList({
     super.key,
-    required SqliteConnection connection,
-    required String personId,
-  })  : _connection = connection,
-        _personId = personId;
+    required Person person,
+  }) : _person = person;
 
   Future<List<CertificationDto>> _getCertifications() async {
     List<CertificationDto> toReturn = [];
 
-    toReturn = await CertificationRepository(_connection)
-        .getCertificationsFromPersonId(_personId);
+    toReturn = await CertificationRepository.getCertificationsFromPersonId(
+        _person.id as String);
 
     return toReturn;
   }
@@ -57,6 +54,22 @@ class PersonCertificationsList extends StatelessWidget {
     state.selectCertification(c.certification as Certification, c.person);
 
     navigator.pushNamed("/certificates");
+  }
+
+  _toCsv(List<CertificationDto> certifications) async {
+    List<List<dynamic>> data = [];
+    data.add(CertificationDto.csvHeader);
+    for (var c in certifications) {
+      if (c.certification != null) {
+        data.add(CertificationDto(
+          certification: c.certification,
+          person: _person,
+          course: null,
+        ).csvArray);
+      }
+    }
+
+    await CsvService.save(CsvService.toCsv(data));
   }
 
   ListTile _buildTile(BuildContext context, CertificationDto c) {
@@ -110,14 +123,25 @@ class PersonCertificationsList extends StatelessWidget {
                     (snapshot?.data?.length ?? 0) > 0) {
                   return Column(
                     children: [
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(top: 8),
-                        child: Text(
-                          "Certificati",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Certificati",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () => _toCsv(snapshot?.data ?? []),
+                              icon: const Icon(Icons.save),
+                              tooltip: "Salva come csv",
+                            )
+                          ],
                         ),
                       ),
                       ListView.builder(

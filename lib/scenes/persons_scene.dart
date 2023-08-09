@@ -6,14 +6,11 @@ import 'package:scadenziario/components/person_edit.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:scadenziario/services/csv_service.dart';
 import 'package:scadenziario/state/person_state.dart';
 
 class PersonsScene extends StatefulWidget {
-  final SqliteConnection _connection;
-
-  const PersonsScene({super.key, required SqliteConnection connection})
-      : _connection = connection;
+  const PersonsScene({super.key});
 
   @override
   State<StatefulWidget> createState() => _PersonsSceneState();
@@ -39,10 +36,9 @@ class _PersonsSceneState extends State<PersonsScene> {
   Future<void> _getAllPersons() async {
     List<Person> res = [];
     if (_searchController.text.isNotEmpty) {
-      res = await PersonRepository(widget._connection)
-          .searchByName(_searchController.text);
+      res = await PersonRepository.searchByName(_searchController.text);
     } else {
-      res = await PersonRepository(widget._connection).getAll();
+      res = await PersonRepository.getAll();
     }
     setState(() {
       _persons = res;
@@ -57,7 +53,6 @@ class _PersonsSceneState extends State<PersonsScene> {
             child: PersonEdit(
               confirm: _personSaved,
               cancel: _editCancelled,
-              connection: widget._connection,
             ),
           )
         : Container();
@@ -67,8 +62,8 @@ class _PersonsSceneState extends State<PersonsScene> {
     final state = Provider.of<PersonState>(context, listen: false);
 
     state.selectPerson(p);
-    state.setAttachments(await AttachmentRepository(widget._connection)
-        .getAttachmentsByLinkedEntity(
+    state
+        .setAttachments(await AttachmentRepository.getAttachmentsByLinkedEntity(
       p.id as String,
       AttachmentType.person,
     ));
@@ -90,6 +85,16 @@ class _PersonsSceneState extends State<PersonsScene> {
     Provider.of<PersonState>(context, listen: false).deselectPerson();
   }
 
+  _toCsv() async {
+    List<List<dynamic>> data = [];
+    data.add(Person.csvHeader);
+    for (var p in _persons) {
+      data.add(p.csvArray);
+    }
+
+    await CsvService.save(CsvService.toCsv(data));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,19 +111,30 @@ class _PersonsSceneState extends State<PersonsScene> {
               children: [
                 Form(
                   key: _formKey,
-                  child: TextFormField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                        label: const Text("Cerca"),
-                        prefixIcon: const Icon(Icons.search),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            _searchController.clear();
-                            _getAllPersons();
-                          },
-                          icon: const Icon(Icons.backspace),
-                        )),
-                    onChanged: (value) => _getAllPersons(),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                              label: const Text("Cerca"),
+                              prefixIcon: const Icon(Icons.search),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  _searchController.clear();
+                                  _getAllPersons();
+                                },
+                                icon: const Icon(Icons.backspace),
+                              )),
+                          onChanged: (value) => _getAllPersons(),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () async => await _toCsv(),
+                        icon: const Icon(Icons.save),
+                        tooltip: "Salva i nominativi come csv",
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(

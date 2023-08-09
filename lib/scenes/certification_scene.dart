@@ -5,16 +5,10 @@ import 'package:scadenziario/components/certification_edit.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:scadenziario/state/course_state.dart';
 
 class CertificateScene extends StatefulWidget {
-  final SqliteConnection _connection;
-
-  const CertificateScene({
-    super.key,
-    required SqliteConnection connection,
-  }) : _connection = connection;
+  const CertificateScene({super.key});
 
   @override
   State<CertificateScene> createState() => _CertificateSceneState();
@@ -30,8 +24,7 @@ class _CertificateSceneState extends State<CertificateScene> {
     CourseState state = Provider.of<CourseState>(context, listen: false);
     List<CertificationDto> res = [];
 
-    res = await CertificationRepository(widget._connection)
-        .getPersonsAndCertificationsByCourse(
+    res = await CertificationRepository.getPersonsAndCertificationsByCourse(
       state.course.id as String,
       state.searchController.text,
     );
@@ -68,7 +61,6 @@ class _CertificateSceneState extends State<CertificateScene> {
             child: Consumer<CourseState>(
               builder: (context, state, child) => state.hasCourse
                   ? CertificationsList(
-                      connection: widget._connection,
                       getAllCertifications: _getAllCertifications,
                     )
                   : Container(),
@@ -79,7 +71,6 @@ class _CertificateSceneState extends State<CertificateScene> {
               builder: (context, state, child) => state.hasCertification ||
                       state.checkedCertifications.isNotEmpty
                   ? CertificationEdit(
-                      connection: widget._connection,
                       confirm: _certificateSaved,
                       cancel: _editCancelled,
                     )

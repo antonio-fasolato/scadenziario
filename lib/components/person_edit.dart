@@ -241,6 +241,9 @@ class _PersonEditState extends State<PersonEdit> {
                             const EdgeInsets.only(left: 16, top: 16, bottom: 8),
                         child: ElevatedButton(
                           onPressed: () async {
+                            final scaffoldMessenger =
+                                ScaffoldMessenger.of(context);
+
                             PersonState state = Provider.of<PersonState>(
                                 context,
                                 listen: false);
@@ -261,10 +264,7 @@ class _PersonEditState extends State<PersonEdit> {
                                   false);
                               int res = await PersonRepository.save(person);
                               if (res == 0) {
-                                if (!context.mounted) {
-                                  return;
-                                }
-                                ScaffoldMessenger.of(context).showSnackBar(
+                                scaffoldMessenger.showSnackBar(
                                   SnackBar(
                                     content: Container(
                                         padding: const EdgeInsets.all(16),

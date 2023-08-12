@@ -219,7 +219,7 @@ class _CourseEditState extends State<CourseEdit> {
                     child: AttachmentsList(
                       type: AttachmentType.course,
                       attachments: state.attachments,
-                      id: state.course.id as String,
+                      id: state.course.id,
                       reloadAttachments: _loadAttachments,
                     ),
                   ),
@@ -230,7 +230,7 @@ class _CourseEditState extends State<CourseEdit> {
                   builder: (context, state, child) => Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: CoursePersonsList(
-                      courseId: state.course.id as String,
+                      courseId: state.course.id,
                     ),
                   ),
                 ),

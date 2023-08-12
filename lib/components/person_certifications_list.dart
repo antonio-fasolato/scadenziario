@@ -36,12 +36,12 @@ class PersonCertificationsList extends StatelessWidget {
     if (c.issuingDate == null) {
       a = "";
     }
-    a = "Ottenuto il ${DateFormat("dd/MM/yyyy").format(c!.issuingDate as DateTime)} - ";
+    a = "Ottenuto il ${DateFormat("dd/MM/yyyy").format(c.issuingDate as DateTime)} - ";
 
     if (c.expirationDate == null) {
       b = "";
     }
-    b = "In scadenza il ${DateFormat("dd/MM/yyyy").format(c!.expirationDate as DateTime)}";
+    b = "In scadenza il ${DateFormat("dd/MM/yyyy").format(c.expirationDate as DateTime)}";
 
     return "$a$b";
   }
@@ -120,11 +120,11 @@ class PersonCertificationsList extends StatelessWidget {
                 return _alternativeText('Error: ${snapshot.error}');
               } else {
                 if (snapshot.data != null &&
-                    (snapshot?.data?.length ?? 0) > 0) {
+                    (snapshot.data?.length ?? 0) > 0) {
                   return Column(
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(top: 8),
+                        padding: const EdgeInsets.only(top: 8),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -137,7 +137,7 @@ class PersonCertificationsList extends StatelessWidget {
                               ),
                             ),
                             IconButton(
-                              onPressed: () => _toCsv(snapshot?.data ?? []),
+                              onPressed: () => _toCsv(snapshot.data ?? []),
                               icon: const Icon(Icons.save),
                               tooltip: "Salva come csv",
                             )

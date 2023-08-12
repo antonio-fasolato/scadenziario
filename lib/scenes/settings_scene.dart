@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:scadenziario/components/footer.dart';
 
 class SettingsScene extends StatelessWidget {
+  const SettingsScene({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

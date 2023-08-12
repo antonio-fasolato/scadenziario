@@ -17,7 +17,7 @@ class CourseState extends WithAttachments {
   Certification? _certification;
   Person? _person;
   GlobalKey<FormState> _certificationFormKey = GlobalKey<FormState>();
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   TextEditingController _certificationIssuingController =
       TextEditingController();
   TextEditingController _certificationExpirationController =

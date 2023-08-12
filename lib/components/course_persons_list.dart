@@ -87,7 +87,7 @@ class CoursePersonsList extends StatelessWidget {
                 return _alternativeText('Error: ${snapshot.error}');
               } else {
                 if (snapshot.data != null &&
-                    (snapshot?.data?.length ?? 0) > 0) {
+                    (snapshot.data?.length ?? 0) > 0) {
                   return Column(
                     children: [
                       const Padding(

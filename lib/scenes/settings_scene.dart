@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/components/footer.dart';
+import 'package:scadenziario/components/options_defaults.dart';
 import 'package:scadenziario/components/options_roles.dart';
 
 class SettingsScene extends StatelessWidget {
@@ -11,7 +12,22 @@ class SettingsScene extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Scadenziario - Opzioni"),
       ),
-      body: const SingleChildScrollView(child: OptionsRoles()),
+      body: SingleChildScrollView(
+        child: Table(
+          children: const [
+            TableRow(
+              children: [
+                TableCell(
+                  child: OptionsRoles(),
+                ),
+                TableCell(
+                  child: OptionsDefaults(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: const Footer(),
     );
   }

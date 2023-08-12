@@ -20,8 +20,10 @@ class PersonCertificationsList extends StatelessWidget {
   Future<List<CertificationDto>> _getCertifications() async {
     List<CertificationDto> toReturn = [];
 
-    toReturn = await CertificationRepository.getCertificationsFromPersonId(
-        _person.id as String);
+    if (_person.id != null) {
+      toReturn = await CertificationRepository.getCertificationsFromPersonId(
+          _person.id as String);
+    }
 
     return toReturn;
   }
@@ -105,6 +107,10 @@ class PersonCertificationsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_person.id == null) {
+      return Container();
+    }
+
     return Card(
       elevation: 4,
       child: FutureBuilder<List<CertificationDto>>(
@@ -119,8 +125,7 @@ class PersonCertificationsList extends StatelessWidget {
               if (snapshot.hasError) {
                 return _alternativeText('Error: ${snapshot.error}');
               } else {
-                if (snapshot.data != null &&
-                    (snapshot.data?.length ?? 0) > 0) {
+                if (snapshot.data != null && (snapshot.data?.length ?? 0) > 0) {
                   return Column(
                     children: [
                       Padding(

@@ -307,7 +307,7 @@ class _PersonEditState extends State<PersonEdit> {
                     child: AttachmentsList(
                       type: AttachmentType.person,
                       attachments: state.attachments,
-                      id: state.person.id as String,
+                      id: state.person.id,
                       reloadAttachments: _loadAttachments,
                     ),
                   ),

@@ -74,7 +74,7 @@ class CoursePersonsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(_courseId == null) {
+    if (_courseId == null) {
       return Container();
     }
 
@@ -92,30 +92,38 @@ class CoursePersonsList extends StatelessWidget {
               if (snapshot.hasError) {
                 return _alternativeText('Error: ${snapshot.error}');
               } else {
-                if (snapshot.data != null && (snapshot.data?.length ?? 0) > 0) {
-                  return Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text(
-                          "Persone",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
+                return Column(
+                  children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 8, bottom: 8),
+                          child: Text(
+                            "Persone",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                            ),
                           ),
                         ),
-                      ),
-                      ListView.builder(
-                        itemBuilder: (context, index) =>
-                            _buildTile(context, snapshot.data![index]),
-                        itemCount: snapshot.data!.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                      ),
-                    ],
-                  );
-                }
-                return _alternativeText("Nessun certificato presente");
+                      ],
+                    ),
+                    snapshot.data == null || snapshot.data!.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.only(bottom: 8.0),
+                            child: Text("Nessun certificato presente"),
+                          )
+                        : ListView.builder(
+                            itemBuilder: (context, index) =>
+                                _buildTile(context, snapshot.data![index]),
+                            itemCount: snapshot.data!.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                          ),
+                  ],
+                );
               }
           }
         },

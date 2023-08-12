@@ -77,7 +77,7 @@ class CoursePersonsList extends StatelessWidget {
     if(_courseId == null) {
       return Container();
     }
-    
+
     return Card(
       elevation: 4,
       child: FutureBuilder<List<PersonDto>>(

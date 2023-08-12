@@ -125,41 +125,43 @@ class PersonCertificationsList extends StatelessWidget {
               if (snapshot.hasError) {
                 return _alternativeText('Error: ${snapshot.error}');
               } else {
-                if (snapshot.data != null && (snapshot.data?.length ?? 0) > 0) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Certificati",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24,
-                              ),
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Certificati",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
                             ),
-                            IconButton(
-                              onPressed: () => _toCsv(snapshot.data ?? []),
-                              icon: const Icon(Icons.save),
-                              tooltip: "Salva come csv",
-                            )
-                          ],
-                        ),
+                          ),
+                          IconButton(
+                            onPressed: () => _toCsv(snapshot.data ?? []),
+                            icon: const Icon(Icons.save),
+                            tooltip: "Salva come csv",
+                          )
+                        ],
                       ),
-                      ListView.builder(
-                        itemBuilder: (context, index) =>
-                            _buildTile(context, snapshot.data![index]),
-                        itemCount: snapshot.data!.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                      ),
-                    ],
-                  );
-                }
-                return _alternativeText("Nessun certificato presente");
+                    ),
+                    snapshot.data == null || snapshot.data!.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.only(bottom: 8.0),
+                            child: Text("Nessun certificato presente"),
+                          )
+                        : ListView.builder(
+                            itemBuilder: (context, index) =>
+                                _buildTile(context, snapshot.data![index]),
+                            itemCount: snapshot.data!.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                          ),
+                  ],
+                );
               }
           }
         },

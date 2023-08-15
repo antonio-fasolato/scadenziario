@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:scadenziario/dto/certification_dto.dart';
+import 'package:scadenziario/dto/notification_dto.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/model/course.dart';
@@ -251,6 +252,51 @@ class CertificationRepository {
     }
 
     return 0;
+  }
+
+  static Future<List<NotificationDto>> getNotifications(DateTime d) async {
+    var db = SqliteConnection().db;
+    Settings settings = await Settings.getInstance();
+
+    DateTime to =
+        DateTime.now().add(Duration(days: settings.daysToExpirationWarning()));
+
+    List<NotificationDto> toReturn = [];
+
+    String sql = """
+      select ce.*, 
+        p.id as person_id, p.name as person_name, p.surname as person_surname, p.birthdate as person_birthdate, p.email as person_email, p.phone as person_phone, p.mobile as person_mobile, 
+        c.name as course_name, c.description as course_description, c.duration 
+      from certification ce
+      inner join persons p on
+        ce.person_id = p.id
+      inner join course c on
+        ce.course_id = c.id
+      where 1 = 1
+        and ce.expiration_date < DATE('${DateFormat("yyyy-MM-dd").format(to)}')
+      order by ce.expiration_date desc
+	    """;
+
+    var res = await db.rawQuery(sql);
+    if (res.isNotEmpty) {
+      toReturn = List.from(
+        res.map(
+          (e) {
+            var toReturn = NotificationDto(
+              person: Person.fromMap(map: e, prefix: "person_"),
+              certification:
+                  e["id"] == null ? null : Certification.fromMap(map: e),
+              course: e["course_id"] == null
+                  ? null
+                  : Course.fromMap(map: e, prefix: "course_"),
+            );
+            return toReturn;
+          },
+        ),
+      );
+    }
+
+    return toReturn;
   }
 
   static Future<int> save(Certification c) async {

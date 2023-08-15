@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/components/footer.dart';
+import 'package:scadenziario/components/scadenziario_app_bar.dart';
 
 class HomepageScene extends StatelessWidget {
   const HomepageScene({super.key});
@@ -7,9 +8,7 @@ class HomepageScene extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Scadenziario"),
-      ),
+      appBar: ScadenziarioAppBar("Scadenziario"),
       body: Center(
         child: SingleChildScrollView(
           child: SingleChildScrollView(
@@ -32,7 +31,8 @@ class HomepageScene extends StatelessWidget {
                           )),
                       const Text(
                         "Personale",
-                        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -53,7 +53,8 @@ class HomepageScene extends StatelessWidget {
                       ),
                       const Text(
                         "Calendario",
-                        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -74,7 +75,8 @@ class HomepageScene extends StatelessWidget {
                       ),
                       const Text(
                         "Corsi",
-                        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

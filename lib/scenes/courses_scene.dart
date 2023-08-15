@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/components/course_edit.dart';
 import 'package:scadenziario/components/footer.dart';
+import 'package:scadenziario/components/scadenziario_app_bar.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/course_repository.dart';
@@ -96,9 +97,7 @@ class _CoursesSceneState extends State<CoursesScene> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Scadenziario - Corsi"),
-      ),
+      appBar: ScadenziarioAppBar("Scadenziario - Corsi"),
       body: Row(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,

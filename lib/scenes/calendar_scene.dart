@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scadenziario/components/events_calendar.dart';
 import 'package:scadenziario/components/events_card.dart';
 import 'package:scadenziario/components/footer.dart';
+import 'package:scadenziario/components/scadenziario_app_bar.dart';
 import 'package:scadenziario/dto/event_dto.dart';
 
 class CalendarScene extends StatefulWidget {
@@ -25,9 +26,7 @@ class _CalendarSceneState extends State<CalendarScene> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Scadenziario - Calendario"),
-      ),
+      appBar: ScadenziarioAppBar("Scadenziario - Calendario"),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

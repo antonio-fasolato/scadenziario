@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:scadenziario/components/certification_list.dart';
 import 'package:scadenziario/components/certification_edit.dart';
 import 'package:scadenziario/components/footer.dart';
+import 'package:scadenziario/components/scadenziario_app_bar.dart';
 import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/state/course_state.dart';
@@ -44,15 +45,16 @@ class _CertificateSceneState extends State<CertificateScene> {
     _getAllCertifications();
   }
 
+  String _getTitile() {
+    CourseState state = Provider.of<CourseState>(context, listen: false);
+
+    return "Scadenziario - Certificazioni del corso \"${state.course.name}\"";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Consumer<CourseState>(
-          builder: (context, state, child) => Text(
-              "Scadenziario - Certificazioni del corso \"${state.course.name}\""),
-        ),
-      ),
+      appBar: ScadenziarioAppBar(_getTitile()),
       body: Row(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:scadenziario/components/scadenziario_app_bar.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -112,9 +113,7 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Scadenziario - Selezione archivio di lavoro"),
-      ),
+      appBar: ScadenziarioAppBar("Scadenziario - Selezione archivio di lavoro"),
       body: Row(
         mainAxisSize: MainAxisSize.max,
         children: [

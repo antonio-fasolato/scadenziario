@@ -3,14 +3,14 @@ import 'package:scadenziario/model/duty.dart';
 import 'package:scadenziario/repositories/duty_repository.dart';
 import 'package:uuid/uuid.dart';
 
-class OptionsRoles extends StatefulWidget {
-  const OptionsRoles({super.key});
+class SettingsRoles extends StatefulWidget {
+  const SettingsRoles({super.key});
 
   @override
-  State<OptionsRoles> createState() => _OptionsRolesState();
+  State<SettingsRoles> createState() => _SettingsRolesState();
 }
 
-class _OptionsRolesState extends State<OptionsRoles> {
+class _SettingsRolesState extends State<SettingsRoles> {
   List<Duty> _duties = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _newDutyController = TextEditingController();

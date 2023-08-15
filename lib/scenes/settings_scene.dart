@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/components/footer.dart';
-import 'package:scadenziario/components/options_defaults.dart';
-import 'package:scadenziario/components/options_roles.dart';
+import 'package:scadenziario/components/settings_defaults.dart';
+import 'package:scadenziario/components/settings_roles.dart';
 
 class SettingsScene extends StatelessWidget {
   const SettingsScene({super.key});
@@ -18,10 +18,10 @@ class SettingsScene extends StatelessWidget {
             TableRow(
               children: [
                 TableCell(
-                  child: OptionsRoles(),
+                  child: SettingsRoles(),
                 ),
                 TableCell(
-                  child: OptionsDefaults(),
+                  child: SettingsDefaults(),
                 ),
               ],
             ),

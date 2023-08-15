@@ -4,20 +4,46 @@ import 'package:scadenziario/constants.dart' as constants;
 import 'package:scadenziario/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class OptionsDefaults extends StatefulWidget {
-  const OptionsDefaults({super.key});
+class SettingsDefaults extends StatefulWidget {
+  const SettingsDefaults({super.key});
 
   @override
-  State<OptionsDefaults> createState() => _OptionsDefaultsState();
+  State<SettingsDefaults> createState() => _SettingsDefaultsState();
 }
 
-class _OptionsDefaultsState extends State<OptionsDefaults> {
+class _SettingsDefaultsState extends State<SettingsDefaults> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late List<DropdownMenuItem<String>> _csvSeparatorValues;
   TextEditingController _daysToExpirationWarningController =
       TextEditingController();
   TextEditingController _csvFieldSeparatorController = TextEditingController();
   TextEditingController _csvStringFieldIdentifierController =
       TextEditingController();
+
+  _SettingsDefaultsState() {
+    _csvSeparatorValues = [
+      const DropdownMenuItem<String>(
+        value: ",",
+        child: Text(","),
+      ),
+      const DropdownMenuItem<String>(
+        value: ";",
+        child: Text(";"),
+      ),
+      const DropdownMenuItem<String>(
+        value: ":",
+        child: Text(":"),
+      ),
+      const DropdownMenuItem<String>(
+        value: " ",
+        child: Text("Spazio"),
+      ),
+      const DropdownMenuItem<String>(
+        value: "\t",
+        child: Text("Tab"),
+      ),
+    ];
+  }
 
   @override
   void initState() {
@@ -143,13 +169,22 @@ class _OptionsDefaultsState extends State<OptionsDefaults> {
                 fontSize: 18,
               ),
             ),
-            TextFormField(
-              controller: _csvFieldSeparatorController,
+            DropdownButtonFormField<String>(
+              value: _csvFieldSeparatorController.text.isEmpty
+                  ? null
+                  : _csvFieldSeparatorController.text,
+              items: _csvSeparatorValues,
               decoration: const InputDecoration(
                 label: Text(
                     "CSV: separatore di campi (default: ${constants.csvFieldSeparator})"),
-                prefixIcon: Icon(Icons.calendar_month),
+                prefixIcon: Icon(Icons.format_line_spacing),
               ),
+              onChanged: (value) {
+                setState(() {
+                  _csvFieldSeparatorController =
+                      TextEditingController(text: value ?? "");
+                });
+              },
             ),
             TextFormField(
               controller: _csvStringFieldIdentifierController,

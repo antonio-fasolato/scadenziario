@@ -236,6 +236,8 @@ class CertificationRepository {
     var db = SqliteConnection().db;
     Settings settings = await Settings.getInstance();
 
+    DateTime from = DateTime.now()
+        .subtract(Duration(days: settings.stopNotifyingExpirationAfterDays()));
     DateTime to =
         DateTime.now().add(Duration(days: settings.daysToExpirationWarning()));
 
@@ -244,6 +246,7 @@ class CertificationRepository {
       from certification c
       where 1 = 1
         and notification_hidden = 0
+        and expiration_date >= DATE('${DateFormat("yyyy-MM-dd").format(from)}')
         and expiration_date < DATE('${DateFormat("yyyy-MM-dd").format(to)}')
     """;
 
@@ -260,6 +263,8 @@ class CertificationRepository {
     var db = SqliteConnection().db;
     Settings settings = await Settings.getInstance();
 
+    DateTime from = DateTime.now()
+        .subtract(Duration(days: settings.stopNotifyingExpirationAfterDays()));
     DateTime to =
         DateTime.now().add(Duration(days: settings.daysToExpirationWarning()));
 
@@ -279,6 +284,7 @@ class CertificationRepository {
         ce.course_id = c.id
       where 1 = 1
         ${hidden ? "" : "and ce.notification_hidden = 0"}
+        and expiration_date >= DATE('${DateFormat("yyyy-MM-dd").format(from)}')
         and ce.expiration_date < DATE('${DateFormat("yyyy-MM-dd").format(to)}')
         ${q.isNotEmpty ? fullText : ""}
       order by ce.expiration_date desc

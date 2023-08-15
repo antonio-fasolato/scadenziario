@@ -24,6 +24,19 @@ class Settings {
     return toReturn;
   }
 
+  int stopNotifyingExpirationAfterDays() {
+    int toReturn = constants.stopNotifyingExpirationAfterDays;
+
+    if (_preferences!
+        .containsKey(constants.stopNotifyingExpirationAfterDaysKey)) {
+      toReturn =
+          _preferences!.getInt(constants.stopNotifyingExpirationAfterDaysKey) ??
+              toReturn;
+    }
+
+    return toReturn;
+  }
+
   String csvFieldSeparator() {
     return _preferences!.getString(constants.csvFieldSeparatorKey) ??
         constants.csvFieldSeparator;

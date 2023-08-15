@@ -16,6 +16,8 @@ class _SettingsDefaultsState extends State<SettingsDefaults> {
   late List<DropdownMenuItem<String>> _csvSeparatorValues;
   TextEditingController _daysToExpirationWarningController =
       TextEditingController();
+  TextEditingController _stopNotifyingExpirationAfterDaysController =
+      TextEditingController();
   TextEditingController _csvFieldSeparatorController = TextEditingController();
   TextEditingController _csvStringFieldIdentifierController =
       TextEditingController();
@@ -57,6 +59,7 @@ class _SettingsDefaultsState extends State<SettingsDefaults> {
     _daysToExpirationWarningController.dispose();
     _csvFieldSeparatorController.dispose();
     _csvStringFieldIdentifierController.dispose();
+    _stopNotifyingExpirationAfterDaysController.dispose();
 
     super.dispose();
   }
@@ -67,6 +70,9 @@ class _SettingsDefaultsState extends State<SettingsDefaults> {
     setState(() {
       _daysToExpirationWarningController =
           TextEditingController(text: "${settings.daysToExpirationWarning()}");
+
+      _stopNotifyingExpirationAfterDaysController = TextEditingController(
+          text: "${settings.stopNotifyingExpirationAfterDays()}");
 
       _csvFieldSeparatorController =
           TextEditingController(text: settings.csvFieldSeparator());
@@ -87,6 +93,14 @@ class _SettingsDefaultsState extends State<SettingsDefaults> {
       } else {
         sharedPreferences.setInt(
             constants.daysToExpirationWarningKey, int.parse(days));
+      }
+
+      days = _stopNotifyingExpirationAfterDaysController.text;
+      if (days.isEmpty) {
+        sharedPreferences.remove(constants.stopNotifyingExpirationAfterDaysKey);
+      } else {
+        sharedPreferences.setInt(
+            constants.stopNotifyingExpirationAfterDaysKey, int.parse(days));
       }
 
       var separator = _csvFieldSeparatorController.text;
@@ -159,6 +173,18 @@ class _SettingsDefaultsState extends State<SettingsDefaults> {
               ],
               autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
+            TextFormField(
+              controller: _stopNotifyingExpirationAfterDaysController,
+              decoration: const InputDecoration(
+                label: Text(
+                    "Numero di giorni dopo i quali non viene visualizzata una notifica per una certificazione scaduta (default ${constants.stopNotifyingExpirationAfterDays})"),
+                prefixIcon: Icon(Icons.calendar_month),
+              ),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+              ],
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+            ),
             const SizedBox(
               height: 8,
             ),
@@ -191,7 +217,7 @@ class _SettingsDefaultsState extends State<SettingsDefaults> {
               decoration: const InputDecoration(
                 label: Text(
                     "CSV: identificatore di stringhe (default: ${constants.csvStringFieldIdentifier})"),
-                prefixIcon: Icon(Icons.calendar_month),
+                prefixIcon: Icon(Icons.text_fields),
               ),
             ),
             Container(

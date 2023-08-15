@@ -200,6 +200,7 @@ class _CertificationEditState extends State<CertificationEdit> {
                       .parse(state.certificationExpirationController.text),
                   state.certificationNoteController.text,
                   state.certification?.attachmentId,
+                  false,
                 );
 
                 await CertificationRepository.save(cert);
@@ -216,6 +217,7 @@ class _CertificationEditState extends State<CertificationEdit> {
                         .parse(state.certificationExpirationController.text),
                     state.certificationNoteController.text,
                     null,
+                    false,
                   );
 
                   await CertificationRepository.save(cert);

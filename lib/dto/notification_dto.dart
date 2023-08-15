@@ -14,6 +14,7 @@ class NotificationDto extends CertificationDto {
         "Data di scadenza",
         "Nome",
         "Cognome",
+        "Nascosta",
       ];
 
   @override
@@ -26,5 +27,6 @@ class NotificationDto extends CertificationDto {
             : null,
         person.name,
         person.surname,
+        certification?.notificationHidden ?? false ? 1 : 0
       ];
 }

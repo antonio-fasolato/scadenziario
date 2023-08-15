@@ -13,13 +13,21 @@ class Certification {
   DateTime? expirationDate;
   String? note;
   String? attachmentId;
+  bool notificationHidden = false;
 
   Person? person;
   Course? course;
   Attachment? attachment;
 
-  Certification(this.id, this.courseId, this.personId, this.issuingDate,
-      this.expirationDate, this.note, this.attachmentId);
+  Certification(
+      this.id,
+      this.courseId,
+      this.personId,
+      this.issuingDate,
+      this.expirationDate,
+      this.note,
+      this.attachmentId,
+      this.notificationHidden);
 
   Certification.empty();
 
@@ -37,6 +45,7 @@ class Certification {
           : DateFormat("yyyy-MM-dd").parse(map["${prefix}expiration_date"]),
       map["${prefix}note"],
       map["${prefix}attachment_id"],
+      map["${prefix}notification_hidden"] == 1 ? true : false,
     );
 
     return toReturn;
@@ -70,13 +79,15 @@ class Certification {
     );
 
     Certification toReturn = Certification(
-        map["id"],
-        map["course_id"],
-        map["person_id"],
-        DateFormat("yyyy-MM-dd").parse(map["issuing_date"]),
-        DateFormat("yyyy-MM-dd").parse(map["expiration_date"]),
-        map["note"],
-        map["attachment_id"]);
+      map["id"],
+      map["course_id"],
+      map["person_id"],
+      DateFormat("yyyy-MM-dd").parse(map["issuing_date"]),
+      DateFormat("yyyy-MM-dd").parse(map["expiration_date"]),
+      map["note"],
+      map["attachment_id"],
+      map["notification_hidden"] == 1 ? true : false,
+    );
 
     toReturn.person = p;
     toReturn.course = c;
@@ -97,7 +108,8 @@ class Certification {
           ? DateFormat("yyyy-MM-dd").format(expirationDate as DateTime)
           : null,
       "note": note,
-      "attachment_id": attachmentId
+      "attachment_id": attachmentId,
+      "notification_hidden": notificationHidden ? 1 : 0,
     };
   }
 
@@ -116,10 +128,5 @@ class Certification {
 
     return nowDateOnly.difference(expirationDateOnly).inDays.abs() <=
         constants.daysToExpirationWarning;
-  }
-
-  @override
-  String toString() {
-    return 'Certification{id: $id, course_id: $courseId, person_id: $personId, issuing_date: $issuingDate, expiration_date: $expirationDate, note: $note, attachment_id: $attachmentId}';
   }
 }

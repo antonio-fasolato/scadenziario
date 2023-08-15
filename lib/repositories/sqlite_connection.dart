@@ -149,6 +149,7 @@ class SqliteConnection {
         "expiration_date" text NOT NULL,
         "note" text,
         "attachment_id" text NULL,
+        "notification_hidden" integer NOT NULL default(0),
         FOREIGN KEY ("course_id") REFERENCES course("id"),
         FOREIGN KEY ("person_id") REFERENCES persons("id"),
         FOREIGN KEY ("attachment_id") REFERENCES attachment("id")

@@ -243,6 +243,7 @@ class CertificationRepository {
       select count(*) as count
       from certification c
       where 1 = 1
+        and notification_hidden = 0
         and expiration_date < DATE('${DateFormat("yyyy-MM-dd").format(to)}')
     """;
 
@@ -255,7 +256,7 @@ class CertificationRepository {
   }
 
   static Future<List<NotificationDto>> getNotifications(
-      DateTime d, String q) async {
+      DateTime d, String q, bool hidden) async {
     var db = SqliteConnection().db;
     Settings settings = await Settings.getInstance();
 
@@ -277,6 +278,7 @@ class CertificationRepository {
       inner join course c on
         ce.course_id = c.id
       where 1 = 1
+        ${hidden ? "" : "and ce.notification_hidden = 0"}
         and ce.expiration_date < DATE('${DateFormat("yyyy-MM-dd").format(to)}')
         ${q.isNotEmpty ? fullText : ""}
       order by ce.expiration_date desc

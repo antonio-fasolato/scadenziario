@@ -115,8 +115,8 @@ class _CoursesSceneState extends State<CoursesScene> {
                         child: TextFormField(
                           controller: _searchController,
                           decoration: InputDecoration(
-                            label: Text("Cerca"),
-                            prefixIcon: Icon(Icons.search),
+                            label: const Text("Cerca"),
+                            prefixIcon: const Icon(Icons.search),
                             suffixIcon: IconButton(
                               onPressed: () {
                                 _searchController.clear();

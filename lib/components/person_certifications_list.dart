@@ -20,8 +20,10 @@ class PersonCertificationsList extends StatelessWidget {
   Future<List<CertificationDto>> _getCertifications() async {
     List<CertificationDto> toReturn = [];
 
-    toReturn = await CertificationRepository.getCertificationsFromPersonId(
-        _person.id as String);
+    if (_person.id != null) {
+      toReturn = await CertificationRepository.getCertificationsFromPersonId(
+          _person.id as String);
+    }
 
     return toReturn;
   }
@@ -36,12 +38,12 @@ class PersonCertificationsList extends StatelessWidget {
     if (c.issuingDate == null) {
       a = "";
     }
-    a = "Ottenuto il ${DateFormat("dd/MM/yyyy").format(c!.issuingDate as DateTime)} - ";
+    a = "Ottenuto il ${DateFormat("dd/MM/yyyy").format(c.issuingDate as DateTime)} - ";
 
     if (c.expirationDate == null) {
       b = "";
     }
-    b = "In scadenza il ${DateFormat("dd/MM/yyyy").format(c!.expirationDate as DateTime)}";
+    b = "In scadenza il ${DateFormat("dd/MM/yyyy").format(c.expirationDate as DateTime)}";
 
     return "$a$b";
   }
@@ -105,6 +107,10 @@ class PersonCertificationsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_person.id == null) {
+      return Container();
+    }
+
     return Card(
       elevation: 4,
       child: FutureBuilder<List<CertificationDto>>(
@@ -119,42 +125,43 @@ class PersonCertificationsList extends StatelessWidget {
               if (snapshot.hasError) {
                 return _alternativeText('Error: ${snapshot.error}');
               } else {
-                if (snapshot.data != null &&
-                    (snapshot?.data?.length ?? 0) > 0) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Certificati",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24,
-                              ),
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Certificati",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
                             ),
-                            IconButton(
-                              onPressed: () => _toCsv(snapshot?.data ?? []),
-                              icon: const Icon(Icons.save),
-                              tooltip: "Salva come csv",
-                            )
-                          ],
-                        ),
+                          ),
+                          IconButton(
+                            onPressed: () => _toCsv(snapshot.data ?? []),
+                            icon: const Icon(Icons.save),
+                            tooltip: "Salva come csv",
+                          )
+                        ],
                       ),
-                      ListView.builder(
-                        itemBuilder: (context, index) =>
-                            _buildTile(context, snapshot.data![index]),
-                        itemCount: snapshot.data!.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                      ),
-                    ],
-                  );
-                }
-                return _alternativeText("Nessun certificato presente");
+                    ),
+                    snapshot.data == null || snapshot.data!.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.only(bottom: 8.0),
+                            child: Text("Nessun certificato presente"),
+                          )
+                        : ListView.builder(
+                            itemBuilder: (context, index) =>
+                                _buildTile(context, snapshot.data![index]),
+                            itemCount: snapshot.data!.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                          ),
+                  ],
+                );
               }
           }
         },

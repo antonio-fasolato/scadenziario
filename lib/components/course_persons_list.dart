@@ -5,15 +5,17 @@ import 'package:scadenziario/repositories/person_repository.dart';
 import 'package:scadenziario/state/person_state.dart';
 
 class CoursePersonsList extends StatelessWidget {
-  final String _courseId;
+  final String? _courseId;
 
   const CoursePersonsList({
     super.key,
-    required String courseId,
+    required String? courseId,
   }) : _courseId = courseId;
 
   Future<List<PersonDto>> _getPersons() async {
-    return await PersonRepository.getPersonsFromCourse(_courseId);
+    return _courseId == null
+        ? []
+        : await PersonRepository.getPersonsFromCourse(_courseId as String);
   }
 
   _goToPerson(BuildContext context, PersonDto p) async {
@@ -72,6 +74,10 @@ class CoursePersonsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_courseId == null) {
+      return Container();
+    }
+
     return Card(
       elevation: 4,
       child: FutureBuilder<List<PersonDto>>(
@@ -86,31 +92,38 @@ class CoursePersonsList extends StatelessWidget {
               if (snapshot.hasError) {
                 return _alternativeText('Error: ${snapshot.error}');
               } else {
-                if (snapshot.data != null &&
-                    (snapshot?.data?.length ?? 0) > 0) {
-                  return Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text(
-                          "Persone",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
+                return Column(
+                  children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 8, bottom: 8),
+                          child: Text(
+                            "Persone",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                            ),
                           ),
                         ),
-                      ),
-                      ListView.builder(
-                        itemBuilder: (context, index) =>
-                            _buildTile(context, snapshot.data![index]),
-                        itemCount: snapshot.data!.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                      ),
-                    ],
-                  );
-                }
-                return _alternativeText("Nessun certificato presente");
+                      ],
+                    ),
+                    snapshot.data == null || snapshot.data!.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.only(bottom: 8.0),
+                            child: Text("Nessun certificato presente"),
+                          )
+                        : ListView.builder(
+                            itemBuilder: (context, index) =>
+                                _buildTile(context, snapshot.data![index]),
+                            itemCount: snapshot.data!.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                          ),
+                  ],
+                );
               }
           }
         },

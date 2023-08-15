@@ -241,6 +241,9 @@ class _PersonEditState extends State<PersonEdit> {
                             const EdgeInsets.only(left: 16, top: 16, bottom: 8),
                         child: ElevatedButton(
                           onPressed: () async {
+                            final scaffoldMessenger =
+                                ScaffoldMessenger.of(context);
+
                             PersonState state = Provider.of<PersonState>(
                                 context,
                                 listen: false);
@@ -261,10 +264,7 @@ class _PersonEditState extends State<PersonEdit> {
                                   false);
                               int res = await PersonRepository.save(person);
                               if (res == 0) {
-                                if (!context.mounted) {
-                                  return;
-                                }
-                                ScaffoldMessenger.of(context).showSnackBar(
+                                scaffoldMessenger.showSnackBar(
                                   SnackBar(
                                     content: Container(
                                         padding: const EdgeInsets.all(16),
@@ -307,7 +307,7 @@ class _PersonEditState extends State<PersonEdit> {
                     child: AttachmentsList(
                       type: AttachmentType.person,
                       attachments: state.attachments,
-                      id: state.person.id as String,
+                      id: state.person.id,
                       reloadAttachments: _loadAttachments,
                     ),
                   ),
@@ -318,7 +318,7 @@ class _PersonEditState extends State<PersonEdit> {
                   builder: (context, state, child) => Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: PersonCertificationsList(
-                      person: state?.person as Person,
+                      person: state.person,
                     ),
                   ),
                 ),

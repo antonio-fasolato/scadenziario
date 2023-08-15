@@ -11,14 +11,14 @@ import 'package:uuid/uuid.dart';
 class AttachmentsList extends StatelessWidget {
   final AttachmentType _type;
   final List<Attachment> _attachments;
-  final String _id;
+  final String? _id;
   final Function() _reloadAttachments;
 
   const AttachmentsList({
     super.key,
     required AttachmentType type,
     required List<Attachment> attachments,
-    required String id,
+    required String? id,
     required Function() reloadAttachments,
   })  : _type = type,
         _attachments = attachments,
@@ -28,7 +28,7 @@ class AttachmentsList extends StatelessWidget {
   const AttachmentsList.person({
     super.key,
     required List<Attachment> attachments,
-    required String id,
+    required String? id,
     required Function() reloadAttachments,
   })  : _id = id,
         _attachments = attachments,
@@ -38,7 +38,7 @@ class AttachmentsList extends StatelessWidget {
   const AttachmentsList.course({
     super.key,
     required List<Attachment> attachments,
-    required String id,
+    required String? id,
     required Function() reloadAttachments,
   })  : _id = id,
         _attachments = attachments,
@@ -116,26 +116,32 @@ class AttachmentsList extends StatelessWidget {
   }
 
   _addAttachment() async {
-    FilePickerResult? res = await FilePicker.platform.pickFiles(
-      dialogTitle: "Selezionare il file da allegare",
-      allowMultiple: false,
-    );
-    if (res != null && res.count > 0 && res.paths.first != null) {
-      String path = res.paths.first as String;
-      File f = File(path);
-      Uint8List raw = await f.readAsBytes();
-      Attachment attachment = Attachment(
-        const Uuid().v4(),
-        f.path.split(Platform.pathSeparator).last,
-        raw,
+    if (_id != null) {
+      FilePickerResult? res = await FilePicker.platform.pickFiles(
+        dialogTitle: "Selezionare il file da allegare",
+        allowMultiple: false,
       );
-      await AttachmentRepository.save(attachment, _id, _type);
+      if (res != null && res.count > 0 && res.paths.first != null) {
+        String path = res.paths.first as String;
+        File f = File(path);
+        Uint8List raw = await f.readAsBytes();
+        Attachment attachment = Attachment(
+          const Uuid().v4(),
+          f.path.split(Platform.pathSeparator).last,
+          raw,
+        );
+        await AttachmentRepository.save(attachment, _id as String, _type);
+      }
+      _reloadAttachments();
     }
-    _reloadAttachments();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_id == null) {
+      return Container();
+    }
+
     return Stack(
       children: [
         Card(

@@ -30,7 +30,7 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
   _getRecentFiles() {
     setState(() {
       _recentFiles = widget._sharedPreferences
-              ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
+              .getStringList(DatabaseSelectionScene._recentFilesKey) ??
           [];
     });
   }
@@ -55,7 +55,7 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
 
   _deleteRecent(String path) {
     var oldFiles = widget._sharedPreferences
-            ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
+            .getStringList(DatabaseSelectionScene._recentFilesKey) ??
         [];
     oldFiles.remove(path);
 
@@ -82,7 +82,7 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
 
   void _pushRecentFile(String path) {
     var oldFiles = widget._sharedPreferences
-            ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
+            .getStringList(DatabaseSelectionScene._recentFilesKey) ??
         [];
     oldFiles.remove(path);
     oldFiles.add(path);

@@ -31,8 +31,8 @@ class CertificationDto {
   List<dynamic> get csvArray => [
         "${certification?.id}",
         "${course?.name}",
-        "${person?.surname}",
-        "${person?.name}",
+        "${person.surname}",
+        "${person.name}",
         certification?.issuingDate != null
             ? DateFormat("yyyy-MM-dd")
                 .format(certification?.issuingDate as DateTime)

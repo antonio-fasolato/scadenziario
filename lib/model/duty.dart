@@ -16,6 +16,13 @@ class Duty {
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      "id": id,
+      "description": description,
+    };
+  }
+
   @override
   String toString() {
     return 'Duty{id: $id, description: $description}';

@@ -18,6 +18,8 @@ class AttachmentRepository {
         joinTable = "person_attachment";
         foreignKey = "person_id";
         break;
+      default:
+        throw Exception("Tipo di allegato non conosciuto");
     }
     String sql = """
       select id, filename

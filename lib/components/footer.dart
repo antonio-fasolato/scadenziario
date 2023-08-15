@@ -39,6 +39,13 @@ class Footer extends StatelessWidget {
                 Navigator.of(context).pushNamed("/courses");
               },
             ),
+            IconButton(
+              tooltip: "Notifiche",
+              icon: const Icon(Icons.notifications),
+              onPressed: () {
+                Navigator.of(context).pushNamed("/notifications");
+              },
+            ),
             const Spacer(),
             IconButton(
               tooltip: "Cambia archivio",

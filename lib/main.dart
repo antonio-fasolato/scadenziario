@@ -8,6 +8,7 @@ import 'package:scadenziario/scenes/courses_scene.dart';
 import 'package:scadenziario/scenes/calendar_scene.dart';
 import 'package:scadenziario/scenes/database_selection_scene.dart';
 import 'package:scadenziario/scenes/homepage_scene.dart';
+import 'package:scadenziario/scenes/notifications_scene.dart';
 import 'package:scadenziario/scenes/persons_scene.dart';
 import 'package:scadenziario/scenes/settings_scene.dart';
 import 'package:scadenziario/state/course_state.dart';
@@ -97,7 +98,8 @@ class _ScadenziarioState extends State<Scadenziario> {
             ChangeNotifierProvider<CourseState>.value(
               value: courseState,
               child: const CertificateScene(),
-            )
+            ),
+        "/notifications": (buildContext) => const NotificationsScene(),
       },
       initialRoute: '/',
     );

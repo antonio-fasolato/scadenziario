@@ -254,7 +254,8 @@ class CertificationRepository {
     return 0;
   }
 
-  static Future<List<NotificationDto>> getNotifications(DateTime d) async {
+  static Future<List<NotificationDto>> getNotifications(
+      DateTime d, String q) async {
     var db = SqliteConnection().db;
     Settings settings = await Settings.getInstance();
 
@@ -262,6 +263,9 @@ class CertificationRepository {
         DateTime.now().add(Duration(days: settings.daysToExpirationWarning()));
 
     List<NotificationDto> toReturn = [];
+
+    String fullText =
+        "and (p.name like '%$q%' OR p.surname like '%$q%' or p.email like '%$q%' or c.name like '%$q%')";
 
     String sql = """
       select ce.*, 
@@ -274,6 +278,7 @@ class CertificationRepository {
         ce.course_id = c.id
       where 1 = 1
         and ce.expiration_date < DATE('${DateFormat("yyyy-MM-dd").format(to)}')
+        ${q.isNotEmpty ? fullText : ""}
       order by ce.expiration_date desc
 	    """;
 

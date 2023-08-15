@@ -6,6 +6,7 @@ import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:scadenziario/settings.dart';
 
 class CertificationRepository {
   static final log = Logger((CertificationRepository).toString());
@@ -228,6 +229,28 @@ class CertificationRepository {
     }).toList();
 
     return toReturn;
+  }
+
+  static Future<int> getNotificationsCount(DateTime d) async {
+    var db = SqliteConnection().db;
+    Settings settings = await Settings.getInstance();
+
+    DateTime to =
+        DateTime.now().add(Duration(days: settings.daysToExpirationWarning()));
+
+    String sql = """
+      select count(*) as count
+      from certification c
+      where 1 = 1
+        and expiration_date < DATE('${DateFormat("yyyy-MM-dd").format(to)}')
+    """;
+
+    var res = await db.rawQuery(sql);
+    if (res.isNotEmpty) {
+      return res.first["count"] as int;
+    }
+
+    return 0;
   }
 
   static Future<int> save(Certification c) async {

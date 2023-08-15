@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scadenziario/dto/NotificationDto.dart';
+import 'package:scadenziario/repositories/certification_repository.dart';
 
 class AppBarTitle extends StatefulWidget {
   final String _title;
@@ -11,37 +11,67 @@ class AppBarTitle extends StatefulWidget {
 }
 
 class _AppBarTitleState extends State<AppBarTitle> {
-  List<NotificationDto> _notifications = [];
+  int _notificationsCount = 0;
 
   @override
   void initState() {
     super.initState();
 
-    _notifications = [
-      NotificationDto("Notifica di prova", DateTime.now()),
-      NotificationDto("Notifica di prova", DateTime.now()),
-      NotificationDto("Notifica di prova", DateTime.now()),
-    ];
+    _getNotificationsCount();
+  }
+
+  _getNotificationsCount() async {
+    var c = await CertificationRepository.getNotificationsCount(DateTime.now());
+
+    setState(() {
+      _notificationsCount = c;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = [Text(widget._title)];
-    if (_notifications.isNotEmpty) {
+    List<Widget> children = [];
+    if (_notificationsCount > 0) {
       children.add(const SizedBox(width: 16));
-      children.add(Tooltip(
-        message: "Hai ${_notifications.length} notifiche",
-        child: Badge(
-          label: Text("${_notifications.length}"),
-          child: IconButton(
-            onPressed: () => Navigator.of(context).pushNamed("/notifications"),
-            color: Colors.red,
-            icon: const Icon(Icons.notification_important_outlined),
+      children.add(
+        Tooltip(
+          message: "Hai $_notificationsCount notifiche",
+          child: Badge(
+            label: Text("$_notificationsCount"),
+            child: IconButton(
+              onPressed: () =>
+                  Navigator.of(context).pushNamed("/notifications"),
+              color: Colors.red,
+              icon: const Icon(Icons.notification_important_outlined),
+            ),
           ),
         ),
-      ));
+      );
     }
 
-    return Row(children: children);
+    return Row(
+      children: [
+        Text(widget._title),
+        Visibility(
+          visible: _notificationsCount > 0,
+          child: const SizedBox(width: 16),
+        ),
+        Visibility(
+          visible: _notificationsCount > 0,
+          child: Tooltip(
+            message: "Hai $_notificationsCount notifiche",
+            child: Badge(
+              label: Text("$_notificationsCount"),
+              child: IconButton(
+                onPressed: () =>
+                    Navigator.of(context).pushNamed("/notifications"),
+                color: Colors.red,
+                icon: const Icon(Icons.notification_important_outlined),
+              ),
+            ),
+          ),
+        )
+      ],
+    );
   }
 }

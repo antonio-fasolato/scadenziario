@@ -3,15 +3,11 @@ import 'package:scadenziario/components/events_calendar.dart';
 import 'package:scadenziario/components/events_card.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/dto/event_dto.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 
 class CalendarScene extends StatefulWidget {
-  final SqliteConnection _connection;
-
   const CalendarScene({
     super.key,
-    required SqliteConnection connection,
-  }) : _connection = connection;
+  });
 
   @override
   State<CalendarScene> createState() => _CalendarSceneState();
@@ -39,7 +35,6 @@ class _CalendarSceneState extends State<CalendarScene> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               EventsCalendar(
-                connection: widget._connection,
                 setEvents: _setEvents,
               ),
               Visibility(
@@ -64,10 +59,7 @@ class _CalendarSceneState extends State<CalendarScene> {
                   shrinkWrap: true,
                   children: _events
                       .map(
-                        (e) => EventsCard(
-                          event: e,
-                          connection: widget._connection,
-                        ),
+                        (e) => EventsCard(event: e),
                       )
                       .toList(),
                 ),

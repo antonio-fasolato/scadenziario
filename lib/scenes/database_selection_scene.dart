@@ -6,14 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DatabaseSelectionScene extends StatefulWidget {
   static const String _recentFilesKey = "recentFiles";
   final SharedPreferences _sharedPreferences;
-  final Function(SqliteConnection) _setSqliteConnection;
 
-  const DatabaseSelectionScene(
-      {super.key,
-      required SharedPreferences sharedPreferences,
-      required Function(SqliteConnection) setSqliteConnection})
-      : _sharedPreferences = sharedPreferences,
-        _setSqliteConnection = setSqliteConnection;
+  const DatabaseSelectionScene({
+    super.key,
+    required SharedPreferences sharedPreferences,
+  }) : _sharedPreferences = sharedPreferences;
 
   @override
   State<DatabaseSelectionScene> createState() => _DatabaseSelectionSceneState();
@@ -33,7 +30,7 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
   _getRecentFiles() {
     setState(() {
       _recentFiles = widget._sharedPreferences
-              ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
+              .getStringList(DatabaseSelectionScene._recentFilesKey) ??
           [];
     });
   }
@@ -58,7 +55,7 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
 
   _deleteRecent(String path) {
     var oldFiles = widget._sharedPreferences
-            ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
+            .getStringList(DatabaseSelectionScene._recentFilesKey) ??
         [];
     oldFiles.remove(path);
 
@@ -74,16 +71,18 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
     });
   }
 
-  void _openDatabase(String path) {
-    widget._setSqliteConnection(SqliteConnection(path));
+  void _openDatabase(String path) async {
+    final navigator = Navigator.of(context);
+
+    await SqliteConnection().connect(path);
     _pushRecentFile(path);
 
-    Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
+    navigator.pushNamedAndRemoveUntil("/home", (route) => false);
   }
 
   void _pushRecentFile(String path) {
     var oldFiles = widget._sharedPreferences
-            ?.getStringList(DatabaseSelectionScene._recentFilesKey) ??
+            .getStringList(DatabaseSelectionScene._recentFilesKey) ??
         [];
     oldFiles.remove(path);
     oldFiles.add(path);
@@ -152,7 +151,8 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
                                 const Text(
                                   "Selezionare file di archivio",
                                   style: TextStyle(
-                                      fontSize: 26, fontWeight: FontWeight.bold),
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(
                                   height: 20,
@@ -172,8 +172,8 @@ class _DatabaseSelectionSceneState extends State<DatabaseSelectionScene> {
                                   child: TextButton(
                                     child: const Text(
                                         "Oppure seleziona uno dei file usati recentemente",
-                                        style:
-                                            TextStyle(fontWeight: FontWeight.bold)),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
                                     onPressed: () => setState(() {
                                       _showRecentFiles = true;
                                     }),

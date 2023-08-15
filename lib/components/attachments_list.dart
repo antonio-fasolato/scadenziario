@@ -6,59 +6,50 @@ import 'package:flutter/material.dart';
 import 'package:scadenziario/attachment_type.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
 import 'package:uuid/uuid.dart';
 
 class AttachmentsList extends StatelessWidget {
-  final SqliteConnection _connection;
   final AttachmentType _type;
   final List<Attachment> _attachments;
-  final String _id;
+  final String? _id;
   final Function() _reloadAttachments;
 
   const AttachmentsList({
     super.key,
     required AttachmentType type,
     required List<Attachment> attachments,
-    required String id,
-    required SqliteConnection connection,
+    required String? id,
     required Function() reloadAttachments,
   })  : _type = type,
         _attachments = attachments,
         _id = id,
-        _connection = connection,
         _reloadAttachments = reloadAttachments;
 
   const AttachmentsList.person({
     super.key,
     required List<Attachment> attachments,
-    required String id,
-    required SqliteConnection connection,
+    required String? id,
     required Function() reloadAttachments,
   })  : _id = id,
         _attachments = attachments,
         _type = AttachmentType.person,
-        _connection = connection,
         _reloadAttachments = reloadAttachments;
 
   const AttachmentsList.course({
     super.key,
     required List<Attachment> attachments,
-    required String id,
-    required SqliteConnection connection,
+    required String? id,
     required Function() reloadAttachments,
   })  : _id = id,
         _attachments = attachments,
         _type = AttachmentType.course,
-        _connection = connection,
         _reloadAttachments = reloadAttachments;
 
   Future<bool> _download(BuildContext context, String id) async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
-    Attachment? attachment =
-        await AttachmentRepository(_connection).getById(id);
+    Attachment? attachment = await AttachmentRepository.getById(id);
     if (attachment == null) {
       scaffoldMessenger.showSnackBar(
         SnackBar(
@@ -119,32 +110,38 @@ class AttachmentsList extends StatelessWidget {
 
   _delete(BuildContext context, String id) async {
     final navigator = Navigator.of(context);
-    await AttachmentRepository(_connection).delete(id, _type);
+    await AttachmentRepository.delete(id, _type);
     navigator.pop();
     _reloadAttachments();
   }
 
   _addAttachment() async {
-    FilePickerResult? res = await FilePicker.platform.pickFiles(
-      dialogTitle: "Selezionare il file da allegare",
-      allowMultiple: false,
-    );
-    if (res != null && res.count > 0 && res.paths.first != null) {
-      String path = res.paths.first as String;
-      File f = File(path);
-      Uint8List raw = await f.readAsBytes();
-      Attachment attachment = Attachment(
-        const Uuid().v4(),
-        f.path.split(Platform.pathSeparator).last,
-        raw,
+    if (_id != null) {
+      FilePickerResult? res = await FilePicker.platform.pickFiles(
+        dialogTitle: "Selezionare il file da allegare",
+        allowMultiple: false,
       );
-      await AttachmentRepository(_connection).save(attachment, _id, _type);
+      if (res != null && res.count > 0 && res.paths.first != null) {
+        String path = res.paths.first as String;
+        File f = File(path);
+        Uint8List raw = await f.readAsBytes();
+        Attachment attachment = Attachment(
+          const Uuid().v4(),
+          f.path.split(Platform.pathSeparator).last,
+          raw,
+        );
+        await AttachmentRepository.save(attachment, _id as String, _type);
+      }
+      _reloadAttachments();
     }
-    _reloadAttachments();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_id == null) {
+      return Container();
+    }
+
     return Stack(
       children: [
         Card(

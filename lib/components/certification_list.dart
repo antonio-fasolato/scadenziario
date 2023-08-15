@@ -14,20 +14,17 @@ import 'package:scadenziario/model/certification.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
-import 'package:scadenziario/repositories/sqlite_connection.dart';
+import 'package:scadenziario/services/csv_service.dart';
 import 'package:scadenziario/state/course_state.dart';
 import 'package:uuid/uuid.dart';
 
 class CertificationsList extends StatefulWidget {
-  final SqliteConnection _connection;
   final void Function() _getAllCertifications;
 
   const CertificationsList({
     super.key,
-    required SqliteConnection connection,
     required Function() getAllCertifications,
-  })  : _connection = connection,
-        _getAllCertifications = getAllCertifications;
+  }) : _getAllCertifications = getAllCertifications;
 
   @override
   State<CertificationsList> createState() => _CertificationsListState();
@@ -53,15 +50,17 @@ class _CertificationsListState extends State<CertificationsList> {
       Uint8List raw = await f.readAsBytes();
       Attachment attachment = Attachment(
           const Uuid().v4(), f.path.split(Platform.pathSeparator).last, raw);
-      await AttachmentRepository(widget._connection)
-          .save(attachment, id, AttachmentType.certification);
+      await AttachmentRepository.save(
+        attachment,
+        id,
+        AttachmentType.certification,
+      );
       widget._getAllCertifications();
     }
   }
 
   _openAttachment(String id) async {
-    Attachment? attachment =
-        await AttachmentRepository(widget._connection).getById(id);
+    Attachment? attachment = await AttachmentRepository.getById(id);
 
     if (attachment == null) {
       return;
@@ -81,7 +80,7 @@ class _CertificationsListState extends State<CertificationsList> {
 
     if (c.certification == null) {
       return ListTile(
-        title: Text("${c.person?.surname ?? ""} ${c.person?.name ?? ""}"),
+        title: Text("${c.person.surname ?? ""} ${c.person.name ?? ""}"),
         leading: const Icon(Icons.workspace_premium_outlined),
         trailing: IconButton(
           icon: c.certification != null
@@ -96,13 +95,13 @@ class _CertificationsListState extends State<CertificationsList> {
             }
           },
         ),
-        selected: state.hasPerson && state.person.id == c.person?.id,
+        selected: state.hasPerson && state.person.id == c.person.id,
         selectedTileColor: Colors.grey,
         selectedColor: Colors.white70,
       );
     } else {
       return ListTile(
-        title: Text("${c.person?.surname ?? ""} ${c.person?.name ?? ""}"),
+        title: Text("${c.person.surname ?? ""} ${c.person.name ?? ""}"),
         subtitle: Text(
             "Conseguito il ${DateFormat.yMd('it_IT').format(c.certification?.issuingDate as DateTime)} - Prossima scadenza il ${DateFormat.yMd('it_IT').format(c.certification?.expirationDate as DateTime)}"),
         leading: const Icon(Icons.workspace_premium_outlined),
@@ -149,20 +148,27 @@ class _CertificationsListState extends State<CertificationsList> {
     }
   }
 
-  _addCertification(Person p) {
-    CourseState state = Provider.of<CourseState>(context, listen: false);
-
-    state.selectCertification(Certification.empty(), p);
-  }
-
   _editCertification(String id, Person p) async {
     CourseState state = Provider.of<CourseState>(context, listen: false);
 
-    Certification? c =
-        await CertificationRepository(widget._connection).getById(id);
+    Certification? c = await CertificationRepository.getById(id);
     if (c != null) {
       state.selectCertification(c, p);
     }
+  }
+
+  _toCsv() async {
+    CourseState state = Provider.of<CourseState>(context, listen: false);
+
+    List<List<dynamic>> data = [];
+    data.add(CertificationDto.csvHeader);
+    for (var c in state.certifications) {
+      if (c.certification != null) {
+        data.add(c.csvArray);
+      }
+    }
+
+    await CsvService.save(CsvService.toCsv(data));
   }
 
   @override
@@ -172,21 +178,32 @@ class _CertificationsListState extends State<CertificationsList> {
         Form(
           key: _formKey,
           child: Consumer<CourseState>(
-            builder: (context, state, child) => TextFormField(
-              controller: state.searchController,
-              decoration: InputDecoration(
-                label: const Text("Cerca"),
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    Provider.of<CourseState>(context, listen: false)
-                        .changeSearchController("");
-                    widget._getAllCertifications();
-                  },
-                  icon: const Icon(Icons.backspace),
+            builder: (context, state, child) => Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: state.searchController,
+                    decoration: InputDecoration(
+                      label: const Text("Cerca"),
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          Provider.of<CourseState>(context, listen: false)
+                              .changeSearchController("");
+                          widget._getAllCertifications();
+                        },
+                        icon: const Icon(Icons.backspace),
+                      ),
+                    ),
+                    onChanged: (value) => widget._getAllCertifications(),
+                  ),
                 ),
-              ),
-              onChanged: (value) => widget._getAllCertifications(),
+                IconButton(
+                  onPressed: () async => await _toCsv(),
+                  icon: const Icon(Icons.save),
+                  tooltip: "Salva come csv",
+                )
+              ],
             ),
           ),
         ),

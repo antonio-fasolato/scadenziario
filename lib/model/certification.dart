@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scadenziario/model/attachment.dart';
 import 'package:scadenziario/model/course.dart';
 import 'package:scadenziario/model/person.dart';
+import 'package:scadenziario/constants.dart' as constants;
 
 class Certification {
   String? id;
@@ -27,8 +29,12 @@ class Certification {
       map["${prefix}id"],
       map["${prefix}course_id"],
       map["${prefix}person_id"],
-      DateFormat("yyyy-MM-dd").parse(map["${prefix}issuing_date"]),
-      DateFormat("yyyy-MM-dd").parse(map["${prefix}expiration_date"]),
+      map["${prefix}issuing_date"] == null
+          ? null
+          : DateFormat("yyyy-MM-dd").parse(map["${prefix}issuing_date"]),
+      map["${prefix}expiration_date"] == null
+          ? null
+          : DateFormat("yyyy-MM-dd").parse(map["${prefix}expiration_date"]),
       map["${prefix}note"],
       map["${prefix}attachment_id"],
     );
@@ -93,6 +99,23 @@ class Certification {
       "note": note,
       "attachment_id": attachmentId
     };
+  }
+
+  bool get isExpired {
+    DateTime expirationDateOnly =
+        DateUtils.dateOnly(expirationDate as DateTime);
+    DateTime nowDateOnly = DateUtils.dateOnly(DateTime.now());
+
+    return nowDateOnly.compareTo(expirationDateOnly) > 0;
+  }
+
+  bool get isExpiring {
+    DateTime expirationDateOnly =
+        DateUtils.dateOnly(expirationDate as DateTime);
+    DateTime nowDateOnly = DateUtils.dateOnly(DateTime.now());
+
+    return nowDateOnly.difference(expirationDateOnly).inDays.abs() <=
+        constants.daysToExpirationWarning;
   }
 
   @override

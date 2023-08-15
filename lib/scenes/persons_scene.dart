@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scadenziario/attachment_type.dart';
+import 'package:scadenziario/components/app_bar_title.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/components/person_edit.dart';
-import 'package:scadenziario/components/scadenziario_app_bar.dart';
 import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/attachment_repository.dart';
 import 'package:scadenziario/repositories/person_repository.dart';
@@ -99,7 +99,9 @@ class _PersonsSceneState extends State<PersonsScene> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ScadenziarioAppBar("Scadenziario - Personale"),
+      appBar: AppBar(
+        title: const AppBarTitle(title: "Scadenziario - Personale"),
+      ),
       body: Row(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,

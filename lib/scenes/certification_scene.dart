@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scadenziario/components/app_bar_title.dart';
 import 'package:scadenziario/components/certification_list.dart';
 import 'package:scadenziario/components/certification_edit.dart';
 import 'package:scadenziario/components/footer.dart';
-import 'package:scadenziario/components/scadenziario_app_bar.dart';
 import 'package:scadenziario/dto/certification_dto.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/state/course_state.dart';
@@ -54,7 +54,9 @@ class _CertificateSceneState extends State<CertificateScene> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ScadenziarioAppBar(_getTitile()),
+      appBar: AppBar(
+        title: AppBarTitle(title: _getTitile()),
+      ),
       body: Row(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,

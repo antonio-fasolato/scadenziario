@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scadenziario/components/app_bar_title.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/components/scadenziario_app_bar.dart';
 import 'package:scadenziario/components/settings_defaults.dart';
@@ -10,7 +11,9 @@ class SettingsScene extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ScadenziarioAppBar("Scadenziario - Opzioni"),
+      appBar: AppBar(
+        title: const AppBarTitle(title: "Scadenziario - Opzioni"),
+      ),
       body: SingleChildScrollView(
         child: Table(
           children: const [

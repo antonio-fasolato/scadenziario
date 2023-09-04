@@ -61,7 +61,7 @@ class _NotificationsSceneState extends State<NotificationsScene> {
       title: Text("${n.person.surname} ${n.person.name} - ${n.course?.name}"),
       titleTextStyle: n.certification?.notificationHidden ?? false
           ? const TextStyle(color: Colors.black26)
-          : const TextStyle(),
+          : const TextStyle(color: Colors.black),
       subtitle: Text(
           "Il corso ${n.course?.name} e' ${n.isExpiring ? "in scadenza" : "scaduto"} il ${DateFormat("dd-MM-yyyy").format(n.certification?.expirationDate as DateTime)} per ${n.person.surname} ${n.person.name}"),
       subtitleTextStyle: n.certification?.notificationHidden ?? false

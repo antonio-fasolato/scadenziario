@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:scadenziario/components/app_bar_title.dart';
 import 'package:scadenziario/components/footer.dart';
 import 'package:scadenziario/dto/notification_dto.dart';
 import 'package:scadenziario/model/certification.dart';
+import 'package:scadenziario/model/course.dart';
+import 'package:scadenziario/model/person.dart';
 import 'package:scadenziario/repositories/certification_repository.dart';
 import 'package:scadenziario/services/csv_service.dart';
+import 'package:scadenziario/state/course_state.dart';
 
 class NotificationsScene extends StatefulWidget {
   const NotificationsScene({super.key});
@@ -54,6 +58,21 @@ class _NotificationsSceneState extends State<NotificationsScene> {
     }
 
     await CsvService.save(CsvService.toCsv(data));
+  }
+
+  _goToCertification(NotificationDto n) {
+    final navigator = Navigator.of(context);
+
+    CourseState state = Provider.of<CourseState>(context, listen: false);
+    Certification? certification = n.certification;
+    Course? course = n.course;
+    Person? person = n.person;
+    if (certification != null && course != null && person != null) {
+      state.selectCourse(course);
+      state.selectCertification(certification, person);
+    }
+
+    navigator.pushNamed("/certificates");
   }
 
   ListTile _buildTile(NotificationDto n) {
@@ -106,6 +125,7 @@ class _NotificationsSceneState extends State<NotificationsScene> {
                 icon: const Icon(Icons.visibility_off),
               ),
             ),
+      onTap: () => _goToCertification(n),
     );
   }
 

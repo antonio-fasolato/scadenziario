@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scadenziario/components/app_bar_title.dart';
 import 'package:scadenziario/components/footer.dart';
-import 'package:scadenziario/components/scadenziario_app_bar.dart';
 import 'package:scadenziario/components/settings_defaults.dart';
 import 'package:scadenziario/components/settings_roles.dart';
 

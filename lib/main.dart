@@ -99,7 +99,11 @@ class _ScadenziarioState extends State<Scadenziario> {
               value: courseState,
               child: const CertificateScene(),
             ),
-        "/notifications": (buildContext) => const NotificationsScene(),
+        "/notifications": (buildContext) =>
+            ChangeNotifierProvider<CourseState>.value(
+              value: courseState,
+              child: const NotificationsScene(),
+            ),
       },
       initialRoute: '/',
     );

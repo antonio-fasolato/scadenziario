@@ -126,29 +126,31 @@ class _PersonEditState extends State<PersonEdit> {
                           ]),
                           TableRow(children: [
                             TableCell(
-                                child: TextFormField(
-                              controller: state.birthDateController,
-                              decoration: const InputDecoration(
-                                  label: Text("Data di nascita"),
-                                  prefixIcon: Icon(Icons.calendar_today)),
-                              onTap: () async {
-                                DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(1900),
-                                    lastDate: DateTime.now());
-                                if (pickedDate != null) {
-                                  String formattedDate = DateFormat.yMd('it_IT')
-                                      .format(pickedDate);
-                                  state.changePersonBirthdate(formattedDate);
-                                }
-                              },
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (value) => (value ?? "").isEmpty
-                                  ? "La data di nascita è obbligatoria"
-                                  : null,
-                            )),
+                              child: TextFormField(
+                                controller: state.birthDateController,
+                                decoration: const InputDecoration(
+                                    label: Text("Data di nascita"),
+                                    prefixIcon: Icon(Icons.calendar_today)),
+                                onTap: () async {
+                                  DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(1900),
+                                      lastDate: DateTime.now());
+                                  if (pickedDate != null) {
+                                    String formattedDate =
+                                        DateFormat.yMd('it_IT')
+                                            .format(pickedDate);
+                                    state.changePersonBirthdate(formattedDate);
+                                  }
+                                },
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                validator: (value) => (value ?? "").isEmpty
+                                    ? "La data di nascita è obbligatoria"
+                                    : null,
+                              ),
+                            ),
                             TableCell(
                               child: DropdownButtonFormField<String>(
                                 value: state.dutyController.text.isEmpty

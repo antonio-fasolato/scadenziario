@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -28,6 +30,16 @@ void main() async {
     var log = Logger('main');
     log.info("Application started in debug mode");
   }
+
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    debugPrint('An error has occurred: ${details.exception}');
+    exit(1);
+  };
+  PlatformDispatcher.instance.onError = (exception, stackTrace) {
+    debugPrint('An error has occurred: $exception $stackTrace');
+    exit(1);
+  };
 
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 

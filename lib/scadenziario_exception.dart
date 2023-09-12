@@ -1,6 +1,6 @@
 class ScadenziarioException implements Exception {
-  String cause;
+  String message;
   final bool recoverable;
 
-  ScadenziarioException(this.cause, this.recoverable);
+  ScadenziarioException(this.message, this.recoverable);
 }

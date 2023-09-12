@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:scadenziario/scadenziario_exception.dart';
+import 'package:scadenziario/main.dart' show globalNavigatorKey;
 
 class ErrorHandler {
   static showError({
     required String message,
-    required BuildContext context,
   }) =>
       showDialog(
-        context: context,
+        context: globalNavigatorKey.currentContext as BuildContext,
         builder: (context) {
           return ErrorHandlerWidget(
             message: message,
@@ -20,13 +20,12 @@ class ErrorHandler {
 
   static handleException({
     required Exception exception,
-    required BuildContext context,
     Logger? log,
   }) {
     log?.severe('An error has occurred: $exception');
 
     showDialog(
-      context: context,
+      context: globalNavigatorKey.currentContext as BuildContext,
       builder: (context) {
         return ErrorHandlerWidget(
           exception: exception,

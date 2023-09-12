@@ -19,6 +19,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:window_manager/window_manager.dart';
 
+final globalNavigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   Logger.root.onRecord.listen((record) {
     debugPrint(
@@ -81,6 +83,7 @@ class _ScadenziarioState extends State<Scadenziario> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: globalNavigatorKey,
       title: 'Scadenziario',
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,

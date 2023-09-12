@@ -92,7 +92,10 @@ class _ErrorHandlerWidgetState extends State<ErrorHandlerWidget> {
                 ),
                 Visibility(
                   visible: _showDetails,
-                  child: Text(widget.exception.toString()),
+                  child: widget.exception is ScadenziarioException
+                      ? Text(
+                          (widget.exception as ScadenziarioException).message)
+                      : Text(widget.exception.toString()),
                 ),
                 Visibility(
                   visible: _showDetails,
@@ -100,7 +103,7 @@ class _ErrorHandlerWidgetState extends State<ErrorHandlerWidget> {
                 ),
                 Visibility(
                   visible: _unrecoverableError(),
-                  child: const SizedBox(height: 8),
+                  child: const SizedBox(height: 16),
                 ),
                 Visibility(
                   visible: _unrecoverableError(),
